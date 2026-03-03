@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>📦 Estoque</h2>
+    <a href="dashboard.html" class="ativo">Dashboard</a>
+    <a href="index.html">Produtos</a>
+    <a href="mapa.html">Mapa</a>
+    <a href="cadastro.html">Cadastrar</a>
+    
+    
+</div>
+
+<div class="main">
+
+    <div class="header-dashboard">
+        <h1>Dashboard</h1>
+    </div>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h3>Total de Produtos</h3>
+            <p id="totalProdutos">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total de Peças</h3>
+            <p id="totalPecas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Posições Ocupadas</h3>
+            <p id="ocupadas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Estoque Baixo</h3>
+            <p id="estoqueBaixo">0</p>
+        </div>
+
+    </div>
+<div class="graficos-grid">
+
+    <div class="grafico-container">
+        <h3>Posições do Armazém</h3>
+        <canvas id="graficoPosicoes"></canvas>
+    </div>
+
+    <div class="grafico-container">
+        <h3>Status do Estoque</h3>
+        <canvas id="graficoEstoque"></canvas>
+    </div>
+
+</div>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/protect.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

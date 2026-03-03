@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa do Armazém</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>📦 Estoque</h2>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="index.html">Produtos</a>
+    <a href="mapa.html" class="ativo">Mapa</a>
+    <a href="cadastro.html">Cadastrar</a>
+    
+</div>
+
+<div class="main">
+
+    <!-- TOPO PROFISSIONAL -->
+   <div class="mapa-topo">
+
+    <div class="mapa-titulo">
+        <h1>Mapa do Armazém</h1>
+        <span>Visualização geral das posições de estoque</span>
+    </div>
+
+    <div class="mapa-busca-card">
+        <input 
+            type="text" 
+            id="buscarCodigo" 
+            placeholder="Digite o código do produto..."
+            onkeydown="if(event.key==='Enter'){buscarProduto();}"
+        >
+        <button onclick="buscarProduto()">🔍 Buscar</button>
+    </div>
+
+</div>
+
+<div id="mapa"></div>
+
+    <!-- MAPA -->
+    <div id="mapa"></div>
+</div>
+
+<script src="js/protect.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
