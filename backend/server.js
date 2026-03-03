@@ -33,9 +33,6 @@ app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
 
-const path = require("path");
-
-
 // Servir frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
