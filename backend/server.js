@@ -4,31 +4,34 @@ const path = require("path");
 
 const app = express();
 
-// MIDDLEWARES
+// middlewares
 app.use(cors());
 app.use(express.json());
 
-// SERVIR FRONTEND
+// servir arquivos do frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// IMPORTAR ROTAS
+// rotas da API
 const produtosRoutes = require("./routes/produtos");
 const importarRoutes = require("./routes/importar");
 const authRoutes = require("./routes/auth");
 
-// ROTAS API
 app.use("/produtos", produtosRoutes);
 app.use("/importar", importarRoutes);
 app.use("/auth", authRoutes);
 
-// ABRIR FRONTEND
+// rota principal (abrir index.html)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+});
+
+// fallback
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
-// PORTA
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log("Servidor rodando na porta " + PORT);
 });
