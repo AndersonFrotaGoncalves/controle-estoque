@@ -1,5 +1,4 @@
-const apiUrl = "http://localhost:3000/produtos";
-
+const apiUrl = "/produtos";
 /* ========================================
    UTIL
 ======================================== */

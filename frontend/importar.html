@@ -43,17 +43,18 @@ document.getElementById("formImportar").addEventListener("submit", function(e) {
     const formData = new FormData();
     formData.append("arquivo", document.getElementById("arquivo").files[0]);
 
-    fetch("http://localhost:3000/importar", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-    })
-    .catch(err => {
-        alert("Erro na importação");
-    });
+   fetch("/importar", {
+    method: "POST",
+    body: formData
+})
+.then(res => res.json())
+.then(data => {
+    alert(data.message);
+})
+.catch(err => {
+    alert("Erro na importação");
+});
+
 });
 </script>
 <script src="js/protect.js"></script>
