@@ -2,48 +2,32 @@ const apiUrl = "/produtos";
 /* ========================================
    UTIL
 ======================================== */
+async function carregarProdutos() {
 
-function fetchProdutos() {
-    return fetch(apiUrl).then(res => res.json());
-    const token = localStorage.getItem("token");
+    const response = await fetch("/produtos");
 
-if (!token && !window.location.pathname.includes("login.html")) {
-    window.location.href = "login.html";
-}
-}
+    const produtos = await response.json();
 
-/* ========================================
-   LISTAR PRODUTOS
-======================================== */
+    const tabela = document.querySelector("#tabelaProdutos tbody");
 
-if (document.getElementById("tabelaProdutos")) {
+    tabela.innerHTML = "";
 
-    fetchProdutos().then(data => {
+    produtos.forEach(produto => {
 
-        const tbody = document.querySelector("#tabelaProdutos tbody");
-        tbody.innerHTML = "";
+        const linha = `
+        <tr>
+            <td>${produto.codigo}</td>
+            <td>${produto.descricao}</td>
+            <td>${produto.rack}</td>
+            <td>${produto.nivel}</td>
+            <td>${produto.quantidade}</td>
+        </tr>
+        `;
 
-        data.forEach(produto => {
+        tabela.innerHTML += linha;
 
-            const baixo = Number(produto.quantidade) <= Number(produto.quantidade_minima);
-
-            const row = `
-            <tr class="${baixo ? 'estoque-baixo' : ''}">
-                <td>${produto.codigo}</td>
-                <td>${produto.descricao}</td>
-                <td>${produto.rack}</td>
-                <td>${produto.nivel}</td>
-                <td>${produto.quantidade}</td>
-                <td class="acoes">
-                    <button class="btn-editar" onclick="editarProduto(${produto.id})">✏</button>
-                    <button class="btn-excluir" onclick="abrirModal(${produto.id})">🗑</button>
-                </td>
-            </tr>
-            `;
-
-            tbody.innerHTML += row;
-        });
     });
+
 }
 
 /* ========================================
