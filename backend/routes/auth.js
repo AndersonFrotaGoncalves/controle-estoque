@@ -39,13 +39,11 @@ router.post("/login", (req, res) => {
 
         const usuario = results[0];
 
-        const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
-        if (!senhaValida) {
-            return res.status(401).json({
-                error: "Senha incorreta"
-            });
-        }
+       if (senha !== usuario.senha) {
+    return res.status(401).json({
+        error: "Senha incorreta"
+    });
+}
 
         const token = jwt.sign(
             {
