@@ -2,16 +2,21 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const mysql = require("mysql2");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+/* ROTAS AUTH */
+app.use("/auth", authRoutes);
+
+/* SERVIR FRONTEND */
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/login.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dashboard.html"));
 });
 
 /* CONEXÃO MYSQL */
@@ -30,31 +35,6 @@ connection.connect(err => {
   } else {
     console.log("MySQL conectado");
   }
-});
-
-/* LOGIN */
-
-app.post("/auth/login", (req, res) => {
-
-  const { email, senha } = req.body;
-
-  const sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
-
-  connection.query(sql, [email, senha], (err, result) => {
-
-    if (err) return res.status(500).json({ error: "Erro no servidor" });
-
-    if (result.length === 0) {
-      return res.status(401).json({ error: "Email ou senha inválidos" });
-    }
-
-    res.json({
-      token: "login-ok",
-      usuario: result[0]
-    });
-
-  });
-
 });
 
 /* LISTAR PRODUTOS */

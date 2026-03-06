@@ -72,11 +72,10 @@ if (form) {
         const method = id ? "PUT" : "POST";
         const url = id ? `${apiUrl}/${id}` : apiUrl;
 
-       fetch(url, {
+      fetch(url, {
     method,
     headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token")
+        "Content-Type": "application/json"
     },
             body: JSON.stringify(produto)
         })
