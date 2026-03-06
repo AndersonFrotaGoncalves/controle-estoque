@@ -2,30 +2,20 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const app = express();
+const mysql = require("mysql2");
 
-app.use(cors());
-app.use(express.json());
-
-// SERVIR FRONTEND
-app.use(express.static(path.join(__dirname, "../frontend")));
-
-// ROTAS API
-const produtosRoutes = require("./routes/produtos");
-const importarRoutes = require("./routes/importar");
-const authRoutes = require("./routes/auth");
-
-app.use("/produtos", produtosRoutes);
-app.use("/importar", importarRoutes);
-app.use("/auth", authRoutes);
-
-// ABRIR INDEX
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+const connection = mysql.createConnection({
+  host: "maglev.proxy.rlwy.net",
+  user: "root",
+  password: "SUA_SENHA_AQUI",
+  database: "railway",
+  port: 50021
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta " + PORT);
+connection.connect(function(err) {
+  if (err) {
+    console.error("Erro ao conectar no MySQL:", err);
+  } else {
+    console.log("MySQL conectado com sucesso!");
+  }
 });
