@@ -42,16 +42,19 @@ app.post("/auth/login", (req, res) => {
       return res.status(500).json({ error: "Erro no servidor" });
     }
 
-    if (result.length > 0) {
-      res.json({
-        sucesso: true,
-        usuario: result[0].email
-      });
-    } else {
-      res.status(401).json({
-        error: "Usuário ou senha inválidos"
-      });
+    if (result.length === 0) {
+      return res.status(401).json({ error: "Email ou senha inválidos" });
     }
+
+    const usuario = {
+      id: result[0].id,
+      email: result[0].email
+    };
+
+    res.json({
+      token: "login-ok",
+      usuario: usuario
+    });
 
   });
 
