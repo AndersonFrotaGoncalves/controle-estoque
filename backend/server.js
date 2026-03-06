@@ -8,6 +8,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
 /* CONEXÃO MYSQL */
 const connection = mysql.createConnection({
   host: "maglev.proxy.rlwy.net",
@@ -21,7 +27,7 @@ connection.connect((err) => {
   if (err) {
     console.error("Erro ao conectar no MySQL:", err);
   } else {
-    console.log("✅ MySQL conectado com sucesso!");
+    console.log("MySQL conectado com sucesso!");
   }
 });
 
