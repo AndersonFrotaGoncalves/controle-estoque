@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Controle de Estoque</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <div class="sidebar">
@@ -13,8 +17,6 @@
     <a href="index.html">Produtos</a>
     <a href="mapa.html">Mapa</a>
     <a href="cadastro.html">Cadastrar</a>
-    
-    
 </div>
 
 <div class="main">
@@ -46,25 +48,30 @@
         </div>
 
     </div>
-<div class="graficos-grid">
 
-    <div class="grafico-container">
-        <h3>Posições do Armazém</h3>
-        <canvas id="graficoPosicoes"></canvas>
+    <div class="graficos-grid">
+
+        <div class="grafico-container">
+            <h3>Posições do Armazém</h3>
+            <canvas id="graficoPosicoes"></canvas>
+        </div>
+
+        <div class="grafico-container">
+            <h3>Status do Estoque</h3>
+            <canvas id="graficoEstoque"></canvas>
+        </div>
+
     </div>
 
-    <div class="grafico-container">
-        <h3>Status do Estoque</h3>
-        <canvas id="graficoEstoque"></canvas>
-    </div>
-
 </div>
 
-</div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/protect.js"></script>
-<script src="js/app.js"></script>
+
+<!-- proteção de login -->
 <script src="js/proteger.js"></script>
+
+<!-- funções do sistema -->
+<script src="js/app.js"></script>
+
 </body>
 </html>

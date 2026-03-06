@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
+
 <head>
     <meta charset="UTF-8">
-    <title>Mapa do Armazém</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa do Armazém - Controle de Estoque</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <div class="sidebar">
@@ -13,39 +17,41 @@
     <a href="index.html">Produtos</a>
     <a href="mapa.html" class="ativo">Mapa</a>
     <a href="cadastro.html">Cadastrar</a>
-    
 </div>
 
 <div class="main">
 
-    <!-- TOPO PROFISSIONAL -->
-   <div class="mapa-topo">
+    <!-- TOPO -->
+    <div class="mapa-topo">
 
-    <div class="mapa-titulo">
-        <h1>Mapa do Armazém</h1>
-        <span>Visualização geral das posições de estoque</span>
+        <div class="mapa-titulo">
+            <h1>Mapa do Armazém</h1>
+            <span>Visualização geral das posições de estoque</span>
+        </div>
+
+        <div class="mapa-busca-card">
+            <input 
+                type="text" 
+                id="buscarCodigo" 
+                placeholder="Digite o código do produto..."
+                onkeydown="if(event.key==='Enter'){buscarProduto();}"
+            >
+
+            <button onclick="buscarProduto()">🔍 Buscar</button>
+        </div>
+
     </div>
-
-    <div class="mapa-busca-card">
-        <input 
-            type="text" 
-            id="buscarCodigo" 
-            placeholder="Digite o código do produto..."
-            onkeydown="if(event.key==='Enter'){buscarProduto();}"
-        >
-        <button onclick="buscarProduto()">🔍 Buscar</button>
-    </div>
-
-</div>
-
-<div id="mapa"></div>
 
     <!-- MAPA -->
     <div id="mapa"></div>
+
 </div>
 
-<script src="js/protect.js"></script>
-<script src="js/app.js"></script>
+<!-- proteção de login -->
 <script src="js/proteger.js"></script>
+
+<!-- funções do sistema -->
+<script src="js/app.js"></script>
+
 </body>
 </html>

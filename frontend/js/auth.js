@@ -1,4 +1,6 @@
-async function login() {
+async function login(event) {
+
+    if (event) event.preventDefault();
 
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
@@ -14,10 +16,10 @@ async function login() {
     try {
 
         const response = await fetch("/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, senha })
-});
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, senha })
+        });
 
         const data = await response.json();
 
@@ -26,12 +28,23 @@ async function login() {
             return;
         }
 
+        // salva login
         localStorage.setItem("token", data.token);
-        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+        localStorage.setItem("usuario", data.usuario.nome || data.usuario.email);
 
+        // redireciona
         window.location.href = "dashboard.html";
 
     } catch (err) {
         erro.innerText = "Servidor não disponível";
+        console.error(err);
     }
+
+}
+
+// conecta o formulário
+const form = document.getElementById("loginForm");
+
+if (form) {
+    form.addEventListener("submit", login);
 }

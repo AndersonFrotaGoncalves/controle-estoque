@@ -15,8 +15,10 @@ app.use("/auth", authRoutes);
 /* SERVIR FRONTEND */
 app.use(express.static(path.join(__dirname, "../frontend")));
 
+/* PÁGINA INICIAL → LOGIN */
+
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dashboard.html"));
+  res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
 /* CONEXÃO MYSQL */
@@ -30,20 +32,26 @@ const connection = mysql.createConnection({
 });
 
 connection.connect(err => {
+
   if (err) {
     console.error("Erro MySQL:", err);
   } else {
     console.log("MySQL conectado");
   }
+
 });
 
-/* LISTAR PRODUTOS */
+/* ===============================
+   LISTAR PRODUTOS
+================================ */
 
 app.get("/produtos", (req, res) => {
 
   connection.query("SELECT * FROM produtos", (err, result) => {
 
-    if (err) return res.status(500).json({ error: "Erro ao buscar produtos" });
+    if (err) {
+      return res.status(500).json({ error: "Erro ao buscar produtos" });
+    }
 
     res.json(result);
 
@@ -51,24 +59,28 @@ app.get("/produtos", (req, res) => {
 
 });
 
-/* CADASTRAR PRODUTO */
+/* ===============================
+   CADASTRAR PRODUTO
+================================ */
 
 app.post("/produtos", (req, res) => {
 
   const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
 
   const sql = `
-  INSERT INTO produtos
-  (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
-  VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO produtos
+    (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   connection.query(
     sql,
     [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2],
-    (err, result) => {
+    (err) => {
 
-      if (err) return res.status(500).json({ error: "Erro ao cadastrar produto" });
+      if (err) {
+        return res.status(500).json({ error: "Erro ao cadastrar produto" });
+      }
 
       res.json({ sucesso: true });
 
@@ -77,7 +89,41 @@ app.post("/produtos", (req, res) => {
 
 });
 
-/* EXCLUIR PRODUTO */
+/* ===============================
+   EDITAR PRODUTO
+================================ */
+
+app.put("/produtos/:id", (req, res) => {
+
+  const { id } = req.params;
+
+  const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
+
+  const sql = `
+    UPDATE produtos
+    SET codigo=?, descricao=?, rack=?, nivel=?, quantidade=?, quantidade_minima=?
+    WHERE id=?
+  `;
+
+  connection.query(
+    sql,
+    [codigo, descricao, rack, nivel, quantidade, quantidade_minima, id],
+    (err) => {
+
+      if (err) {
+        return res.status(500).json({ error: "Erro ao atualizar produto" });
+      }
+
+      res.json({ sucesso: true });
+
+    }
+  );
+
+});
+
+/* ===============================
+   EXCLUIR PRODUTO
+================================ */
 
 app.delete("/produtos/:id", (req, res) => {
 
@@ -86,9 +132,11 @@ app.delete("/produtos/:id", (req, res) => {
   connection.query(
     "DELETE FROM produtos WHERE id = ?",
     [id],
-    (err, result) => {
+    (err) => {
 
-      if (err) return res.status(500).json({ error: "Erro ao excluir produto" });
+      if (err) {
+        return res.status(500).json({ error: "Erro ao excluir produto" });
+      }
 
       res.json({ sucesso: true });
 
@@ -97,7 +145,9 @@ app.delete("/produtos/:id", (req, res) => {
 
 });
 
-/* PORTA */
+/* ===============================
+   PORTA
+================================ */
 
 const PORT = process.env.PORT || 3000;
 
