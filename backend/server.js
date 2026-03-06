@@ -15,26 +15,25 @@ app.get("/", (req, res) => {
 });
 
 /* CONEXÃO MYSQL */
+
 const connection = mysql.createConnection({
   host: "maglev.proxy.rlwy.net",
   user: "root",
-  password: "goJcMRFGnYcqYZltvSblgdFwVDmAaNcg",
+  password: "SUA_SENHA",
   database: "railway",
   port: 50021
 });
 
-connection.connect((err) => {
+connection.connect(err => {
   if (err) {
-    console.error("Erro ao conectar no MySQL:", err);
+    console.error("Erro MySQL:", err);
   } else {
-    console.log("MySQL conectado com sucesso!");
+    console.log("MySQL conectado");
   }
 });
 
-/* SERVIR FRONTEND */
-app.use(express.static(path.join(__dirname, "public")));
+/* LOGIN */
 
-/* ROTA LOGIN */
 app.post("/auth/login", (req, res) => {
 
   const { email, senha } = req.body;
@@ -43,23 +42,15 @@ app.post("/auth/login", (req, res) => {
 
   connection.query(sql, [email, senha], (err, result) => {
 
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Erro no servidor" });
-    }
+    if (err) return res.status(500).json({ error: "Erro no servidor" });
 
     if (result.length === 0) {
       return res.status(401).json({ error: "Email ou senha inválidos" });
     }
 
-    const usuario = {
-      id: result[0].id,
-      email: result[0].email
-    };
-
     res.json({
       token: "login-ok",
-      usuario: usuario
+      usuario: result[0]
     });
 
   });
@@ -67,16 +58,12 @@ app.post("/auth/login", (req, res) => {
 });
 
 /* LISTAR PRODUTOS */
+
 app.get("/produtos", (req, res) => {
 
-  const sql = "SELECT * FROM produtos";
+  connection.query("SELECT * FROM produtos", (err, result) => {
 
-  connection.query(sql, (err, result) => {
-
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Erro ao buscar produtos" });
-    }
+    if (err) return res.status(500).json({ error: "Erro ao buscar produtos" });
 
     res.json(result);
 
@@ -85,24 +72,23 @@ app.get("/produtos", (req, res) => {
 });
 
 /* CADASTRAR PRODUTO */
+
 app.post("/produtos", (req, res) => {
 
-  const { codigo, descricao, rack, nivel, quantidade } = req.body;
+  const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
 
   const sql = `
-    INSERT INTO produtos (codigo, descricao, rack, nivel, quantidade)
-    VALUES (?, ?, ?, ?, ?)
+  INSERT INTO produtos
+  (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
+  VALUES (?, ?, ?, ?, ?, ?)
   `;
 
   connection.query(
     sql,
-    [codigo, descricao, rack, nivel, quantidade],
+    [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2],
     (err, result) => {
 
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ error: "Erro ao cadastrar produto" });
-      }
+      if (err) return res.status(500).json({ error: "Erro ao cadastrar produto" });
 
       res.json({ sucesso: true });
 
@@ -112,26 +98,27 @@ app.post("/produtos", (req, res) => {
 });
 
 /* EXCLUIR PRODUTO */
+
 app.delete("/produtos/:id", (req, res) => {
 
-  const id = req.params.id;
+  const { id } = req.params;
 
-  const sql = "DELETE FROM produtos WHERE id = ?";
+  connection.query(
+    "DELETE FROM produtos WHERE id = ?",
+    [id],
+    (err, result) => {
 
-  connection.query(sql, [id], (err, result) => {
+      if (err) return res.status(500).json({ error: "Erro ao excluir produto" });
 
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Erro ao excluir produto" });
+      res.json({ sucesso: true });
+
     }
-
-    res.json({ sucesso: true });
-
-  });
+  );
 
 });
 
-/* PORTA RENDER */
+/* PORTA */
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
