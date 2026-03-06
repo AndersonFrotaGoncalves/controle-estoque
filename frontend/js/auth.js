@@ -35,8 +35,3 @@ async function login() {
         erro.innerText = "Servidor não disponível";
     }
 }
-function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-    window.location.href = "login.html";
-}
