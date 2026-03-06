@@ -8,10 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, "frontend")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", (req, res) => {
-  app.use(express.static(path.join(__dirname, "frontend")));
+  res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
 /* CONEXÃO MYSQL */
