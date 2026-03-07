@@ -1,26 +1,27 @@
-function verificarLogin(){
+/* USUÁRIO LOGADO */
 
-    const usuario = localStorage.getItem("usuario");
+const usuarioSalvo = localStorage.getItem("usuario");
 
-    if(!usuario){
-        window.location.href = "login.html";
-        return;
+if (usuarioSalvo) {
+
+    let nomeUsuario = "";
+
+    try {
+
+        const dados = JSON.parse(usuarioSalvo);
+
+        nomeUsuario = dados.nome || dados.email || "Usuário";
+
+    } catch {
+
+        nomeUsuario = usuarioSalvo;
+
     }
 
-    try{
+    const elementoUsuario = document.getElementById("usuarioLogado");
 
-        const dadosUsuario = JSON.parse(usuario);
-
-        const campoUsuario = document.getElementById("usuarioLogado");
-
-        if(campoUsuario){
-            campoUsuario.innerText = dadosUsuario.nome;
-        }
-
-    }catch{
-        console.log("Erro ao ler usuário");
+    if (elementoUsuario) {
+        elementoUsuario.innerText = nomeUsuario;
     }
 
 }
-
-verificarLogin();

@@ -45,9 +45,9 @@ async function carregarProdutos(){
             <td>${produto.nivel}</td>
             <td>${produto.quantidade}</td>
             <td>
-                <button onclick="editarProduto(${produto.id})">Editar</button>
-                <button onclick="excluirProduto(${produto.id})">Excluir</button>
-            </td>
+<button onclick="editarProduto(${produto.id})">Editar</button>
+<button onclick="excluirProduto(${produto.id})">Excluir</button>
+</td>
         </tr>
         `;
 
@@ -486,5 +486,25 @@ if (document.getElementById("totalProdutos")) {
         document.getElementById("estoqueBaixo").innerText = estoqueBaixo;
 
     });
+
+}
+
+function excluirProduto(id){
+
+if(!confirm("Deseja excluir este produto?")) return;
+
+fetch(`/produtos/${id}`,{
+
+method:"DELETE"
+
+})
+.then(res => res.json())
+.then(()=>{
+
+alert("Produto excluído com sucesso");
+
+carregarProdutos();
+
+});
 
 }

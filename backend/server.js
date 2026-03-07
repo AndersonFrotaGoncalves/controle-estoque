@@ -3,6 +3,8 @@ const cors = require("cors");
 const path = require("path");
 const mysql = require("mysql2");
 const authRoutes = require("./routes/auth");
+const usuariosRoutes = require("./routes/usuarios");
+
 
 const app = express();
 
@@ -11,6 +13,8 @@ app.use(express.json());
 
 /* ROTAS AUTH */
 app.use("/auth", authRoutes);
+
+app.use("/usuarios", usuariosRoutes);
 
 /* SERVIR FRONTEND */
 app.use(express.static(path.join(__dirname, "../frontend")));

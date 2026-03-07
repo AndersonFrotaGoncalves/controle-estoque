@@ -38,17 +38,21 @@ router.post("/login", (req, res) => {
         }
 
         const usuario = results[0];
+        console.log("Senha digitada:", senha);
+console.log("Senha no banco:", usuario.senha);
 
-       if (senha !== usuario.senha) {
-    return res.status(401).json({
-        error: "Senha incorreta"
-    });
-}
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+
+        if (!senhaCorreta) {
+            return res.status(401).json({
+                error: "Senha incorreta"
+            });
+        }
 
         const token = jwt.sign(
             {
                 id: usuario.id,
-                nivel: usuario.nivel
+                role: usuario.role
             },
             SECRET,
             { expiresIn: "8h" }
@@ -60,7 +64,8 @@ router.post("/login", (req, res) => {
             usuario: {
                 id: usuario.id,
                 nome: usuario.nome,
-                nivel: usuario.nivel
+                email: usuario.email,
+                role: usuario.role
             }
         });
 
@@ -130,3 +135,4 @@ router.post("/registrar", async (req, res) => {
 });
 
 module.exports = router;
+

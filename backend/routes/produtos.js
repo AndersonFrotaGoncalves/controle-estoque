@@ -99,22 +99,19 @@ router.put("/:id", verificarToken, (req, res) => {
 });
 
 // EXCLUIR PRODUTO
-router.delete("/:id", verificarToken, (req, res) => {
+router.delete("/:id",(req,res)=>{
 
-    const { id } = req.params;
+const {id} = req.params;
 
-    const sql = "DELETE FROM produtos WHERE id = ?";
+db.query("DELETE FROM produtos WHERE id=?",[id],(err)=>{
 
-    db.query(sql, [id], (err, result) => {
+if(err){
+return res.status(500).json({error:err});
+}
 
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            res.json({ message: "Produto excluído com sucesso" });
-        }
-
-    });
+res.json({message:"Produto excluído"});
 
 });
 
+});
 module.exports = router;

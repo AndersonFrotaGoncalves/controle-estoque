@@ -655,50 +655,53 @@ button:hover {
     grid-template-columns:1fr;
 }
 
-}
-
 /* =========================
-   RESPONSIVO SMARTPHONE
+   MOBILE
 ========================= */
 
-@media (max-width: 768px){
+@media (max-width:768px){
 
 body{
     flex-direction:column;
 }
 
-/* SIDEBAR VIRA TOPO */
+/* MENU TOPO */
 
 .sidebar{
     position:relative;
     width:100%;
     height:auto;
     display:flex;
-    align-items:center;
-    justify-content:space-between;
+    flex-direction:column;
+    padding:10px;
 }
+
+/* TITULO */
 
 .sidebar h2{
-    font-size:18px;
+    text-align:center;
+    margin-bottom:10px;
 }
 
-/* MENU HORIZONTAL */
+/* MENU */
 
 .menu{
     display:flex;
-    gap:10px;
+    justify-content:space-around;
+    flex-wrap:wrap;
 }
 
 .menu a{
-    margin:0;
-    padding:6px 10px;
+    font-size:14px;
+    padding:8px 12px;
 }
 
-/* USER BOX */
+/* USER */
 
 .user-box{
-    margin-top:0;
-    border:none;
+    margin-top:10px;
+    border-top:1px solid rgba(255,255,255,0.2);
+    padding-top:10px;
 }
 
 /* CONTEUDO */
@@ -708,7 +711,7 @@ body{
     padding:15px;
 }
 
-/* CARDS */
+/* DASHBOARD */
 
 .dashboard{
     flex-direction:column;
@@ -718,11 +721,119 @@ body{
     width:100%;
 }
 
-/* TABELA SCROLL */
+/* GRAFICOS */
+
+.graficos-grid{
+    grid-template-columns:1fr;
+}
+
+/* TABELA */
 
 table{
     display:block;
     overflow-x:auto;
+}
+
+/* =========================
+RESPONSIVO TABLET
+========================= */
+
+@media (max-width: 1024px){
+
+.sidebar{
+width:180px;
+}
+
+.main{
+margin-left:180px;
+}
+
+.card{
+width:45%;
+}
+
+.graficos-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+/* =========================
+RESPONSIVO MOBILE
+========================= */
+
+@media (max-width:768px){
+
+body{
+flex-direction:column;
+}
+
+/* SIDEBAR VIRA MENU TOPO */
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+display:flex;
+flex-direction:column;
+padding:10px;
+}
+
+/* MENU */
+
+.menu{
+display:flex;
+justify-content:space-around;
+flex-wrap:wrap;
+}
+
+.menu a{
+font-size:14px;
+padding:8px 12px;
+}
+
+/* USER */
+
+.user-box{
+margin-top:10px;
+border-top:1px solid rgba(255,255,255,0.2);
+padding-top:10px;
+}
+
+/* CONTEÚDO */
+
+.main{
+margin-left:0;
+padding:15px;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+flex-direction:column;
+}
+
+.card{
+width:100%;
+}
+
+/* GRAFICOS */
+
+.graficos-grid{
+grid-template-columns:1fr;
+}
+
+/* MAPA */
+
+#mapa{
+grid-template-columns:1fr;
+}
+
+/* TABELA RESPONSIVA */
+
+table{
+display:block;
+overflow-x:auto;
 }
 
 }

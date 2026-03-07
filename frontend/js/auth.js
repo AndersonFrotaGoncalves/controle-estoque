@@ -29,8 +29,8 @@ async function login(event) {
         }
 
         // salva login
-        localStorage.setItem("token", data.token);
-       localStorage.setItem("usuario", data.usuario.email);
+      localStorage.setItem("token", data.token);
+localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
         // redireciona
         window.location.href = "dashboard.html";
