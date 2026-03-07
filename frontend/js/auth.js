@@ -30,7 +30,7 @@ async function login(event) {
 
         // salva login
         localStorage.setItem("token", data.token);
-        localStorage.setItem("usuario", data.usuario.nome || data.usuario.email);
+       localStorage.setItem("usuario", data.usuario.email);
 
         // redireciona
         window.location.href = "dashboard.html";

@@ -564,3 +564,28 @@ button:hover {
 .grafico-container canvas {
     max-height: 280px;
 }
+.user-box{
+    margin-top:40px;
+    padding:15px;
+    border-top:1px solid rgba(255,255,255,0.2);
+}
+
+.usuario{
+    color:#fff;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.btn-logout{
+    width:100%;
+    padding:8px;
+    background:#ef4444;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+}
+
+.btn-logout:hover{
+    background:#dc2626;
+}
