@@ -20,17 +20,22 @@ async function fetchProdutos() {
 
 }
 
-async function carregarProdutos() {
+async function carregarProdutos(){
+
+    const resposta = await fetch("/produtos");
+    const dados = await resposta.json();
+
+    console.log("PRODUTOS RECEBIDOS:", dados);
 
     const tabela = document.querySelector("#tabelaProdutos tbody");
-
-    if (!tabela) return;
-
-    const produtos = await fetchProdutos();
-
     tabela.innerHTML = "";
 
-    produtos.forEach(produto => {
+    if(!Array.isArray(dados)){
+        console.error("API não retornou lista de produtos");
+        return;
+    }
+
+    dados.forEach(produto => {
 
         const linha = `
         <tr>
@@ -39,6 +44,10 @@ async function carregarProdutos() {
             <td>${produto.rack}</td>
             <td>${produto.nivel}</td>
             <td>${produto.quantidade}</td>
+            <td>
+                <button onclick="editarProduto(${produto.id})">Editar</button>
+                <button onclick="excluirProduto(${produto.id})">Excluir</button>
+            </td>
         </tr>
         `;
 
@@ -259,16 +268,13 @@ function buscarProduto() {
 /* ========================================
    DASHBOARD
 ======================================== */
+/* ========================================
+   GRÁFICOS DO DASHBOARD
+======================================== */
 
-if (document.getElementById("totalProdutos")) {
+if (document.getElementById("graficoPosicoes")) {
 
     fetchProdutos().then(data => {
-
-        const totalProdutos = data.length;
-
-        const totalPecas = data.reduce((s, p) =>
-            s + Number(p.quantidade), 0
-        );
 
         const racks = [
             "A","B","C","D","E",
@@ -277,12 +283,46 @@ if (document.getElementById("totalProdutos")) {
         ];
 
         const niveisPorRack = 30;
+
         const totalPosicoes = racks.length * niveisPorRack;
 
         const ocupadas = data.length;
-        const vazias = totalPosicoes - ocupadas;
 
-        const estoquePositivo = data.filter(p =>
+        const livres = totalPosicoes - ocupadas;
+
+        const ctxPosicoes = document.getElementById("graficoPosicoes");
+
+        new Chart(ctxPosicoes, {
+            type: "doughnut",
+            data: {
+                labels: ["Ocupadas", "Livres"],
+                datasets: [{
+                    data: [ocupadas, livres],
+                    backgroundColor: [
+                        "#16a34a",
+                        "#1e3a8a"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        });
+
+    });
+
+}
+
+if (document.getElementById("graficoEstoque")) {
+
+    fetchProdutos().then(data => {
+
+        const estoqueNormal = data.filter(p =>
             Number(p.quantidade) > Number(p.quantidade_minima)
         ).length;
 
@@ -290,15 +330,33 @@ if (document.getElementById("totalProdutos")) {
             Number(p.quantidade) <= Number(p.quantidade_minima)
         ).length;
 
-        document.getElementById("totalProdutos").innerText = totalProdutos;
-        document.getElementById("totalPecas").innerText = totalPecas;
-        document.getElementById("ocupadas").innerText = ocupadas;
-        document.getElementById("estoqueBaixo").innerText = estoqueBaixo;
+        const ctxEstoque = document.getElementById("graficoEstoque");
+
+        new Chart(ctxEstoque, {
+            type: "pie",
+            data: {
+                labels: ["Estoque Normal", "Estoque Baixo"],
+                datasets: [{
+                    data: [estoqueNormal, estoqueBaixo],
+                    backgroundColor: [
+                        "#16a34a",
+                        "#dc2626"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        });
 
     });
 
 }
-
 /* ========================================
    MODAL & TOAST
 ======================================== */
@@ -363,5 +421,70 @@ function logout() {
     localStorage.removeItem("usuario");
 
     window.location.href = "login.html";
+
+}
+if (document.getElementById("tabelaProdutos")) {
+    carregarProdutos();
+}
+
+/* =========================
+   MENU ATIVO AUTOMÁTICO
+========================= */
+
+const paginaAtual = window.location.pathname.split("/").pop();
+
+document.querySelectorAll(".sidebar a").forEach(link => {
+
+    const linkPagina = link.getAttribute("href");
+
+    if(linkPagina === paginaAtual){
+        link.classList.add("ativo");
+    }else{
+        link.classList.remove("ativo");
+    }
+
+});
+
+
+
+/* ========================================
+   DASHBOARD CARDS
+======================================== */
+
+if (document.getElementById("totalProdutos")) {
+
+    fetchProdutos().then(data => {
+
+        const totalProdutos = data.length;
+
+        const totalPecas = data.reduce((soma, p) => 
+            soma + Number(p.quantidade), 0
+        );
+
+        const racks = [
+            "A","B","C","D","E",
+            "E-ARM4","E-ARM5","E-ARM6","E-ARM7",
+            "F","G","H","I","J","K","L","M","N","O"
+        ];
+
+        const niveisPorRack = 30;
+
+        const totalPosicoes = racks.length * niveisPorRack;
+
+        const ocupadas = data.length;
+
+        const estoqueBaixo = data.filter(p =>
+            Number(p.quantidade) <= Number(p.quantidade_minima)
+        ).length;
+
+        document.getElementById("totalProdutos").innerText = totalProdutos;
+
+        document.getElementById("totalPecas").innerText = totalPecas;
+
+        document.getElementById("ocupadas").innerText = ocupadas;
+
+        document.getElementById("estoqueBaixo").innerText = estoqueBaixo;
+
+    });
 
 }

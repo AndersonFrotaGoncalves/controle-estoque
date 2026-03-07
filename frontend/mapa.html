@@ -12,13 +12,28 @@
 <body>
 
 <div class="sidebar">
-    <h2>📦 Estoque</h2>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="index.html">Produtos</a>
-    <a href="mapa.html" class="ativo">Mapa</a>
-    <a href="cadastro.html">Cadastrar</a>
-</div>
 
+    <div class="menu">
+        <h2>📦 Estoque</h2>
+
+        <a href="dashboard.html">Dashboard</a>
+       <a href="index.html">Produtos</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="cadastro.html">Cadastrar</a>
+    </div>
+
+    <!-- USUÁRIO LOGADO -->
+    <div class="user-box">
+        <div class="usuario">
+            👤 <span id="usuarioLogado"></span>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">
+            Sair
+        </button>
+    </div>
+
+</div>
 <div class="main">
 
     <!-- TOPO -->

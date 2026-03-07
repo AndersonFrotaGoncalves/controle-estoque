@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 const connection = mysql.createPool({
   host: "maglev.proxy.rlwy.net",
   user: "root",
-  password: "SUA_SENHA",
+  password: "goJcMRFGnYcqYZltvSblgdFwVDmAaNcg",
   database: "railway",
   port: 50021,
   waitForConnections: true,
@@ -43,7 +43,8 @@ app.get("/produtos", (req, res) => {
   connection.query("SELECT * FROM produtos", (err, result) => {
 
     if (err) {
-      return res.status(500).json({ error: "Erro ao buscar produtos" });
+      console.log("ERRO MYSQL:", err);
+      return res.status(500).json(err);
     }
 
     res.json(result);

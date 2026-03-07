@@ -1,32 +1,26 @@
-// verifica se o usuário está logado
-function verificarLogin() {
+function verificarLogin(){
 
-    const token = localStorage.getItem("token");
     const usuario = localStorage.getItem("usuario");
 
-    if (!token || !usuario) {
+    if(!usuario){
         window.location.href = "login.html";
         return;
     }
 
-    // mostra o usuário logado se existir o elemento
-    const usuarioElemento = document.getElementById("usuarioLogado");
+    try{
 
-    if (usuarioElemento) {
-        usuarioElemento.textContent = "👤 " + usuario;
+        const dadosUsuario = JSON.parse(usuario);
+
+        const campoUsuario = document.getElementById("usuarioLogado");
+
+        if(campoUsuario){
+            campoUsuario.innerText = dadosUsuario.nome;
+        }
+
+    }catch{
+        console.log("Erro ao ler usuário");
     }
 
 }
 
-// logout do sistema
-function logout() {
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-
-    window.location.href = "login.html";
-
-}
-
-// executa ao carregar a página
 verificarLogin();

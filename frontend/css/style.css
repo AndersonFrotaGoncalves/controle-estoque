@@ -18,6 +18,10 @@ body {
    SIDEBAR
 ========================= */
 
+/* =========================
+   SIDEBAR
+========================= */
+
 .sidebar {
     width: 220px;
     height: 100vh;
@@ -25,6 +29,9 @@ body {
     color: white;
     padding: 20px;
     position: fixed;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar h2 {
@@ -46,6 +53,39 @@ body {
 .sidebar a.ativo {
     background-color: #334155;
     color: white;
+}
+
+/* =========================
+   USER BOX (FINAL DA SIDEBAR)
+========================= */
+
+.user-box{
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.usuario{
+    color:#fff;
+    font-size:14px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.btn-logout{
+    width:100%;
+    padding:8px;
+    background:#ef4444;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+}
+
+.btn-logout:hover{
+    background:#dc2626;
 }
 
 /* =========================
