@@ -23,22 +23,15 @@ app.get("/", (req, res) => {
 
 /* CONEXÃO MYSQL */
 
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
   host: "maglev.proxy.rlwy.net",
   user: "root",
   password: "SUA_SENHA",
   database: "railway",
-  port: 50021
-});
-
-connection.connect(err => {
-
-  if (err) {
-    console.error("Erro MySQL:", err);
-  } else {
-    console.log("MySQL conectado");
-  }
-
+  port: 50021,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 /* ===============================
