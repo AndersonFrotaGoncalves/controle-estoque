@@ -629,3 +629,100 @@ button:hover {
 .btn-logout:hover{
     background:#dc2626;
 }
+/* =========================
+   RESPONSIVO TABLET
+========================= */
+
+@media (max-width: 1024px){
+
+.sidebar{
+    width:180px;
+}
+
+.main{
+    margin-left:180px;
+}
+
+.dashboard{
+    flex-wrap:wrap;
+}
+
+.card{
+    width:45%;
+}
+
+.graficos-grid{
+    grid-template-columns:1fr;
+}
+
+}
+
+/* =========================
+   RESPONSIVO SMARTPHONE
+========================= */
+
+@media (max-width: 768px){
+
+body{
+    flex-direction:column;
+}
+
+/* SIDEBAR VIRA TOPO */
+
+.sidebar{
+    position:relative;
+    width:100%;
+    height:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.sidebar h2{
+    font-size:18px;
+}
+
+/* MENU HORIZONTAL */
+
+.menu{
+    display:flex;
+    gap:10px;
+}
+
+.menu a{
+    margin:0;
+    padding:6px 10px;
+}
+
+/* USER BOX */
+
+.user-box{
+    margin-top:0;
+    border:none;
+}
+
+/* CONTEUDO */
+
+.main{
+    margin-left:0;
+    padding:15px;
+}
+
+/* CARDS */
+
+.dashboard{
+    flex-direction:column;
+}
+
+.card{
+    width:100%;
+}
+
+/* TABELA SCROLL */
+
+table{
+    display:block;
+    overflow-x:auto;
+}
+
+}
