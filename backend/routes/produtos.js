@@ -98,20 +98,25 @@ router.put("/:id", verificarToken, (req, res) => {
     );
 });
 
+
 // EXCLUIR PRODUTO
-router.delete("/:id",(req,res)=>{
+router.delete("/:id", verificarToken, (req, res) => {
 
-const {id} = req.params;
+    if (req.user.tipo !== "MASTER") {
+        return res.status(403).json({ message: "Sem permissão para excluir" });
+    }
 
-db.query("DELETE FROM produtos WHERE id=?",[id],(err)=>{
+    const { id } = req.params;
 
-if(err){
-return res.status(500).json({error:err});
-}
+    db.query("DELETE FROM produtos WHERE id = ?", [id], (err, result) => {
 
-res.json({message:"Produto excluído"});
+        if (err) {
+            return res.status(500).send(err);
+        }
 
-});
+        res.json({ message: "Produto excluído com sucesso" });
+
+    });
 
 });
 module.exports = router;
