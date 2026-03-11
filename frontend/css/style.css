@@ -299,7 +299,6 @@ button:hover {
 .posicao.apagada {
     opacity: 0.25;
 }
-}
 
 /* =========================
    BUSCA
@@ -756,7 +755,6 @@ width:45%;
 grid-template-columns:1fr;
 }
 
-}
 
 /* =========================
 RESPONSIVO MOBILE
@@ -836,4 +834,72 @@ display:block;
 overflow-x:auto;
 }
 
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 700px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* LOGO LOGIN */
+
+.logo-login{
+display:flex;
+justify-content:center;
+align-items:center;
+width:100%;
+margin-bottom:15px;
+}
+
+.logo-img{
+width:85px;
+height:auto;
+}
+
+/* TABLET */
+
+@media (max-width:1024px){
+.logo-login img{
+width:75px;
+}
+}
+
+/* CELULAR */
+
+@media (max-width:768px){
+.logo-login img{
+width:65px;
+}
+}
+/* =========================
+LOGO SIDEBAR
+========================= */
+
+.logo-sidebar{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:25px;
+}
+
+.logo-sidebar img{
+width:70px;
+height:auto;
+}
+
+/* TABLET */
+
+@media (max-width:1024px){
+.logo-sidebar img{
+width:60px;
+}
+}
+
+/* CELULAR */
+
+@media (max-width:768px){
+.logo-sidebar img{
+width:50px;
+}
 }

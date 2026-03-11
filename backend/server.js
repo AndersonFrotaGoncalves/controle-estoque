@@ -2,26 +2,26 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const mysql = require("mysql2");
+
 const authRoutes = require("./routes/auth");
 const usuariosRoutes = require("./routes/usuarios");
 const importarRoutes = require("./routes/importar");
-
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+/* SERVIR FRONTEND (HTML, CSS, JS, IMG) */
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-/* ROTAS AUTH */
-app.use("/auth", authRoutes);
+/* ROTAS API */
 
+app.use("/auth", authRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
-/* SERVIR FRONTEND */
-app.use(express.static(path.join(__dirname, "../frontend")));
 
-/* PÁGINA INICIAL → LOGIN */
+/* PÁGINA INICIAL */
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));

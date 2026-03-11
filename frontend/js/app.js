@@ -1,4 +1,11 @@
 const apiUrl = "/produtos";
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+const btnExcluir = document.getElementById("btnExcluirSelecionados");
+
+if (btnExcluir && usuario?.role !== "admin") {
+    btnExcluir.style.display = "none";
+}
 
 /* ========================================
    UTIL
@@ -37,38 +44,43 @@ async function carregarProdutos(){
 
     dados.forEach(produto => {
 
-        const linha = `
-        <tr>
-            <td>${produto.codigo}</td>
-            <td>${produto.descricao}</td>
-            <td>${produto.rack}</td>
-            <td>${produto.nivel}</td>
-            <td>${produto.quantidade}</td>
-            <td>
+    const tr = document.createElement("tr");
+
+tr.innerHTML = `
+<td>${produto.codigo}</td>
+<td>${produto.descricao}</td>
+<td>${produto.rack}</td>
+<td>${produto.nivel}</td>
+<td>${produto.quantidade ?? 0}</td>
+<td>
+
+${usuario?.role === "admin" ? `
 <button onclick="editarProduto(${produto.id})">Editar</button>
-<button onclick="excluirProduto(${produto.id})">Excluir</button>
+
+<input 
+type="checkbox"
+class="selecionarProduto"
+value="${produto.id}"
+title="Selecionar para excluir"
+>
+` : `<span style="color:#888;">Somente leitura</span>`}
+
 </td>
-        </tr>
-        `;
+`;
+    tabela.appendChild(tr);
 
-        tabela.innerHTML += linha;
-
-    });
+});
 
 }
 
-// executa automaticamente se existir tabela
-if (document.getElementById("tabelaProdutos")) {
-    carregarProdutos();
-}
 
 /* ========================================
    CADASTRO / EDIÇÃO
 ======================================== */
 
-const form = document.getElementById("formProduto");
+const formProduto = document.getElementById("formProduto");
 
-if (form) {
+if (formProduto) {
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
@@ -93,7 +105,7 @@ if (form) {
 
     }
 
-    form.addEventListener("submit", function (e) {
+    formProduto.addEventListener("submit", function (e) {
 
         e.preventDefault();
 
@@ -192,19 +204,21 @@ function renderizarMapa(data) {
             posicao.dataset.rack = rack;
             posicao.dataset.nivel = nivel;
 
-            const produto = produtosRack.find(p => Number(p.nivel) === nivel);
+            const produtosNivel = produtosRack.filter(p => Number(p.nivel) === nivel);
 
-            if (produto) {
+            if (produtosNivel.length > 0) {
 
-                if (Number(produto.quantidade) === 0) {
-                    posicao.classList.add("sem-estoque");
-                } else {
-                    posicao.classList.add("ocupada");
-                }
+    posicao.classList.add("ocupada");
 
-                posicao.dataset.codigo = produto.codigo;
+    let tooltip = "";
 
-            } else {
+    produtosNivel.forEach(p => {
+        tooltip += `${p.codigo} - ${p.descricao}\n`;
+    });
+
+    posicao.title = tooltip;
+
+} else {
 
                 posicao.classList.add("vazia");
 
@@ -506,5 +520,31 @@ alert("Produto excluído com sucesso");
 carregarProdutos();
 
 });
+
+}
+async function excluirSelecionados(){
+
+const selecionados = document.querySelectorAll(".selecionarProduto:checked");
+
+if(selecionados.length === 0){
+alert("Selecione pelo menos um produto");
+return;
+}
+
+if(!confirm("Deseja excluir os produtos selecionados?")) return;
+
+const ids = Array.from(selecionados).map(cb => cb.value);
+
+for(const id of ids){
+
+await fetch(`/produtos/${id}`,{
+method:"DELETE"
+});
+
+}
+
+alert("Produtos excluídos com sucesso");
+
+carregarProdutos();
 
 }
