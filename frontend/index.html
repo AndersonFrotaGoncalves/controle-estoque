@@ -7,36 +7,40 @@
 <title>Produtos - Controle de Estoque</title>
 
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
 </head>
 
 <body>
 
 <div class="sidebar">
 
-   <div class="logo-login">
-    <img src="img/logo.png" alt="Logo Sistema" class="logo-img">
+<div class="logo-sidebar">
+<img src="img/logo.png" alt="Logo Empresa">
+<h2>Delta<br>Estoque</h2>
 </div>
 
-    <div class="menu">
+<div class="menu">
 
-        <a href="dashboard.html">Dashboard</a>
-        <a href="index.html">Produtos</a>
-        <a href="mapa.html">Mapa</a>
-        <a href="cadastro.html">Cadastrar</a>
-        <a href="usuarios.html">Usuários</a>
-         <a href="importar.html">Importar</a>
-    </div>
+<a href="dashboard.html">📊 Dashboard</a>
+<a href="index.html">📦 Produtos</a>
+<a href="mapa.html">🗺️ Mapa</a>
+<a href="cadastro.html">➕ Cadastrar</a>
+<a href="usuarios.html">👤 Usuários</a>
+<a href="importar.html">📥 Importar</a>
 
-    <!-- USUÁRIO LOGADO -->
-    <div class="user-box">
-        <div class="usuario">
-            👤 <span id="usuarioLogado"></span>
-        </div>
+</div>
 
-        <button class="btn-logout" onclick="logout()">
-            Sair
-        </button>
-    </div>
+<div class="user-box">
+
+<div class="usuario">
+👤 <span id="usuarioLogado"></span>
+</div>
+
+<button class="btn-logout" onclick="logout()">
+Sair
+</button>
+
+</div>
 
 </div>
 
@@ -45,12 +49,7 @@
 
 <h1>Lista de Produtos</h1>
 
-<button id="btnExcluirSelecionados" onclick="excluirSelecionados()">
-🗑 Excluir Selecionados
-</button>
-
 <table id="tabelaProdutos" class="tabela-produtos">
-
 <thead>
 <tr>
 <th>Código</th>
@@ -59,11 +58,13 @@
 <th>Nível</th>
 <th>Qtd</th>
 <th>Ações</th>
+<button id="btnExcluirSelecionados" onclick="excluirSelecionados()">
+🗑 Excluir Selecionados
+</button>
 </tr>
 </thead>
 
 <tbody></tbody>
-
 </table>
 
 </div>
@@ -85,6 +86,7 @@
 <div id="toast" class="toast"></div>
 
 <script src="js/app.js"></script>
+<script src="js/importar.js"></script>
 <script src="js/proteger.js"></script>
 
 

@@ -2,96 +2,181 @@
 <html lang="pt">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Controle de Estoque</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Controle de Estoque</title>
 
-    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
+
 <div class="sidebar">
 
-    <div class="logo-sidebar">
-        <img src="img/logo.png" alt="Logo Empresa">
-    </div>
+<div class="logo-sidebar">
+<img src="img/logo.png">
+<h2>Delta<br>Estoque</h2>
+</div>
 
-    <div class="menu">
+<div class="menu">
 
-        <a href="dashboard.html">Dashboard</a>
-        <a href="index.html">Produtos</a>
-        <a href="mapa.html">Mapa</a>
-        <a href="cadastro.html">Cadastrar</a>
-        <a href="usuarios.html">Usuários</a>
-         <a href="importar.html">Importar</a>
-    </div>
-
-    <!-- USUÁRIO LOGADO -->
-    <div class="user-box">
-        <div class="usuario">
-            👤 <span id="usuarioLogado"></span>
-        </div>
-
-        <button class="btn-logout" onclick="logout()">
-            Sair
-        </button>
-    </div>
+<a href="dashboard.html" class="ativo">📊 Dashboard</a>
+<a href="index.html">📦 Produtos</a>
+<a href="mapa.html">🗺️ Mapa</a>
+<a href="cadastro.html">➕ Cadastrar</a>
+<a href="usuarios.html">👤 Usuários</a>
+<a href="importar.html">📥 Importar</a>
 
 </div>
 
-<div class="main">
+<div class="user-box">
 
-    <div class="header-dashboard">
-        <h1>Dashboard</h1>
-    </div>
+<div class="usuario">
+👤 <span id="usuarioLogado"></span>
+</div>
 
-    <div class="dashboard">
-
-        <div class="card">
-            <h3>Total de Produtos</h3>
-            <p id="totalProdutos">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Total de Peças</h3>
-            <p id="totalPecas">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Posições Ocupadas</h3>
-            <p id="ocupadas">0</p>
-        </div>
-
-        <div class="card">
-            <h3>Estoque Baixo</h3>
-            <p id="estoqueBaixo">0</p>
-        </div>
-
-    </div>
-
-    <div class="graficos-grid">
-
-        <div class="grafico-container">
-            <h3>Posições do Armazém</h3>
-            <canvas id="graficoPosicoes"></canvas>
-        </div>
-
-        <div class="grafico-container">
-            <h3>Status do Estoque</h3>
-            <canvas id="graficoEstoque"></canvas>
-        </div>
-
-    </div>
+<button class="btn-logout" onclick="logout()">
+Sair
+</button>
 
 </div>
+
+</div>
+
+
+<!-- CONTEÚDO PRINCIPAL -->
+
+<div class="main dashboard-page">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div class="search-box">
+
+<input type="text" placeholder="Buscar produto...">
+
+</div>
+
+<div class="top-actions">
+
+<span class="icon">⚙</span>
+<span class="icon">🔔</span>
+
+<button class="close-btn">✖</button>
+
+</div>
+
+</div>
+
+
+<!-- HEADER -->
+
+<div class="dashboard-header">
+
+<h1>Dashboard</h1>
+
+</div>
+
+
+<!-- CARDS -->
+
+<div class="dashboard">
+
+<div class="card">
+<div class="card-icon icon-produtos">📦</div>
+<div>
+<h3>Total de Produtos</h3>
+<p id="totalProdutos">0</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon icon-pecas">🏢</div>
+<div>
+<h3>Total de Racks</h3>
+<p id="totalPecas">0</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon icon-posicoes">📍</div>
+<div>
+<h3>Posições Ocupadas</h3>
+<p id="ocupadas">0</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-icon icon-alerta">📂</div>
+<div>
+<h3>Posições Livres</h3>
+<p id="estoqueBaixo">0</p>
+</div>
+</div>
+</div>
+
+
+<!-- GRÁFICOS -->
+
+<div class="graficos-grid">
+
+<div class="grafico-container">
+
+<h3>Posições do Armazém</h3>
+
+<canvas id="graficoPosicoes"></canvas>
+
+</div>
+
+
+<div class="grafico-container">
+
+<h3>Produtos por Rack</h3>
+
+<canvas id="graficoRacks"></canvas>
+
+</div>
+
+</div>
+
+
+<!-- ALERTAS -->
+
+<div class="alertas-container">
+
+<div class="alertas-header">
+
+<h3>Alertas</h3>
+
+<span class="dots">•••</span>
+
+</div>
+
+<div id="listaAlertas">
+
+<p class="sem-alerta">
+
+Nenhum alerta no momento
+
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- proteção de login -->
 <script src="js/proteger.js"></script>
 
-<!-- funções do sistema -->
 <script src="js/app.js"></script>
 
 </body>

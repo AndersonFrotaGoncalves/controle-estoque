@@ -176,7 +176,7 @@ function renderizarMapa(data) {
     racks.forEach(rack => {
 
         const produtosRack = data.filter(p => p.rack === rack);
-
+        
         const rackCard = document.createElement("div");
         rackCard.classList.add("rack-card");
 
@@ -186,10 +186,23 @@ function renderizarMapa(data) {
         const titulo = document.createElement("h3");
         titulo.innerText = `Rack ${rack}`;
 
-        const contador = document.createElement("span");
-        contador.classList.add("rack-count");
-        contador.innerText = `${produtosRack.length} ocupadas`;
+       const totalPosicoes = niveis.length;
+       
+const niveisOcupados = new Set(
+produtosRack.map(p => p.nivel)
+);
 
+const ocupadas = niveisOcupados.size;
+
+const percentual = Math.round((ocupadas / totalPosicoes) * 100);
+
+const contador = document.createElement("span");
+contador.classList.add("rack-count");
+
+contador.innerHTML = `
+${percentual}% ocupado<br>
+${ocupadas} de ${totalPosicoes} posições
+`;
         header.appendChild(titulo);
         header.appendChild(contador);
 
@@ -288,47 +301,81 @@ function buscarProduto() {
 
 if (document.getElementById("graficoPosicoes")) {
 
-    fetchProdutos().then(data => {
+fetchProdutos().then(data => {
 
-        const racks = [
-            "A","B","C","D","E",
-            "E-ARM4","E-ARM5","E-ARM6","E-ARM7",
-            "F","G","H","I","J","K","L","M","N","O"
-        ];
+const racks = [
+"A","B","C","D","E",
+"E-ARM4","E-ARM5","E-ARM6","E-ARM7",
+"F","G","H","I","J","K","L","M","N","O"
+];
 
-        const niveisPorRack = 30;
+const niveisPorRack = 30;
 
-        const totalPosicoes = racks.length * niveisPorRack;
+const totalPosicoes = racks.length * niveisPorRack;
 
-        const ocupadas = data.length;
+/* POSIÇÕES ÚNICAS OCUPADAS */
 
-        const livres = totalPosicoes - ocupadas;
+const posicoesUnicas = new Set();
 
-        const ctxPosicoes = document.getElementById("graficoPosicoes");
+data.forEach(p => {
 
-        new Chart(ctxPosicoes, {
-            type: "doughnut",
-            data: {
-                labels: ["Ocupadas", "Livres"],
-                datasets: [{
-                    data: [ocupadas, livres],
-                    backgroundColor: [
-                        "#16a34a",
-                        "#1e3a8a"
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "bottom"
-                    }
-                }
-            }
-        });
+const rack = String(p.rack || "").trim();
+const nivel = parseInt(p.nivel);
 
-    });
+if(rack && !isNaN(nivel)){
+posicoesUnicas.add(rack + "-" + nivel);
+}
+
+});
+
+const ocupadas = posicoesUnicas.size;
+
+const livres = totalPosicoes - ocupadas;
+
+/* GRÁFICO */
+
+const ctxPosicoes = document.getElementById("graficoPosicoes");
+
+new Chart(ctxPosicoes, {
+
+type: "doughnut",
+
+data: {
+
+labels: ["Ocupadas", "Livres"],
+
+datasets: [{
+
+data: [ocupadas, livres],
+
+backgroundColor: [
+"#16a34a",
+"#1e3a8a"
+]
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+cutout: "65%",
+
+plugins: {
+
+legend: {
+position: "bottom"
+}
+
+}
+
+}
+
+});
+
+});
 
 }
 
@@ -464,42 +511,57 @@ document.querySelectorAll(".sidebar a").forEach(link => {
 /* ========================================
    DASHBOARD CARDS
 ======================================== */
-
 if (document.getElementById("totalProdutos")) {
 
-    fetchProdutos().then(data => {
+fetchProdutos().then(data => {
 
-        const totalProdutos = data.length;
+const racks = [
+"A","B","C","D","E",
+"E-ARM4","E-ARM5","E-ARM6","E-ARM7",
+"F","G","H","I","J","K","L","M","N","O"
+];
 
-        const totalPecas = data.reduce((soma, p) => 
-            soma + Number(p.quantidade), 0
-        );
+const niveisPorRack = 30;
 
-        const racks = [
-            "A","B","C","D","E",
-            "E-ARM4","E-ARM5","E-ARM6","E-ARM7",
-            "F","G","H","I","J","K","L","M","N","O"
-        ];
+const totalPosicoes = racks.length * niveisPorRack;
 
-        const niveisPorRack = 30;
+/* TOTAL PRODUTOS */
 
-        const totalPosicoes = racks.length * niveisPorRack;
+const totalProdutos = data.length;
 
-        const ocupadas = data.length;
+/* POSIÇÕES OCUPADAS REAIS */
 
-        const estoqueBaixo = data.filter(p =>
-            Number(p.quantidade) <= Number(p.quantidade_minima)
-        ).length;
+const posicoesUnicas = new Set();
 
-        document.getElementById("totalProdutos").innerText = totalProdutos;
+data.forEach(p => {
 
-        document.getElementById("totalPecas").innerText = totalPecas;
+const rack = String(p.rack || "").trim();
+const nivel = parseInt(p.nivel);
 
-        document.getElementById("ocupadas").innerText = ocupadas;
+if(rack && !isNaN(nivel)){
+posicoesUnicas.add(rack + "-" + nivel);
+}
 
-        document.getElementById("estoqueBaixo").innerText = estoqueBaixo;
+});
 
-    });
+const ocupadas = posicoesUnicas.size;
+
+/* POSIÇÕES LIVRES */
+
+const livres = totalPosicoes - ocupadas;
+
+/* TOTAL RACKS */
+
+const totalRacks = racks.length;
+
+/* MOSTRAR */
+
+document.getElementById("totalProdutos").innerText = totalProdutos;
+document.getElementById("totalPecas").innerText = totalRacks;
+document.getElementById("ocupadas").innerText = ocupadas;
+document.getElementById("estoqueBaixo").innerText = livres;
+
+});
 
 }
 
@@ -546,5 +608,80 @@ method:"DELETE"
 alert("Produtos excluídos com sucesso");
 
 carregarProdutos();
+
+}
+
+/* ========================================
+   GRAFICO PRODUTOS POR RACK
+======================================== */
+
+if (document.getElementById("graficoRacks")) {
+
+fetchProdutos().then(data => {
+
+const racks = {};
+
+data.forEach(produto => {
+
+if(!racks[produto.rack]){
+racks[produto.rack] = 0;
+}
+
+racks[produto.rack]++;
+
+});
+
+const labels = Object.keys(racks);
+const valores = Object.values(racks);
+
+const ctx = document.getElementById("graficoRacks");
+
+new Chart(ctx, {
+
+type: "bar",
+
+data: {
+
+labels: labels,
+
+datasets: [{
+
+label: "Produtos por Rack",
+
+data: valores,
+
+backgroundColor: "#2563eb",
+
+borderRadius: 6
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+plugins: {
+
+legend: {
+display:false
+}
+
+},
+
+scales:{
+
+y:{
+beginAtZero:true
+}
+
+}
+
+}
+
+});
+
+});
 
 }
