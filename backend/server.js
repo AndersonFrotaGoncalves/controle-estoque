@@ -1,19 +1,32 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const mysql = require("mysql2");
 
 const authRoutes = require("./routes/auth");
 const usuariosRoutes = require("./routes/usuarios");
 const importarRoutes = require("./routes/importar");
+const movimentacoes = require("./routes/movimentacoes");
+const produtos = require("./routes/produtos");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-/* SERVIR FRONTEND (HTML, CSS, JS, IMG) */
+// ROTAS API
+app.use("/api", movimentacoes);
+app.use("/api", produtos);
+
+app.use("/auth", authRoutes);
+app.use("/usuarios", usuariosRoutes);
+app.use("/importar", importarRoutes);
+
+// FRONTEND
 app.use(express.static(path.join(__dirname, "../frontend")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/login.html"));
+});
 
 /* ROTAS API */
 
@@ -27,26 +40,13 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-/* CONEXÃO MYSQL */
-
-const connection = mysql.createPool({
-  host: "maglev.proxy.rlwy.net",
-  user: "root",
-  password: "goJcMRFGnYcqYZltvSblgdFwVDmAaNcg",
-  database: "railway",
-  port: 50021,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
 /* ===============================
    LISTAR PRODUTOS
 ================================ */
 
 app.get("/produtos", (req, res) => {
 
-  connection.query("SELECT * FROM produtos", (err, result) => {
+  db.query("SELECT * FROM produtos", (err, result) => {
 
     if (err) {
       console.log("ERRO MYSQL:", err);
@@ -73,7 +73,7 @@ app.post("/produtos", (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(
+  db.query(
     sql,
     [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2],
     (err) => {
@@ -105,7 +105,7 @@ app.put("/produtos/:id", (req, res) => {
     WHERE id=?
   `;
 
-  connection.query(
+  db.query(
     sql,
     [codigo, descricao, rack, nivel, quantidade, quantidade_minima, id],
     (err) => {
@@ -129,9 +129,9 @@ app.delete("/produtos/:id", (req, res) => {
 
   const { id } = req.params;
 
-  connection.query(
-    "DELETE FROM produtos WHERE id = ?",
-    [id],
+  db.query(
+  "DELETE FROM produtos WHERE id = ?",
+  [id],
     (err) => {
 
       if (err) {

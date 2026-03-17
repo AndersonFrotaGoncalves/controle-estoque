@@ -685,3 +685,47 @@ beginAtZero:true
 });
 
 }
+
+function importarExcel(){
+
+let tabela = document.querySelector("#tabelaSAP tbody");
+
+tabela.innerHTML = "";
+
+let dados = [
+
+{material:"10001", produto:"Motor", sistema:10, sap:8},
+
+{material:"10002", produto:"Sensor", sistema:5, sap:5},
+
+{material:"10003", produto:"Parafuso", sistema:30, sap:25}
+
+];
+
+dados.forEach(item =>{
+
+let diferenca = item.sistema - item.sap;
+
+let classe = "";
+
+if(diferenca == 0){
+classe = "diferenca-zero";
+}else{
+classe = "diferenca-negativa";
+}
+
+let linha = `
+<tr class="${classe}">
+<td>${item.material}</td>
+<td>${item.produto}</td>
+<td>${item.sistema}</td>
+<td>${item.sap}</td>
+<td>${diferenca}</td>
+</tr>
+`;
+
+tabela.innerHTML += linha;
+
+});
+
+}

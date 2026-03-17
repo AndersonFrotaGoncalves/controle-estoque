@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Movimentação de Estoque</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo-sidebar">
+<img src="img/logo.png">
+<h2>Delta<br>Estoque</h2>
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+
+<a href="index.html">📦 Produtos</a>
+
+<a href="cadastro.html">➕ Cadastrar Produto</a>
+
+<a href="movimentacao.html">🔄 Movimentação</a>
+
+<a href="mapa.html">🗺️ Mapa</a>
+
+<a href="importar.html">📥 Importar</a>
+
+<a href="sap.html">📊 Inventário SAP</a>
+
+<a href="usuarios.html">👤 Usuários</a>
+
+</div>
+
+<div class="user-box">
+
+<div class="usuario">
+👤 <span id="usuarioLogado"></span>
+</div>
+
+<button class="btn-logout" onclick="logout()">
+Sair
+</button>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<h1>Movimentação de Estoque</h1>
+
+<div class="form-movimentacao">
+
+<label>Código do Produto</label>
+<input type="text" id="codigo" placeholder="Digite ou escaneie o código">
+
+<button onclick="buscarProduto()">Buscar</button>
+
+<br><br>
+<label>Produto</label>
+<input type="text" id="descricao" readonly>
+<input type="hidden" id="produto">
+
+<label>Tipo</label>
+<select id="tipo">
+<option value="entrada">Entrada</option>
+<option value="saida">Saída</option>
+</select>
+
+<label>Quantidade</label>
+<input type="number" id="quantidade">
+
+<label>Observação</label>
+<input type="text" id="obs">
+
+<button onclick="salvarMovimentacao()">Salvar</button>
+
+</div>
+<h2>Histórico de Movimentações</h2>
+
+<table id="tabelaMovimentacoes">
+
+<thead>
+<tr>
+<th>Produto</th>
+<th>Tipo</th>
+<th>Quantidade</th>
+<th>Usuário</th>
+<th>Data</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<script src="js/movimentacao.js"></script>
+<script src="js/proteger.js"></script>
+
+<script>
+
+let usuario = localStorage.getItem("usuario");
+
+if(usuario){
+document.getElementById("usuarioLogado").innerText = usuario;
+}else{
+window.location.href="login.html";
+}
+
+function logout(){
+localStorage.removeItem("usuario");
+window.location.href="login.html";
+}
+
+</script>
+
+</body>
+</html>
