@@ -105,7 +105,7 @@ async function salvarMovimentacao(){
                 tipo: tipo,
                 quantidade: quantidade,
                 observacao: obs,
-                usuario: localStorage.getItem("usuario")
+                usuario: JSON.parse(localStorage.getItem("usuario")).email
 
             })
 
@@ -160,7 +160,7 @@ async function carregarHistorico(){
                 <td>${mov.descricao}</td>
                 <td>${mov.tipo}</td>
                 <td>${mov.quantidade}</td>
-                <td>${mov.usuario}</td>
+                <td>${formatarUsuario(mov.usuario)}</td>
                 <td>${new Date(mov.data).toLocaleString()}</td>
             `;
 
@@ -172,6 +172,17 @@ async function carregarHistorico(){
 
         console.error("Erro ao carregar histórico:", error);
 
+    }
+
+}
+
+function formatarUsuario(usuario){
+
+    try {
+        const obj = JSON.parse(usuario);
+        return obj.email || "Desconhecido";
+    } catch {
+        return usuario;
     }
 
 }

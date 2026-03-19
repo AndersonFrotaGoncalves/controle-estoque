@@ -2,93 +2,119 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// ================================
-// LISTAR PRODUTOS
-// ================================
-router.get("/produtos", async (req, res) => {
-    try {
-        const [produtos] = await db.query("SELECT * FROM produtos");
-        res.json(produtos);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json(error);
-    }
+/* ================================
+   LISTAR PRODUTOS
+================================ */
+router.get("/produtos", (req, res) => {
+
+    db.query("SELECT * FROM produtos", (err, result) => {
+
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Erro ao buscar produtos" });
+        }
+
+        res.json(result);
+
+    });
+
 });
 
-// ================================
-// BUSCAR POR CÓDIGO
-// ================================
-router.get("/produtos/codigo/:codigo", async (req, res) => {
+/* ================================
+   BUSCAR POR CÓDIGO
+================================ */
+router.get("/produtos/codigo/:codigo", (req, res) => {
+
     const { codigo } = req.params;
 
-    try {
-        const [produto] = await db.query(
-            "SELECT * FROM produtos WHERE codigo = ?",
-            [codigo]
-        );
+    db.query(
+        "SELECT * FROM produtos WHERE codigo = ?",
+        [codigo],
+        (err, result) => {
 
-        res.json(produto[0] || null);
-    } catch (error) {
-        res.status(500).json(error);
-    }
+            if (err) {
+                return res.status(500).json({ error: "Erro ao buscar produto" });
+            }
+
+            res.json(result[0] || null);
+
+        }
+    );
+
 });
 
-// ================================
-// CRIAR PRODUTO
-// ================================
-router.post("/produtos", async (req, res) => {
+/* ================================
+   CRIAR PRODUTO
+================================ */
+router.post("/produtos", (req, res) => {
+
     const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
 
-    try {
-        await db.query(
-            `INSERT INTO produtos 
-            (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
-            VALUES (?, ?, ?, ?, ?, ?)`,
-            [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2]
-        );
+    db.query(
+        `INSERT INTO produtos 
+        (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2],
+        (err) => {
 
-        res.json({ sucesso: true });
+            if (err) {
+                return res.status(500).json({ error: "Erro ao cadastrar produto" });
+            }
 
-    } catch (error) {
-        res.status(500).json(error);
-    }
+            res.json({ sucesso: true });
+
+        }
+    );
+
 });
 
-// ================================
-// ATUALIZAR
-// ================================
-router.put("/produtos/:id", async (req, res) => {
+/* ================================
+   ATUALIZAR
+================================ */
+router.put("/produtos/:id", (req, res) => {
+
     const { id } = req.params;
     const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
 
-    try {
-        await db.query(
-            `UPDATE produtos SET 
-            codigo=?, descricao=?, rack=?, nivel=?, quantidade=?, quantidade_minima=?
-            WHERE id=?`,
-            [codigo, descricao, rack, nivel, quantidade, quantidade_minima, id]
-        );
+    db.query(
+        `UPDATE produtos SET 
+        codigo=?, descricao=?, rack=?, nivel=?, quantidade=?, quantidade_minima=?
+        WHERE id=?`,
+        [codigo, descricao, rack, nivel, quantidade, quantidade_minima, id],
+        (err) => {
 
-        res.json({ sucesso: true });
+            if (err) {
+                return res.status(500).json({ error: "Erro ao atualizar produto" });
+            }
 
-    } catch (error) {
-        res.status(500).json(error);
-    }
+            res.json({ sucesso: true });
+
+        }
+    );
+
 });
 
-// ================================
-// EXCLUIR
-// ================================
-router.delete("/produtos/:id", async (req, res) => {
+/* ================================
+   EXCLUIR
+================================ */
+router.delete("/produtos/:id", (req, res) => {
+
     const { id } = req.params;
 
-    try {
-        await db.query("DELETE FROM produtos WHERE id = ?", [id]);
-        res.json({ sucesso: true });
+    db.query(
+        "DELETE FROM produtos WHERE id = ?",
+        [id],
+        (err) => {
 
-    } catch (error) {
-        res.status(500).json(error);
-    }
+            if (err) {
+                return res.status(500).json({ error: "Erro ao excluir produto" });
+            }
+
+            res.json({ sucesso: true });
+
+        }
+    );
+
 });
 
 module.exports = router;

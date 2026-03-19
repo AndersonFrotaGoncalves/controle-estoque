@@ -1,127 +1,64 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
-/* ======================
-LISTAR USUÁRIOS
-====================== */
+/* ===============================
+   LISTAR USUÁRIOS
+================================ */
 
-router.get("/", (req, res) => {
+router.get("/usuarios", (req, res) => {
 
-    db.query("SELECT id,nome,email,role FROM usuarios", (err, results) => {
+    db.query("SELECT id, nome, email, role FROM usuarios", (err, result) => {
 
-        if(err){
-            return res.status(500).json({error:err});
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Erro ao buscar usuários" });
         }
 
-        res.json(results);
+        res.json(result);
 
     });
 
 });
 
+/* ===============================
+   CRIAR USUÁRIO
+================================ */
 
-/* ======================
-CRIAR USUÁRIO
-====================== */
+router.post("/usuarios", (req, res) => {
 
-router.post("/", async (req,res)=>{
+    const { nome, email, senha, role } = req.body;
 
-const {nome,email,senha,role} = req.body;
+    if (!nome || !email || !senha || !role) {
+        return res.status(400).json({ error: "Preencha todos os campos" });
+    }
 
-if(!nome || !email || !senha){
-return res.status(400).json({error:"Preencha todos campos"});
-}
+    // 🔥 criptografar senha
+    bcrypt.hash(senha, 10, (err, hash) => {
 
-const hash = await bcrypt.hash(senha,10);
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Erro ao criptografar senha" });
+        }
 
-const sql = `
-INSERT INTO usuarios (nome,email,senha,role)
-VALUES (?,?,?,?)
-`;
+        db.query(
+            "INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)",
+            [nome, email, hash, role],
+            (err) => {
 
-db.query(sql,[nome,email,hash,role],(err)=>{
+                if (err) {
+                    console.error(err);
+                    return res.status(500).json({ error: "Erro ao criar usuário" });
+                }
 
-if(err){
-return res.status(500).json({error:err});
-}
+                res.json({ sucesso: true });
 
-res.json({message:"Usuário criado"});
+            }
+        );
 
-});
-
-});
-
-
-/* ======================
-EDITAR USUÁRIO
-====================== */
-
-router.put("/:id", async (req,res)=>{
-
-const {nome,email,role,senha} = req.body;
-const {id} = req.params;
-
-let sql;
-let valores;
-
-if(senha){
-
-const hash = await bcrypt.hash(senha,10);
-
-sql = `
-UPDATE usuarios 
-SET nome=?, email=?, role=?, senha=? 
-WHERE id=?
-`;
-
-valores = [nome,email,role,hash,id];
-
-}else{
-
-sql = `
-UPDATE usuarios 
-SET nome=?, email=?, role=? 
-WHERE id=?
-`;
-
-valores = [nome,email,role,id];
-
-}
-
-db.query(sql,valores,(err)=>{
-
-if(err){
-return res.status(500).json({error:err});
-}
-
-res.json({message:"Usuário atualizado"});
+    });
 
 });
-
-});
-
-
-/* ======================
-EXCLUIR USUÁRIO
-====================== */
-
-router.delete("/:id",(req,res)=>{
-
-const {id} = req.params;
-
-db.query("DELETE FROM usuarios WHERE id=?",[id],(err)=>{
-
-if(err){
-return res.status(500).json({error:err});
-}
-
-res.json({message:"Usuário excluído"});
-
-});
-
-});
-
 
 module.exports = router;

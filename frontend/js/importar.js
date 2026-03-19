@@ -1,28 +1,30 @@
-document.getElementById("formImportar").addEventListener("submit", async function (e) {
+const form = document.getElementById("formImportar");
 
-    e.preventDefault();
+if (form) {
+    form.addEventListener("submit", async function (e) {
 
-    const arquivo = document.getElementById("arquivo").files[0];
+        e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("arquivo", arquivo);
+        const arquivo = document.getElementById("arquivo").files[0];
 
-    try {
+        const formData = new FormData();
+        formData.append("arquivo", arquivo);
 
-        const resposta = await fetch("/importar", {
-            method: "POST",
-            body: formData
-        });
+        try {
 
-        const resultado = await resposta.json();
+            const resposta = await fetch("/importar", {
+                method: "POST",
+                body: formData
+            });
 
-        alert(resultado.message || resultado.mensagem || "Importação concluída!");
+            const resultado = await resposta.json();
 
-    } catch (erro) {
+            alert(resultado.message || "Importação concluída!");
 
-        console.error(erro);
-        alert("Erro ao importar arquivo");
+        } catch (erro) {
+            console.error(erro);
+            alert("Erro ao importar arquivo");
+        }
 
-    }
-
-});
+    });
+}

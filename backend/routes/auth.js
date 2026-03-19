@@ -1,138 +1,62 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const SECRET = "super_chave_secreta_empresa";
-
-/* ============================
-   LOGIN
-============================ */
+const bcrypt = require("bcryptjs");
 
 router.post("/login", (req, res) => {
 
     const { email, senha } = req.body;
 
+    console.log("LOGIN BACKEND RECEBIDO:", email);
+
     if (!email || !senha) {
-        return res.status(400).json({
-            error: "Preencha email e senha"
-        });
+        return res.status(400).json({ error: "Preencha todos os campos" });
     }
 
-    const sql = "SELECT * FROM usuarios WHERE email = ?";
-
-    db.query(sql, [email], async (err, results) => {
+    db.query("SELECT * FROM usuarios WHERE email = ?", [email], (err, result) => {
 
         if (err) {
-            console.error("Erro login:", err);
-            return res.status(500).json({
-                error: "Erro no servidor"
-            });
+            console.error("ERRO MYSQL:", err);
+            return res.status(500).json({ error: "Erro no servidor" });
         }
 
-        if (results.length === 0) {
-            return res.status(401).json({
-                error: "Usuário não encontrado"
-            });
+        if (!result || result.length === 0) {
+            return res.status(401).json({ error: "Usuário não encontrado" });
         }
 
-        const usuario = results[0];
-        console.log("Senha digitada:", senha);
-console.log("Senha no banco:", usuario.senha);
+        const usuario = result[0];
 
-        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-
-        if (!senhaCorreta) {
-            return res.status(401).json({
-                error: "Senha incorreta"
-            });
+        // 🔥 valida se senha existe no banco
+        if (!usuario.senha) {
+            console.error("Usuário sem senha no banco");
+            return res.status(500).json({ error: "Erro interno (senha inválida)" });
         }
 
-        const token = jwt.sign(
-            {
-                id: usuario.id,
-                role: usuario.role
-            },
-            SECRET,
-            { expiresIn: "8h" }
-        );
+        // 🔥 comparação segura sem travar
+        bcrypt.compare(senha, usuario.senha, (err, senhaValida) => {
 
-        res.json({
-            message: "Login realizado com sucesso",
-            token,
-            usuario: {
-                id: usuario.id,
-                nome: usuario.nome,
-                email: usuario.email,
-                role: usuario.role
+            if (err) {
+                console.error("ERRO BCRYPT:", err);
+                return res.status(500).json({ error: "Erro ao validar senha" });
             }
+
+            if (!senhaValida) {
+                return res.status(401).json({ error: "Senha inválida" });
+            }
+
+            // ✅ resposta correta
+            return res.json({
+                usuario: {
+                    id: usuario.id,
+                    email: usuario.email,
+                    role: usuario.role
+                }
+            });
+
         });
 
     });
 
 });
 
-/* ============================
-   REGISTRAR USUÁRIO
-============================ */
-
-router.post("/registrar", async (req, res) => {
-
-    const { nome, email, senha, nivel } = req.body;
-
-    if (!nome || !email || !senha || nivel === undefined) {
-        return res.status(400).json({
-            error: "Preencha todos os campos"
-        });
-    }
-
-    try {
-
-        const senhaHash = await bcrypt.hash(senha, 10);
-
-        const sql = `
-            INSERT INTO usuarios (nome, email, senha, nivel)
-            VALUES (?, ?, ?, ?)
-        `;
-
-        db.query(
-            sql,
-            [nome, email, senhaHash, nivel],
-            (err) => {
-
-                if (err) {
-
-                    if (err.code === "ER_DUP_ENTRY") {
-                        return res.status(400).json({
-                            error: "Email já cadastrado"
-                        });
-                    }
-
-                    console.error("Erro registro:", err);
-
-                    return res.status(500).json({
-                        error: "Erro ao criar usuário"
-                    });
-
-                }
-
-                res.json({
-                    message: "Usuário criado com sucesso"
-                });
-
-            }
-        );
-
-    } catch (error) {
-
-        res.status(500).json({
-            error: "Erro ao criptografar senha"
-        });
-
-    }
-
-});
-
 module.exports = router;
-

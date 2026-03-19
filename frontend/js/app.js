@@ -1,146 +1,76 @@
-const apiUrl = "/produtos";
+const apiUrl = "/api/produtos";
+
 const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-const btnExcluir = document.getElementById("btnExcluirSelecionados");
-
-if (btnExcluir && usuario?.role !== "admin") {
-    btnExcluir.style.display = "none";
-}
 
 /* ========================================
    UTIL
 ======================================== */
 
 async function fetchProdutos() {
-
     try {
-
         const response = await fetch(apiUrl);
         const data = await response.json();
-
         return data;
-
     } catch (error) {
         console.error("Erro ao buscar produtos:", error);
         return [];
     }
-
 }
 
-async function carregarProdutos(){
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch(apiUrl);
+        const dados = await resposta.json();
 
-    const resposta = await fetch("/produtos");
-    const dados = await resposta.json();
+        const tabela = document.querySelector("#tabelaProdutos tbody");
+        tabela.innerHTML = "";
 
-    console.log("PRODUTOS RECEBIDOS:", dados);
+        if (!Array.isArray(dados)) {
+            console.error("API não retornou lista de produtos");
+            return;
+        }
 
-    const tabela = document.querySelector("#tabelaProdutos tbody");
-    tabela.innerHTML = "";
+        dados.forEach(produto => {
+            const tr = document.createElement("tr");
 
-    if(!Array.isArray(dados)){
-        console.error("API não retornou lista de produtos");
-        return;
-    }
-
-    dados.forEach(produto => {
-
-    const tr = document.createElement("tr");
-
-tr.innerHTML = `
-<td>${produto.codigo}</td>
-<td>${produto.descricao}</td>
-<td>${produto.rack}</td>
-<td>${produto.nivel}</td>
-<td>${produto.quantidade ?? 0}</td>
-<td>
-
-${usuario?.role === "admin" ? `
-<button onclick="editarProduto(${produto.id})">Editar</button>
-
-<input 
-type="checkbox"
-class="selecionarProduto"
-value="${produto.id}"
-title="Selecionar para excluir"
->
-` : `<span style="color:#888;">Somente leitura</span>`}
-
-</td>
+           tr.innerHTML = `
+    <td>
+        <input type="checkbox" class="selecionarProduto" value="${produto.id}">
+    </td>
+    <td>${produto.codigo}</td>
+    <td>${produto.descricao}</td>
+    <td>${produto.rack}</td>
+    <td>${produto.nivel}</td>
+    <td>${produto.quantidade ?? 0}</td>
+    <td>
+    ${usuario?.role === "admin" ? `
+        <button onclick="editarProduto(${produto.id})">Editar</button>
+    ` : `<span style="color:#888;">Somente leitura</span>`}
+    </td>
 `;
-    tabela.appendChild(tr);
 
-});
+            tabela.appendChild(tr);
+        });
 
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+    }
 }
-
 
 /* ========================================
    CADASTRO / EDIÇÃO
 ======================================== */
 
-const formProduto = document.getElementById("formProduto");
+function editarProduto(id) {
+    window.location.href = `cadastro.html?id=${id}`;
+}
 
-if (formProduto) {
+/* ========================================
+   INICIAR
+======================================== */
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get("id");
-
-    if (id) {
-
-        document.getElementById("tituloFormulario").innerText = "Editar Produto";
-
-        fetchProdutos().then(data => {
-
-            const produto = data.find(p => p.id == id);
-            if (!produto) return;
-
-            codigo.value = produto.codigo;
-            descricao.value = produto.descricao;
-            rack.value = produto.rack;
-            nivel.value = produto.nivel;
-            quantidade.value = produto.quantidade;
-            quantidade_minima.value = produto.quantidade_minima;
-
-        });
-
-    }
-
-    formProduto.addEventListener("submit", function (e) {
-
-        e.preventDefault();
-
-        const produto = {
-            codigo: codigo.value,
-            descricao: descricao.value,
-            rack: rack.value,
-            nivel: nivel.value,
-            quantidade: quantidade.value,
-            quantidade_minima: quantidade_minima.value || 2
-        };
-
-        const method = id ? "PUT" : "POST";
-        const url = id ? `${apiUrl}/${id}` : apiUrl;
-
-        fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(produto)
-        })
-        .then(res => res.json())
-        .then(() => {
-
-            mostrarToast(id ? "Produto atualizado!" : "Produto cadastrado!");
-
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 900);
-
-        });
-
-    });
-
+if (document.getElementById("tabelaProdutos")) {
+    carregarProdutos();
 }
 
 /* ========================================
@@ -186,23 +116,24 @@ function renderizarMapa(data) {
         const titulo = document.createElement("h3");
         titulo.innerText = `Rack ${rack}`;
 
-       const totalPosicoes = niveis.length;
-       
-const niveisOcupados = new Set(
-produtosRack.map(p => p.nivel)
-);
+        const totalPosicoes = niveis.length;
 
-const ocupadas = niveisOcupados.size;
+        const niveisOcupados = new Set(
+            produtosRack.map(p => p.nivel)
+        );
 
-const percentual = Math.round((ocupadas / totalPosicoes) * 100);
+        const ocupadas = niveisOcupados.size;
 
-const contador = document.createElement("span");
-contador.classList.add("rack-count");
+        const percentual = Math.round((ocupadas / totalPosicoes) * 100);
 
-contador.innerHTML = `
-${percentual}% ocupado<br>
-${ocupadas} de ${totalPosicoes} posições
-`;
+        const contador = document.createElement("span");
+        contador.classList.add("rack-count");
+
+        contador.innerHTML = `
+        ${percentual}% ocupado<br>
+        ${ocupadas} de ${totalPosicoes} posições
+        `;
+
         header.appendChild(titulo);
         header.appendChild(contador);
 
@@ -221,17 +152,17 @@ ${ocupadas} de ${totalPosicoes} posições
 
             if (produtosNivel.length > 0) {
 
-    posicao.classList.add("ocupada");
+                posicao.classList.add("ocupada");
 
-    let tooltip = "";
+                let tooltip = "";
 
-    produtosNivel.forEach(p => {
-        tooltip += `${p.codigo} - ${p.descricao}\n`;
-    });
+                produtosNivel.forEach(p => {
+                    tooltip += `${p.codigo} - ${p.descricao}\n`;
+                });
 
-    posicao.title = tooltip;
+                posicao.title = tooltip;
 
-} else {
+            } else {
 
                 posicao.classList.add("vazia");
 
@@ -250,53 +181,8 @@ ${ocupadas} de ${totalPosicoes} posições
 
 }
 
-function buscarProduto() {
-
-    const input = document.getElementById("buscarCodigo");
-    const codigoBusca = input.value.trim().toLowerCase();
-
-    document.querySelectorAll(".posicao").forEach(p => {
-        p.classList.remove("destacada", "apagada");
-    });
-
-    if (!codigoBusca) return;
-
-    const produto = dadosMapa.find(p =>
-        p.codigo.toLowerCase() === codigoBusca
-    );
-
-    if (!produto) {
-        alert("Produto não encontrado!");
-        return;
-    }
-
-    const posicao = document.querySelector(
-        `[data-rack="${produto.rack}"][data-nivel="${produto.nivel}"]`
-    );
-
-    if (!posicao) return;
-
-    document.querySelectorAll(".posicao").forEach(p => {
-        p.classList.add("apagada");
-    });
-
-    posicao.classList.remove("apagada");
-    posicao.classList.add("destacada");
-
-    const rackCard = posicao.closest(".rack-card");
-
-    rackCard.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-}
-
 /* ========================================
    DASHBOARD
-======================================== */
-/* ========================================
-   GRÁFICOS DO DASHBOARD
 ======================================== */
 
 if (document.getElementById("graficoPosicoes")) {
@@ -313,8 +199,6 @@ const niveisPorRack = 30;
 
 const totalPosicoes = racks.length * niveisPorRack;
 
-/* POSIÇÕES ÚNICAS OCUPADAS */
-
 const posicoesUnicas = new Set();
 
 data.forEach(p => {
@@ -332,8 +216,6 @@ const ocupadas = posicoesUnicas.size;
 
 const livres = totalPosicoes - ocupadas;
 
-/* GRÁFICO */
-
 const ctxPosicoes = document.getElementById("graficoPosicoes");
 
 new Chart(ctxPosicoes, {
@@ -341,134 +223,22 @@ new Chart(ctxPosicoes, {
 type: "doughnut",
 
 data: {
-
 labels: ["Ocupadas", "Livres"],
-
 datasets: [{
-
 data: [ocupadas, livres],
-
-backgroundColor: [
-"#16a34a",
-"#1e3a8a"
-]
-
+backgroundColor: ["#16a34a","#1e3a8a"]
 }]
-
 },
 
 options: {
-
 responsive: true,
-
 cutout: "65%",
-
-plugins: {
-
-legend: {
-position: "bottom"
-}
-
-}
-
+plugins: { legend: { position: "bottom" } }
 }
 
 });
 
 });
-
-}
-
-if (document.getElementById("graficoEstoque")) {
-
-    fetchProdutos().then(data => {
-
-        const estoqueNormal = data.filter(p =>
-            Number(p.quantidade) > Number(p.quantidade_minima)
-        ).length;
-
-        const estoqueBaixo = data.filter(p =>
-            Number(p.quantidade) <= Number(p.quantidade_minima)
-        ).length;
-
-        const ctxEstoque = document.getElementById("graficoEstoque");
-
-        new Chart(ctxEstoque, {
-            type: "pie",
-            data: {
-                labels: ["Estoque Normal", "Estoque Baixo"],
-                datasets: [{
-                    data: [estoqueNormal, estoqueBaixo],
-                    backgroundColor: [
-                        "#16a34a",
-                        "#dc2626"
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: "bottom"
-                    }
-                }
-            }
-        });
-
-    });
-
-}
-/* ========================================
-   MODAL & TOAST
-======================================== */
-
-let idParaExcluir = null;
-
-function editarProduto(id) {
-    window.location.href = `cadastro.html?id=${id}`;
-}
-
-function abrirModal(id) {
-    idParaExcluir = id;
-    document.getElementById("modalExcluir").style.display = "flex";
-}
-
-function fecharModal() {
-    document.getElementById("modalExcluir").style.display = "none";
-    idParaExcluir = null;
-}
-
-function confirmarExclusao() {
-
-    if (!idParaExcluir) return;
-
-    fetch(`${apiUrl}/${idParaExcluir}`, { method: "DELETE" })
-        .then(res => res.json())
-        .then(() => {
-
-            fecharModal();
-            mostrarToast("Produto excluído com sucesso!");
-
-            setTimeout(() => {
-                location.reload();
-            }, 900);
-
-        });
-
-}
-
-function mostrarToast(mensagem) {
-
-    const toast = document.getElementById("toast");
-
-    if (!toast) return;
-
-    toast.innerText = mensagem;
-    toast.classList.add("show");
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3000);
 
 }
 
@@ -477,20 +247,14 @@ function mostrarToast(mensagem) {
 ======================================== */
 
 function logout() {
-
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
-
     window.location.href = "login.html";
-
-}
-if (document.getElementById("tabelaProdutos")) {
-    carregarProdutos();
 }
 
-/* =========================
-   MENU ATIVO AUTOMÁTICO
-========================= */
+/* ========================================
+   MENU ATIVO
+======================================== */
 
 const paginaAtual = window.location.pathname.split("/").pop();
 
@@ -506,226 +270,89 @@ document.querySelectorAll(".sidebar a").forEach(link => {
 
 });
 
-
-
 /* ========================================
-   DASHBOARD CARDS
-======================================== */
-if (document.getElementById("totalProdutos")) {
-
-fetchProdutos().then(data => {
-
-const racks = [
-"A","B","C","D","E",
-"E-ARM4","E-ARM5","E-ARM6","E-ARM7",
-"F","G","H","I","J","K","L","M","N","O"
-];
-
-const niveisPorRack = 30;
-
-const totalPosicoes = racks.length * niveisPorRack;
-
-/* TOTAL PRODUTOS */
-
-const totalProdutos = data.length;
-
-/* POSIÇÕES OCUPADAS REAIS */
-
-const posicoesUnicas = new Set();
-
-data.forEach(p => {
-
-const rack = String(p.rack || "").trim();
-const nivel = parseInt(p.nivel);
-
-if(rack && !isNaN(nivel)){
-posicoesUnicas.add(rack + "-" + nivel);
-}
-
-});
-
-const ocupadas = posicoesUnicas.size;
-
-/* POSIÇÕES LIVRES */
-
-const livres = totalPosicoes - ocupadas;
-
-/* TOTAL RACKS */
-
-const totalRacks = racks.length;
-
-/* MOSTRAR */
-
-document.getElementById("totalProdutos").innerText = totalProdutos;
-document.getElementById("totalPecas").innerText = totalRacks;
-document.getElementById("ocupadas").innerText = ocupadas;
-document.getElementById("estoqueBaixo").innerText = livres;
-
-});
-
-}
-
-function excluirProduto(id){
-
-if(!confirm("Deseja excluir este produto?")) return;
-
-fetch(`/produtos/${id}`,{
-
-method:"DELETE"
-
-})
-.then(res => res.json())
-.then(()=>{
-
-alert("Produto excluído com sucesso");
-
-carregarProdutos();
-
-});
-
-}
-async function excluirSelecionados(){
-
-const selecionados = document.querySelectorAll(".selecionarProduto:checked");
-
-if(selecionados.length === 0){
-alert("Selecione pelo menos um produto");
-return;
-}
-
-if(!confirm("Deseja excluir os produtos selecionados?")) return;
-
-const ids = Array.from(selecionados).map(cb => cb.value);
-
-for(const id of ids){
-
-await fetch(`/produtos/${id}`,{
-method:"DELETE"
-});
-
-}
-
-alert("Produtos excluídos com sucesso");
-
-carregarProdutos();
-
-}
-
-/* ========================================
-   GRAFICO PRODUTOS POR RACK
+   CADASTRO DE PRODUTO
 ======================================== */
 
-if (document.getElementById("graficoRacks")) {
+const formProduto = document.getElementById("formProduto");
 
-fetchProdutos().then(data => {
+if (formProduto) {
 
-const racks = {};
+    formProduto.addEventListener("submit", async (e) => {
 
-data.forEach(produto => {
+        e.preventDefault();
 
-if(!racks[produto.rack]){
-racks[produto.rack] = 0;
-}
+        const dados = {
+            codigo: document.getElementById("codigo").value,
+            descricao: document.getElementById("descricao").value,
+            rack: document.getElementById("rack").value,
+            nivel: document.getElementById("nivel").value,
+            quantidade: document.getElementById("quantidade").value,
+            quantidade_minima: document.getElementById("quantidade_minima").value
+        };
 
-racks[produto.rack]++;
+        console.log("ENVIANDO PRODUTO:", dados);
 
-});
+        try {
 
-const labels = Object.keys(racks);
-const valores = Object.values(racks);
+            const response = await fetch("/api/produtos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dados)
+            });
 
-const ctx = document.getElementById("graficoRacks");
+            const result = await response.json();
 
-new Chart(ctx, {
+            console.log("RESPOSTA:", result);
 
-type: "bar",
+            if (!response.ok) {
+                alert("Erro ao cadastrar produto");
+                return;
+            }
 
-data: {
+            alert("Produto cadastrado com sucesso!");
 
-labels: labels,
+            // 👉 volta para lista
+            window.location.href = "index.html";
 
-datasets: [{
+        } catch (error) {
+            console.error("ERRO:", error);
+            alert("Erro no servidor");
+        }
 
-label: "Produtos por Rack",
-
-data: valores,
-
-backgroundColor: "#2563eb",
-
-borderRadius: 6
-
-}]
-
-},
-
-options: {
-
-responsive: true,
-
-plugins: {
-
-legend: {
-display:false
-}
-
-},
-
-scales:{
-
-y:{
-beginAtZero:true
-}
+    });
 
 }
 
-}
+function excluirSelecionados(){
 
-});
+    const selecionados = document.querySelectorAll(".selecionarProduto:checked");
 
-});
+    if(selecionados.length === 0){
+        alert("Selecione pelo menos um produto");
+        return;
+    }
 
-}
+    if(!confirm("Deseja excluir os produtos selecionados?")) return;
 
-function importarExcel(){
+    const ids = Array.from(selecionados).map(cb => cb.value);
 
-let tabela = document.querySelector("#tabelaSAP tbody");
-
-tabela.innerHTML = "";
-
-let dados = [
-
-{material:"10001", produto:"Motor", sistema:10, sap:8},
-
-{material:"10002", produto:"Sensor", sistema:5, sap:5},
-
-{material:"10003", produto:"Parafuso", sistema:30, sap:25}
-
-];
-
-dados.forEach(item =>{
-
-let diferenca = item.sistema - item.sap;
-
-let classe = "";
-
-if(diferenca == 0){
-classe = "diferenca-zero";
-}else{
-classe = "diferenca-negativa";
-}
-
-let linha = `
-<tr class="${classe}">
-<td>${item.material}</td>
-<td>${item.produto}</td>
-<td>${item.sistema}</td>
-<td>${item.sap}</td>
-<td>${diferenca}</td>
-</tr>
-`;
-
-tabela.innerHTML += linha;
-
-});
+    Promise.all(
+        ids.map(id =>
+            fetch(`/api/produtos/${id}`, {
+                method: "DELETE"
+            })
+        )
+    )
+    .then(() => {
+        alert("Produtos excluídos com sucesso!");
+        carregarProdutos();
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erro ao excluir");
+    });
 
 }

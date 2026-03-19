@@ -1,50 +1,68 @@
-async function login(event) {
+document.addEventListener("DOMContentLoaded", function () {
 
-    if (event) event.preventDefault();
+    // 👉 MUDA AQUI conforme ambiente
+    const API_URL = "http://localhost:3000"; 
+    // se estiver online:
+    // const API_URL = "https://SEU-BACKEND-REAL.up.railway.app";
 
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
-    const erro = document.getElementById("erroLogin");
+    const form = document.getElementById("loginForm");
 
-    erro.innerText = "";
-
-    if (!email || !senha) {
-        erro.innerText = "Preencha email e senha";
+    if (!form) {
+        console.error("Formulário não encontrado");
         return;
     }
 
-    try {
+    form.addEventListener("submit", async function (e) {
 
-        const response = await fetch("/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, senha })
-        });
+        e.preventDefault();
 
-        const data = await response.json();
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value.trim();
+        const erro = document.getElementById("erroLogin");
 
-        if (!response.ok) {
-            erro.innerText = data.error || "Erro ao fazer login";
-            return;
+        if (erro) erro.innerText = "";
+
+        try {
+
+            console.log("LOGIN DISPARADO");
+
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, senha })
+            });
+
+            console.log("STATUS:", res.status);
+
+            // 👉 tratamento seguro
+            let data;
+            try {
+                data = await res.json();
+            } catch {
+                throw new Error("Resposta inválida do servidor");
+            }
+
+            console.log("RESPOSTA:", data);
+
+            if (!res.ok) {
+                if (erro) erro.innerText = data.error || "Erro no login";
+                return;
+            }
+
+            // 👉 salva usuário
+            localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+            console.log("LOGIN OK - REDIRECIONANDO");
+
+            window.location.href = "dashboard.html";
+
+        } catch (err) {
+            console.error("ERRO LOGIN:", err);
+            if (erro) erro.innerText = "Servidor não disponível";
         }
 
-        // salva login
-      localStorage.setItem("token", data.token);
-localStorage.setItem("usuario", JSON.stringify(data.usuario));
+    });
 
-        // redireciona
-        window.location.href = "dashboard.html";
-
-    } catch (err) {
-        erro.innerText = "Servidor não disponível";
-        console.error(err);
-    }
-
-}
-
-// conecta o formulário
-const form = document.getElementById("loginForm");
-
-if (form) {
-    form.addEventListener("submit", login);
-}
+});

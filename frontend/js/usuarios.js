@@ -1,8 +1,8 @@
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-if(usuario.role !== "admin"){
-alert("Apenas administrador pode acessar");
-window.location.href = "dashboard.html";
+if (!usuario || usuario.role !== "admin") {
+    alert("Apenas administrador pode acessar");
+    window.location.href = "dashboard.html";
 }
 
 const api = "/usuarios";

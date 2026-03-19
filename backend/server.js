@@ -13,26 +13,40 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ROTAS API
+/* ===============================
+   ROTAS API
+================================ */
+
 app.use("/api", movimentacoes);
 app.use("/api", produtos);
+
+/* ===============================
+   OUTRAS ROTAS
+================================ */
 
 app.use("/auth", authRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
 
-// FRONTEND
+/* ===============================
+   FRONTEND
+================================ */
+
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-/* ROTAS API */
+/* ===============================
+   PORTA
+================================ */
 
-app.use("/auth", authRoutes);
-app.use("/usuarios", usuariosRoutes);
-app.use("/importar", importarRoutes);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta", PORT);
+});
 
 /* PÁGINA INICIAL */
 
@@ -149,8 +163,3 @@ app.delete("/produtos/:id", (req, res) => {
    PORTA
 ================================ */
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta", PORT);
-});

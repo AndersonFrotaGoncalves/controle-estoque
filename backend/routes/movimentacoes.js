@@ -2,98 +2,106 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+/* ================================
+   LISTAR MOVIMENTAÇÕES
+================================ */
+router.get("/movimentacoes", (req, res) => {
 
-// ================================
-// LISTAR MOVIMENTAÇÕES
-// ================================
-router.get("/movimentacoes", async (req, res) => {
+    db.query(`
+        SELECT 
+            movimentacoes.*, 
+            produtos.descricao
+        FROM movimentacoes
+        JOIN produtos 
+        ON movimentacoes.produto_id = produtos.id
+        ORDER BY data DESC
+    `, (err, result) => {
 
-    try{
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ erro: "Erro ao buscar movimentações" });
+        }
 
-        const [dados] = await db.query(`
-            SELECT 
-                movimentacoes.*, 
-                produtos.descricao
-            FROM movimentacoes
-            JOIN produtos 
-            ON movimentacoes.produto_id = produtos.id
-            ORDER BY data DESC
-        `);
+        res.json(result);
 
-        res.json(dados);
-
-    }catch(error){
-
-        console.error(error);
-        res.status(500).json(error);
-
-    }
+    });
 
 });
 
-
-// ================================
-// SALVAR MOVIMENTAÇÃO
-// ================================
-router.post("/movimentacoes", async (req, res) => {
+/* ================================
+   SALVAR MOVIMENTAÇÃO
+================================ */
+router.post("/movimentacoes", (req, res) => {
 
     const { produto_id, tipo, quantidade, observacao, usuario } = req.body;
 
     // 🔒 VALIDAÇÃO
-    if(!produto_id || !tipo || !quantidade){
+    if (!produto_id || !tipo || !quantidade) {
         return res.status(400).json({ erro: "Dados inválidos" });
     }
 
-    if(!["entrada", "saida"].includes(tipo)){
+    if (!["entrada", "saida"].includes(tipo)) {
         return res.status(400).json({ erro: "Tipo inválido" });
     }
 
-    try{
+    // 🔍 pegar estoque atual
+    db.query(
+        "SELECT quantidade FROM produtos WHERE id = ?",
+        [produto_id],
+        (err, result) => {
 
-        // 🔍 pegar estoque atual
-        const [produto] = await db.query(
-            "SELECT quantidade FROM produtos WHERE id = ?",
-            [produto_id]
-        );
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ erro: "Erro ao buscar produto" });
+            }
 
-        if(produto.length === 0){
-            return res.status(404).json({ erro: "Produto não encontrado" });
-        }
+            if (!result || result.length === 0) {
+                return res.status(404).json({ erro: "Produto não encontrado" });
+            }
 
-        const estoqueAtual = produto[0].quantidade;
+            const estoqueAtual = result[0].quantidade;
 
-        // 🚫 impedir estoque negativo
-        if(tipo === "saida" && quantidade > estoqueAtual){
-            return res.status(400).json({ erro: "Estoque insuficiente" });
-        }
+            // 🚫 impedir estoque negativo
+            if (tipo === "saida" && quantidade > estoqueAtual) {
+                return res.status(400).json({ erro: "Estoque insuficiente" });
+            }
 
-        // 💾 salvar movimentação
-        await db.query(
-            "INSERT INTO movimentacoes (produto_id, tipo, quantidade, observacao, usuario) VALUES (?, ?, ?, ?, ?)",
-            [produto_id, tipo, quantidade, observacao, usuario]
-        );
+            // 💾 salvar movimentação
+            db.query(
+                "INSERT INTO movimentacoes (produto_id, tipo, quantidade, observacao, usuario) VALUES (?, ?, ?, ?, ?)",
+                [produto_id, tipo, quantidade, observacao, usuario],
+                (err) => {
 
-        // 🔄 atualizar estoque
-        if(tipo === "entrada"){
-            await db.query(
-                "UPDATE produtos SET quantidade = quantidade + ? WHERE id = ?",
-                [quantidade, produto_id]
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json({ erro: "Erro ao salvar movimentação" });
+                    }
+
+                    // 🔄 atualizar estoque
+                    const queryUpdate = tipo === "entrada"
+                        ? "UPDATE produtos SET quantidade = quantidade + ? WHERE id = ?"
+                        : "UPDATE produtos SET quantidade = quantidade - ? WHERE id = ?";
+
+                    db.query(
+                        queryUpdate,
+                        [quantidade, produto_id],
+                        (err) => {
+
+                            if (err) {
+                                console.error(err);
+                                return res.status(500).json({ erro: "Erro ao atualizar estoque" });
+                            }
+
+                            res.json({ sucesso: true });
+
+                        }
+                    );
+
+                }
             );
-        }else{
-            await db.query(
-                "UPDATE produtos SET quantidade = quantidade - ? WHERE id = ?",
-                [quantidade, produto_id]
-            );
+
         }
-
-        res.json({ sucesso: true });
-
-    }catch(error){
-
-        console.error(error);
-        res.status(500).json({ erro: "Erro ao salvar movimentação" });
-
-    }
+    );
 
 });
 
