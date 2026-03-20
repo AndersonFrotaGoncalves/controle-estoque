@@ -57,10 +57,10 @@ async function buscarProduto(){
         if(produto){
 
             const desc = document.getElementById("descricao");
-            const prod = document.getElementById("produto");
+            const prod = document.getElementById("produto"); // 🔥 CAMPO OCULTO
 
             if(desc) desc.value = produto.descricao;
-            if(prod) prod.value = produto.id;
+            if(prod) prod.value = produto.id; // 🔥 ESSENCIAL
 
         }else{
             alert("Produto não encontrado");
@@ -151,22 +151,25 @@ async function carregarHistorico(){
         const tbody = document.querySelector("#tabelaMovimentacoes tbody");
 
         tbody.innerHTML = "";
+dados.forEach(mov => {
 
-        dados.forEach(mov => {
+    const tr = document.createElement("tr");
 
-            const tr = document.createElement("tr");
+    const tipoClass = mov.tipo === "entrada"
+        ? "tipo-entrada"
+        : "tipo-saida";
 
-            tr.innerHTML = `
-                <td>${mov.descricao}</td>
-                <td>${mov.tipo}</td>
-                <td>${mov.quantidade}</td>
-                <td>${formatarUsuario(mov.usuario)}</td>
-                <td>${new Date(mov.data).toLocaleString()}</td>
-            `;
+    tr.innerHTML = `
+        <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
+        <td class="${tipoClass}">${mov.tipo}</td>
+        <td>${mov.quantidade}</td>
+        <td>${formatarUsuario(mov.usuario)}</td>
+        <td>${new Date(mov.data).toLocaleString()}</td>
+    `;
 
-            tbody.appendChild(tr);
+    tbody.appendChild(tr);
 
-        });
+});
 
     }catch(error){
 
@@ -180,7 +183,7 @@ function formatarUsuario(usuario){
 
     try {
         const obj = JSON.parse(usuario);
-        return obj.email || "Desconhecido";
+        return obj.email || obj.nome || "Desconhecido";
     } catch {
         return usuario;
     }

@@ -8,14 +8,15 @@ const db = require("../db");
 router.get("/movimentacoes", (req, res) => {
 
     db.query(`
-        SELECT 
-            movimentacoes.*, 
-            produtos.descricao
-        FROM movimentacoes
-        JOIN produtos 
-        ON movimentacoes.produto_id = produtos.id
-        ORDER BY data DESC
-    `, (err, result) => {
+      SELECT 
+        movimentacoes.*, 
+        produtos.descricao,
+        produtos.codigo
+    FROM movimentacoes
+    JOIN produtos 
+    ON movimentacoes.produto_id = produtos.id
+    ORDER BY data DESC
+`, (err, result) => {
 
         if (err) {
             console.error(err);

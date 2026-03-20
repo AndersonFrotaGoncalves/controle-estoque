@@ -1,0 +1,102 @@
+
+
+/* =========================
+SIDEBAR ERP
+========================= */
+
+.sidebar{
+background:linear-gradient(180deg,#24324a,#1e293b);
+box-shadow:4px 0 20px rgba(0,0,0,0.1);
+}
+
+.logo-sidebar{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:30px;
+}
+
+.logo-sidebar img{
+width:55px;
+}
+
+.logo-sidebar h2{
+font-size:18px;
+font-weight:600;
+}
+
+
+.mov-container{
+padding:30px;
+}
+
+.form-mov{
+display:grid;
+grid-template-columns: 2fr 1fr 2fr 1fr 1fr 2fr 1fr;
+gap:10px;
+margin-bottom:20px;
+}
+
+.form-mov input,
+.form-mov select{
+padding:10px;
+border:1px solid #cbd5e1;
+border-radius:6px;
+}
+
+.btn-salvar{
+background:#2563eb;
+color:white;
+border:none;
+padding:10px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn-salvar:hover{
+background:#1d4ed8;
+}
+
+/* TABELA */
+
+#tabelaMovimentacoes{
+width:100%;
+border-collapse:collapse;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 6px 15px rgba(0,0,0,0.05);
+}
+
+#tabelaMovimentacoes thead{
+background:#1e293b;
+color:white;
+}
+
+#tabelaMovimentacoes th,
+#tabelaMovimentacoes td{
+padding:12px;
+text-align:left;
+font-size:14px;
+}
+
+#tabelaMovimentacoes tbody tr{
+border-bottom:1px solid #eee;
+transition:0.2s;
+}
+
+#tabelaMovimentacoes tbody tr:hover{
+background:#f1f5f9;
+}
+
+/* TIPO (ENTRADA/SAIDA) */
+
+.tipo-entrada{
+color:#16a34a;
+font-weight:bold;
+}
+
+.tipo-saida{
+color:#dc2626;
+font-weight:bold;
+}
