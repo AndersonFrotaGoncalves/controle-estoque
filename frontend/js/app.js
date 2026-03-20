@@ -682,3 +682,45 @@ if (produtoId && document.getElementById("formProduto")) {
         })
         .catch(err => console.error("Erro ao carregar produto:", err));
 }
+
+function buscarNoMapa(){
+
+    const codigo = document.getElementById("buscarMapa").value.toLowerCase();
+
+    if(!codigo){
+        alert("Digite um código");
+        return;
+    }
+
+    const posicoes = document.querySelectorAll(".posicao");
+
+    let encontrou = false;
+
+    posicoes.forEach(pos => {
+
+        const titulo = pos.title?.toLowerCase() || "";
+
+        if(titulo.includes(codigo)){
+
+            pos.style.border = "3px solid red";
+            pos.style.transform = "scale(1.2)";
+
+            pos.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            encontrou = true;
+
+        }else{
+            pos.style.border = "";
+            pos.style.transform = "";
+        }
+
+    });
+
+    if(!encontrou){
+        alert("Produto não encontrado no mapa");
+    }
+
+}
