@@ -6,8 +6,7 @@ const bcrypt = require("bcryptjs");
 /* ===============================
    LISTAR USUÁRIOS
 ================================ */
-
-router.get("/usuarios", (req, res) => {
+router.get("/", (req, res) => {
 
     db.query("SELECT id, nome, email, role FROM usuarios", (err, result) => {
 
@@ -25,8 +24,7 @@ router.get("/usuarios", (req, res) => {
 /* ===============================
    CRIAR USUÁRIO
 ================================ */
-
-router.post("/usuarios", (req, res) => {
+router.post("/", (req, res) => {
 
     const { nome, email, senha, role } = req.body;
 
@@ -34,7 +32,6 @@ router.post("/usuarios", (req, res) => {
         return res.status(400).json({ error: "Preencha todos os campos" });
     }
 
-    // 🔥 criptografar senha
     bcrypt.hash(senha, 10, (err, hash) => {
 
         if (err) {
@@ -56,6 +53,26 @@ router.post("/usuarios", (req, res) => {
 
             }
         );
+
+    });
+
+});
+
+/* ===============================
+   EXCLUIR USUÁRIO
+================================ */
+router.delete("/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    db.query("DELETE FROM usuarios WHERE id = ?", [id], (err) => {
+
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Erro ao excluir usuário" });
+        }
+
+        res.json({ sucesso: true });
 
     });
 

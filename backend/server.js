@@ -1,17 +1,25 @@
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+
+const app = express();
 
 const authRoutes = require("./routes/auth");
 const usuariosRoutes = require("./routes/usuarios");
 const importarRoutes = require("./routes/importar");
 const movimentacoes = require("./routes/movimentacoes");
 const produtos = require("./routes/produtos");
+const sapRoutes = require("./routes/sap");
 
-const app = express();
 
+/* ===============================
+   MIDDLEWARE
+================================ */
 app.use(cors());
 app.use(express.json());
+
+
 
 /* ===============================
    ROTAS API
@@ -27,6 +35,7 @@ app.use("/api", produtos);
 app.use("/auth", authRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
+app.use("/api", sapRoutes);
 
 /* ===============================
    FRONTEND

@@ -5,36 +5,36 @@ if (!usuario || usuario.role !== "admin") {
     window.location.href = "dashboard.html";
 }
 
-const api = "/usuarios";
+const api = "/api/usuarios"; // 🔥 CORRETO
 
+/* ====================
+CARREGAR
+==================== */
 async function carregarUsuarios(){
 
-const res = await fetch("/usuarios");
-const usuarios = await res.json();
+    const res = await fetch("/usuarios");
+    const usuarios = await res.json();
 
-const tabela = document.querySelector("#tabelaUsuarios tbody");
+    const tabela = document.querySelector("#tabelaUsuarios tbody");
 
-tabela.innerHTML="";
+    tabela.innerHTML = "";
 
-usuarios.forEach(u=>{
+    usuarios.forEach(u => {
 
-tabela.innerHTML += `
-<tr>
+        tabela.innerHTML += `
+        <tr>
+            <td>${u.id}</td>
+            <td>${u.nome}</td>
+            <td>${u.email}</td>
+            <td>${u.role}</td>
+            <td>
+                <button onclick="editarUsuario(${u.id})">Editar</button>
+                <button onclick="excluirUsuario(${u.id})">Excluir</button>
+            </td>
+        </tr>
+        `;
 
-<td>${u.id}</td>
-<td>${u.nome}</td>
-<td>${u.email}</td>
-<td>${u.role}</td>
-
-<td>
-<button onclick="editarUsuario(${u.id})">Editar</button>
-<button onclick="excluirUsuario(${u.id})">Excluir</button>
-</td>
-
-</tr>
-`;
-
-});
+    });
 
 }
 
@@ -44,22 +44,19 @@ carregarUsuarios();
 /* ====================
 NOVO USUÁRIO
 ==================== */
-
 function novoUsuario(){
 
-const nome = prompt("Nome:");
-const email = prompt("Email:");
-const senha = prompt("Senha:");
-const role = prompt("Permissão (admin/user):");
+    const nome = prompt("Nome:");
+    const email = prompt("Email:");
+    const senha = prompt("Senha:");
+    const role = prompt("Permissão (admin/user):");
 
-fetch("/usuarios",{
-
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({nome,email,senha,role})
-
-})
-.then(()=>carregarUsuarios());
+    fetch("/usuarios", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ nome, email, senha, role })
+    })
+    .then(() => carregarUsuarios());
 
 }
 
@@ -69,19 +66,17 @@ EDITAR
 ==================== */
 function editarUsuario(id){
 
-const nome = prompt("Novo nome:");
-const email = prompt("Novo email:");
-const role = prompt("Permissão (admin/user):");
-const senha = prompt("Nova senha (deixe vazio para não alterar):");
+    const nome = prompt("Novo nome:");
+    const email = prompt("Novo email:");
+    const role = prompt("Permissão (admin/user):");
+    const senha = prompt("Nova senha (deixe vazio para não alterar):");
 
-fetch(`/usuarios/${id}`,{
-
-method:"PUT",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({nome,email,role,senha})
-
-})
-.then(()=>carregarUsuarios());
+    fetch(`/usuarios/${id}`, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ nome, email, role, senha })
+    })
+    .then(() => carregarUsuarios());
 
 }
 
@@ -89,16 +84,13 @@ body:JSON.stringify({nome,email,role,senha})
 /* ====================
 EXCLUIR
 ==================== */
-
 function excluirUsuario(id){
 
-if(!confirm("Excluir usuário?")) return;
+    if(!confirm("Excluir usuário?")) return;
 
-fetch(`/usuarios/${id}`,{
-
-method:"DELETE"
-
-})
-.then(()=>carregarUsuarios());
+   fetch(`/usuarios/${id}`,{
+        method:"DELETE"
+    })
+    .then(() => carregarUsuarios());
 
 }

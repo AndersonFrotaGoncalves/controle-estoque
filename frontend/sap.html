@@ -84,6 +84,17 @@ Sair
 
 </div>
 
+<div style="display:flex; gap:10px; margin:15px 0;">
+
+<button onclick="exportarExcel()" class="btn-importar">
+📊 Exportar Excel
+</button>
+
+<button onclick="imprimirRelatorio()" class="btn-escolher">
+🖨 Imprimir
+</button>
+
+</div>
 
 <table id="tabelaSAP" class="tabela-produtos">
 
@@ -109,7 +120,7 @@ Sair
 <!-- SCRIPTS -->
 <script src="js/sap.js"></script>
 <script src="js/proteger.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script>
 
 let usuario = localStorage.getItem("usuario");
