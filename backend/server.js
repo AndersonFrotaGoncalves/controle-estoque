@@ -1,10 +1,12 @@
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
+const db = require("./database"); // 🔥 ESSENCIAL
+
 const app = express();
 
+// rotas
 const authRoutes = require("./routes/auth");
 const usuariosRoutes = require("./routes/usuarios");
 const importarRoutes = require("./routes/importar");
@@ -12,45 +14,28 @@ const movimentacoes = require("./routes/movimentacoes");
 const produtos = require("./routes/produtos");
 const sapRoutes = require("./routes/sap");
 
-
-/* ===============================
-   MIDDLEWARE
-================================ */
+// middlewares
 app.use(cors());
 app.use(express.json());
 
-
-
-/* ===============================
-   ROTAS API
-================================ */
-
+// rotas API
 app.use("/api", movimentacoes);
 app.use("/api", produtos);
+app.use("/api", sapRoutes);
 
-/* ===============================
-   OUTRAS ROTAS
-================================ */
-
+// outras rotas
 app.use("/auth", authRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
-app.use("/api", sapRoutes);
 
-/* ===============================
-   FRONTEND
-================================ */
-
+// frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
-/* ===============================
-   PORTA
-================================ */
-
+// porta
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // 👉 MUDA AQUI conforme ambiente
-    const API_URL = "http://localhost:3000"; 
-    // se estiver online:
-    // const API_URL = "https://SEU-BACKEND-REAL.up.railway.app";
+    const API_URL = ""; // mesma origem
 
     const form = document.getElementById("loginForm");
 
@@ -26,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("LOGIN DISPARADO");
 
-            const res = await fetch(`${API_URL}/auth/login`, {
+            const res = await fetch(`/api/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -36,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("STATUS:", res.status);
 
-            // 👉 tratamento seguro
             let data;
             try {
                 data = await res.json();
@@ -51,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // 👉 salva usuário
             localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
             console.log("LOGIN OK - REDIRECIONANDO");
