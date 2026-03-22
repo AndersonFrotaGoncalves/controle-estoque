@@ -88,14 +88,30 @@ Salvar
 
 <h2>Histórico de Movimentações</h2>
 
+<div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
+
+    <input type="date" id="dataInicio">
+    <input type="date" id="dataFim">
+
+    <button onclick="filtrarPorData()">🔍 Filtrar</button>
+    <button onclick="limparFiltro()">♻️ Limpar</button>
+
+</div>
+
+<div style="display:flex; gap:10px; margin-bottom:15px;">
+   <button onclick="exportarExcel()">📥 Exportar Excel</button>
+    <button onclick="imprimir()" class="btn">🖨️ Imprimir</button>
+</div>
+
 <table id="tabelaMovimentacoes">
 <thead>
 <tr>
 <th>Produto</th>
 <th>Tipo</th>
+<th>Observação</th> <!-- 🔥 NOVO -->
 <th>Quantidade</th>
-<th>Usuário</th>
 <th>Data</th>
+<th>Usuário</th>
 </tr>
 </thead>
 <tbody></tbody>

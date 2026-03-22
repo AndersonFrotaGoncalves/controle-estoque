@@ -159,14 +159,14 @@ dados.forEach(mov => {
         ? "tipo-entrada"
         : "tipo-saida";
 
-    tr.innerHTML = `
-        <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
-        <td class="${tipoClass}">${mov.tipo}</td>
-        <td>${mov.quantidade}</td>
-        <td>${formatarUsuario(mov.usuario)}</td>
-        <td>${new Date(mov.data).toLocaleString()}</td>
-    `;
-
+   tr.innerHTML = `
+    <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
+    <td class="${tipoClass}">${mov.tipo}</td>
+    <td>${mov.observacao || "-"}</td> <!-- 🔥 AQUI -->
+    <td>${mov.quantidade}</td>
+    <td>${new Date(mov.data).toLocaleString()}</td>
+    <td>${formatarUsuario(mov.usuario)}</td>
+`;
     tbody.appendChild(tr);
 
 });
@@ -183,8 +183,23 @@ function formatarUsuario(usuario){
 
     try {
         const obj = JSON.parse(usuario);
-        return obj.email || obj.nome || "Desconhecido";
+
+        if (obj.nome) {
+            return obj.nome;
+        }
+
+        if (obj.email) {
+            return obj.email.split("@")[0]; // 🔥 pega só o nome
+        }
+
+        return "Desconhecido";
+
     } catch {
+
+        if (usuario.includes("@")) {
+            return usuario.split("@")[0]; // 🔥 fallback
+        }
+
         return usuario;
     }
 
@@ -203,5 +218,84 @@ if(campoCodigo){
         if(e.key === "Enter"){
             buscarProduto();
         }
+    });
+}
+
+
+//funcao exporta excell
+
+function exportarExcel() {
+
+    const tabela = document.getElementById("tabelaMovimentacoes");
+
+    if (!tabela) {
+        alert("Tabela não encontrada");
+        return;
+    }
+
+    let html = tabela.outerHTML;
+
+    let url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+
+    let link = document.createElement("a");
+    link.href = url;
+    link.download = "movimentacoes.xls";
+
+    link.click();
+}
+
+function imprimir() {
+    window.print();
+}
+
+//funcao filtrto por data
+
+function filtrarPorData() {
+
+    const inicio = document.getElementById("dataInicio").value;
+    const fim = document.getElementById("dataFim").value;
+
+   const linhas = document.querySelectorAll("#tabelaMovimentacoes tbody tr");
+
+    linhas.forEach(linha => {
+
+        const dataTexto = linha.children[4].innerText.split(",")[0].trim();
+
+        const [dia, mes, ano] = dataTexto.split("/");
+
+        const dataLinha = new Date(ano, mes - 1, dia);
+
+        let mostrar = true;
+
+        if (inicio) {
+            const dataInicio = new Date(inicio);
+            dataInicio.setHours(0,0,0,0);
+
+            if (dataLinha < dataInicio) mostrar = false;
+        }
+
+        if (fim) {
+            const dataFim = new Date(fim);
+            dataFim.setHours(23,59,59,999);
+
+            if (dataLinha > dataFim) mostrar = false;
+        }
+
+        linha.style.display = mostrar ? "" : "none";
+    });
+}
+    
+    
+    //funcao limpar filtro
+
+function limparFiltro() {
+
+    document.getElementById("dataInicio").value = "";
+    document.getElementById("dataFim").value = "";
+
+   const linhas = document.querySelectorAll("#tabelaMovimentacoes tbody tr");
+
+    linhas.forEach(linha => {
+        linha.style.display = "";
     });
 }

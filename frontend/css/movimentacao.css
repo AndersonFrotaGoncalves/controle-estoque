@@ -100,3 +100,13 @@ font-weight:bold;
 color:#dc2626;
 font-weight:bold;
 }
+
+@media print {
+    .sidebar {
+        display: none;
+    }
+
+    button {
+        display: none;
+    }
+}
