@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const db = require("./database"); // 🔥 ESSENCIAL
+const db = require("./db"); // 🔥 ESSENCIAL
 
 const app = express();
 
