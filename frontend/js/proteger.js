@@ -13,8 +13,13 @@ let nomeUsuario = "";
 try {
 
     const dados = JSON.parse(usuarioSalvo);
-    nomeUsuario = dados.nome || dados.email || "Usuário";
-
+    if (dados.nome) {
+    nomeUsuario = dados.nome;
+} else if (dados.email) {
+    nomeUsuario = dados.email.split("@")[0]; // 🔥 pega só "anderson"
+} else {
+    nomeUsuario = "Usuário";
+}
 } catch {
 
     nomeUsuario = usuarioSalvo;
