@@ -1,27 +1,28 @@
-/* USUÁRIO LOGADO */
+/* 🔒 PROTEÇÃO DE ACESSO */
 
 const usuarioSalvo = localStorage.getItem("usuario");
 
-if (usuarioSalvo) {
+if (!usuarioSalvo) {
+    window.location.href = "login.html";
+}
 
-    let nomeUsuario = "";
+/* 👤 USUÁRIO LOGADO */
 
-    try {
+let nomeUsuario = "";
 
-        const dados = JSON.parse(usuarioSalvo);
+try {
 
-        nomeUsuario = dados.nome || dados.email || "Usuário";
+    const dados = JSON.parse(usuarioSalvo);
+    nomeUsuario = dados.nome || dados.email || "Usuário";
 
-    } catch {
+} catch {
 
-        nomeUsuario = usuarioSalvo;
+    nomeUsuario = usuarioSalvo;
 
-    }
+}
 
-    const elementoUsuario = document.getElementById("usuarioLogado");
+const elementoUsuario = document.getElementById("usuarioLogado");
 
-    if (elementoUsuario) {
-        elementoUsuario.innerText = nomeUsuario;
-    }
-
+if (elementoUsuario) {
+    elementoUsuario.innerText = nomeUsuario;
 }

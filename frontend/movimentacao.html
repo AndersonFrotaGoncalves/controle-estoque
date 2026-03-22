@@ -106,24 +106,7 @@ Salvar
 <script src="js/movimentacao.js"></script>
 <script src="js/proteger.js"></script>
 
-<script>
 
-let usuario = localStorage.getItem("usuario");
-
-if(usuario){
-
-    try {
-        const obj = JSON.parse(usuario);
-        document.getElementById("usuarioLogado").innerText = obj.email;
-    } catch {
-        document.getElementById("usuarioLogado").innerText = usuario;
-    }
-
-}else{
-    window.location.href="login.html";
-}
-
-</script>
 
 </body>
 </html>

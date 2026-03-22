@@ -23,13 +23,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("LOGIN DISPARADO");
 
-            const res = await fetch(`/api/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, senha })
-            });
+            const res = await fetch("/auth/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ email, senha })
+});
 
             console.log("STATUS:", res.status);
 
