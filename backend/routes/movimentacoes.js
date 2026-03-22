@@ -29,6 +29,8 @@ router.get("/movimentacoes", (req, res) => {
 
 });
 
+
+
 /* ================================
    SALVAR MOVIMENTAÇÃO
 ================================ */
@@ -107,3 +109,65 @@ router.post("/movimentacoes", (req, res) => {
 });
 
 module.exports = router;
+
+
+
+router.post("/movimentacoes/lote", async (req, res) => {
+
+    const { itens, usuario } = req.body;
+
+    console.log("LOTE RECEBIDO:", itens);
+
+    try {
+
+        for (const item of itens) {
+
+            const [produto] = await db.promise().query(
+                "SELECT id, quantidade FROM produtos WHERE codigo = ?",
+                [item.codigo]
+            );
+
+            if (!produto.length) {
+                console.log("Produto não encontrado:", item.codigo);
+                continue;
+            }
+
+            const produtoId = produto[0].id;
+            let quantidadeAtual = produto[0].quantidade;
+
+            // 🔥 REGRA DE NEGÓCIO
+            if (item.tipo === "saida") {
+                quantidadeAtual -= item.quantidade;
+            } else {
+                quantidadeAtual += item.quantidade;
+            }
+
+            // 🔥 ATUALIZA ESTOQUE
+            await db.promise().query(
+                "UPDATE produtos SET quantidade = ? WHERE id = ?",
+                [quantidadeAtual, produtoId]
+            );
+
+            // 🔥 REGISTRA MOVIMENTAÇÃO
+            await db.promise().query(
+                `INSERT INTO movimentacoes 
+                (produto_id, tipo, quantidade, observacao, usuario) 
+                VALUES (?, ?, ?, ?, ?)`,
+                [
+                    produtoId,
+                    item.tipo,
+                    item.quantidade,
+                    item.observacao || "",
+                    usuario
+                ]
+            );
+
+        }
+
+        res.json({ sucesso: true });
+
+    } catch (error) {
+        console.error("ERRO BACKEND:", error);
+        res.status(500).json({ error: "Erro ao salvar lote" });
+    }
+});

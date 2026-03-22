@@ -299,3 +299,132 @@ function limparFiltro() {
         linha.style.display = "";
     });
 }
+
+// funcao transferir mais de um produto
+
+// abrir / fechar modal
+function abrirModal() {
+    document.getElementById("modalMov").style.display = "block";
+}
+
+function fecharModal() {
+    document.getElementById("modalMov").style.display = "none";
+}
+
+// adicionar itens no modal
+function adicionarItemModal() {
+
+    const div = document.createElement("div");
+
+    div.classList.add("linha-item");
+
+    div.innerHTML = `
+        <input placeholder="Código" class="codigo" onblur="buscarDescricao(this)">
+        <input placeholder="Descrição" class="descricao" readonly>
+
+        <select class="tipo">
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+        </select>
+
+        <input type="number" placeholder="Qtd" class="quantidade">
+        <input placeholder="Observação" class="obs">
+
+        <button onclick="this.parentElement.remove()">❌</button>
+    `;
+
+    document.getElementById("listaItensModal").appendChild(div);
+}
+
+// buscar descrição automática
+async function buscarDescricao(inputCodigo) {
+
+    const codigo = inputCodigo.value;
+
+    if (!codigo) return;
+
+    try {
+
+        const response = await fetch(`http://localhost:3000/api/produtos/codigo/${codigo}`);
+        const produto = await response.json();
+
+        if (produto) {
+
+            const linha = inputCodigo.parentElement;
+
+            linha.querySelector(".descricao").value = produto.descricao;
+
+        } else {
+            alert("Produto não encontrado");
+        }
+
+    } catch (error) {
+        console.error("Erro ao buscar produto:", error);
+    }
+}
+
+// salvar movimentação em lote
+async function salvarMovimentacaoLote() {
+
+    const itens = document.querySelectorAll("#listaItensModal .linha-item");
+
+    let lista = [];
+
+    itens.forEach(item => {
+
+        const codigo = item.querySelector(".codigo").value;
+        const quantidade = item.querySelector(".quantidade").value;
+        const tipo = item.querySelector(".tipo").value;
+        const obs = item.querySelector(".obs").value;
+
+        if (codigo && quantidade) {
+            lista.push({
+                codigo,
+                quantidade,
+                tipo,
+                observacao: obs
+            });
+        }
+
+    });
+
+    if (lista.length === 0) {
+        alert("Adicione itens");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("http://localhost:3000/api/movimentacoes/lote", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                itens: lista,
+                usuario: JSON.parse(localStorage.getItem("usuario")).email
+            })
+        });
+
+        const data = await response.json();
+
+        console.log("RESPOSTA BACKEND:", data);
+
+        if (!response.ok) {
+            alert("Erro ao salvar movimentação");
+            return;
+        }
+
+        alert("Movimentação salva com sucesso!");
+
+        fecharModal();
+
+        document.getElementById("listaItensModal").innerHTML = "";
+
+        carregarHistorico();
+
+    } catch (err) {
+        console.error("Erro ao salvar lote:", err);
+        alert("Erro no servidor");
+    }
+}

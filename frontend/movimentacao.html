@@ -19,7 +19,7 @@
 <div class="sidebar">
 
 <div class="logo-sidebar">
-<img src="img/logo.png">
+<img src="img/logo.png" alt="Logo Delta Estoque">
 <h2>Delta<br>Estoque</h2>
 </div>
 
@@ -83,8 +83,25 @@ Sair
 <button onclick="salvarMovimentacao()" class="btn-salvar">
 Salvar
 </button>
+<div id="modalMov">
+  <div class="modal-content">
 
+    <h2>Movimentação em Lote</h2>
+
+    <div id="listaItensModal"></div>
+
+    <button onclick="adicionarItemModal()">+ Adicionar Item</button>
+
+    <div class="modal-actions">
+        <button onclick="salvarMovimentacaoLote()">💾 Gravar</button>
+        <button onclick="fecharModal()">❌ Fechar</button>
+    </div>
+
+  </div>
 </div>
+</div>
+
+<button onclick="abrirModal()">➕ Transderencia em Lote</button>
 
 <h2>Histórico de Movimentações</h2>
 
@@ -125,5 +142,26 @@ Salvar
 <!-- proteção de login -->
 <script src="js/proteger.js"></script>
 
+
+<div id="modalMov" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
+
+  <div style="background:#fff; padding:20px; margin:5% auto; width:500px; border-radius:10px;">
+
+    <h2>Movimentação em Lote</h2>
+
+    <div id="listaItensModal"></div>
+
+    <br>
+
+    <button onclick="adicionarItemModal()">➕ Adicionar Item</button>
+
+    <br><br>
+
+    <button onclick="salvarMovimentacaoLote()">💾 Gravar</button>
+    <button onclick="fecharModal()">❌ Fechar</button>
+
+  </div>
+
+</div>
 </body>
 </html>
