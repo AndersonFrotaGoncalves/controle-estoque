@@ -173,3 +173,96 @@ font-weight:bold;
 #listaItensModal div:first-child {
     font-weight: bold;
 }
+
+/* SUBMENU */
+.submenu {
+    margin-left: 20px; /* 🔥 recuo */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.submenu a {
+    font-size: 14px;
+    color: #ccc;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+/* hover bonito */
+.submenu a:hover {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+/* deixa o principal mais forte */
+.menu-item {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+@media print {
+
+    /* esconder formulário de entrada */
+    .form-mov {
+        display: none !important;
+    }
+
+    /* esconder botão lote */
+    button {
+        display: none !important;
+    }
+
+    /* esconder sidebar */
+    .sidebar {
+        display: none !important;
+    }
+
+    /* ajustar tela */
+    .main {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    /* manter só histórico */
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    /* deixar tabela limpa */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+}
+
+.dashboard-mov {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    flex: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.submenu{
+    dispplay:none;
+}

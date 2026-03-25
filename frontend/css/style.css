@@ -940,3 +940,35 @@ background:#ffcccc;
 background:#ccffcc;
 }
 
+/* SUBMENU */
+.submenu {
+    margin-left: 20px; /* 🔥 recuo */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+
+.submenu a {
+    font-size: 14px;
+    color: #ccc;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+
+/* hover bonito */
+.submenu a:hover {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+/* deixa o principal mais forte */
+.menu-item {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.submenu {
+    display: none;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Entrada de Estoque</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/movimentacao.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo-sidebar">
+<img src="img/logo.png" alt="Logo Delta Estoque">
+<h2>Delta<br>Estoque</h2>
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">📊 Dashboard</a>
+<a href="index.html">📦 Produtos</a>
+<a href="cadastro.html">➕ Cadastrar Produto</a>
+
+<a href="movimentacao.html" class="menu-item">
+    🔄 Movimentação
+</a>
+<div id="submenuMov" class="submenu">
+    <a href="entrada.html">📥 Entrada</a>
+    <a href="saida.html">📤 Saída</a>
+</div>
+
+<a href="mapa.html">🗺️ Mapa</a>
+<a href="importar.html">📥 Importar</a>
+<a href="sap.html">📊 Inventário SAP</a>
+<a href="usuarios.html">👤 Usuários</a>
+
+</div>
+
+<div class="user-box">
+<div class="usuario">👤 <span id="usuarioLogado"></span></div>
+<button class="btn-logout" onclick="logout()">Sair</button>
+</div>
+
+</div>
+
+<div class="main">
+
+<h1>📥 Entrada de Estoque</h1>
+
+<div class="form-mov">
+
+<input id="codigo" placeholder="Digite ou escaneie o código">
+<button onclick="buscarProduto()">Buscar</button>
+
+<input id="descricao" placeholder="Produto" readonly>
+<input type="hidden" id="produto">
+<input type="hidden" id="tipo" value="entrada">
+
+<input id="quantidade" type="number" placeholder="Quantidade">
+<input id="obs" placeholder="Observação">
+
+<button onclick="salvarMovimentacao()">Salvar</button>
+
+</div>
+
+<button onclick="abrirModal()">➕ Entrada em Lote</button>
+
+<h2>Histórico</h2>
+
+<input type="date" id="dataInicio">
+<input type="date" id="dataFim">
+<button onclick="filtrarPorData()">Filtrar</button>
+<button onclick="limparFiltro()">Limpar</button>
+
+<div style="display:flex; gap:10px; margin-bottom:15px;">
+   <button onclick="exportarExcel()">📥 Exportar Excel</button>
+    <button onclick="imprimir()" class="btn">🖨️ Imprimir</button>
+</div>
+
+
+<table id="tabelaMovimentacoes">
+<thead>
+<tr>
+<th>Produto</th>
+<th>Tipo</th>
+<th>Observação</th>
+<th>Quantidade</th>
+<th>Data</th>
+<th>Usuário</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+<!-- MODAL -->
+<div id="modalMov" style="display:none;" class="modal">
+<div class="modal-content">
+
+<h2>Entrada em Lote</h2>
+
+<div id="listaItensModal"></div>
+
+<button onclick="adicionarItemModal()">➕ Adicionar Item</button>
+
+<div class="modal-actions">
+<button onclick="salvarMovimentacaoLote()">💾 Gravar</button>
+<button onclick="fecharModal()">❌ Fechar</button>
+</div>
+
+</div>
+</div>
+
+<script>
+function toggleSubmenu() {
+    const menu = document.getElementById("submenuMov");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+</script>
+
+<script src="js/movimentacao.js"></script>
+<script src="js/proteger.js"></script>
+
+</body>
+</html>

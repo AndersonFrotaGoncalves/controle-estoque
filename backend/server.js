@@ -158,3 +158,12 @@ app.delete("/produtos/:id", (req, res) => {
    PORTA
 ================================ */
 
+function toggleSubmenu() {
+    const menu = document.getElementById("submenuMov");
+
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}

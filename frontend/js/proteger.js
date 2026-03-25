@@ -31,3 +31,10 @@ const elementoUsuario = document.getElementById("usuarioLogado");
 if (elementoUsuario) {
     elementoUsuario.innerText = nomeUsuario;
 }
+
+function fecharSubmenu() {
+    const submenu = document.getElementById("submenuMov");
+    if (submenu) {
+        submenu.style.display = "none";
+    }
+}

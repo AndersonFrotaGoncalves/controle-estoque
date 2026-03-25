@@ -145,31 +145,37 @@ async function carregarHistorico(){
     try{
 
         const response = await fetch("http://localhost:3000/api/movimentacoes");
-
         const dados = await response.json();
 
         const tbody = document.querySelector("#tabelaMovimentacoes tbody");
-
         tbody.innerHTML = "";
-dados.forEach(mov => {
 
-    const tr = document.createElement("tr");
+        // 🔥 PEGA O TIPO DA PÁGINA (entrada ou saída)
+        const tipoPagina = document.getElementById("tipo").value;
 
-    const tipoClass = mov.tipo === "entrada"
-        ? "tipo-entrada"
-        : "tipo-saida";
+        dados.forEach(mov => {
 
-   tr.innerHTML = `
-    <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
-    <td class="${tipoClass}">${mov.tipo}</td>
-    <td>${mov.observacao || "-"}</td> <!-- 🔥 AQUI -->
-    <td>${mov.quantidade}</td>
-    <td>${new Date(mov.data).toLocaleString()}</td>
-    <td>${formatarUsuario(mov.usuario)}</td>
-`;
-    tbody.appendChild(tr);
+            // 🔥 FILTRO AQUI
+            if (mov.tipo !== tipoPagina) return;
 
-});
+            const tr = document.createElement("tr");
+
+            const tipoClass = mov.tipo === "entrada"
+                ? "tipo-entrada"
+                : "tipo-saida";
+
+            tr.innerHTML = `
+                <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
+                <td class="${tipoClass}">${mov.tipo}</td>
+                <td>${mov.observacao || "-"}</td>
+                <td>${mov.quantidade}</td>
+                <td>${new Date(mov.data).toLocaleString()}</td>
+                <td>${formatarUsuario(mov.usuario)}</td>
+            `;
+
+            tbody.appendChild(tr);
+
+        });
 
     }catch(error){
 
@@ -428,3 +434,124 @@ async function salvarMovimentacaoLote() {
         alert("Erro no servidor");
     }
 }
+
+// graficos movimentacoes 
+
+async function carregarDashboard() {
+
+    try {
+
+        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const dados = await response.json();
+
+        let entradas = 0;
+        let saidas = 0;
+
+        const hoje = new Date().toDateString();
+
+        dados.forEach(mov => {
+
+            const dataMov = new Date(mov.data).toDateString();
+
+            if (dataMov === hoje) {
+
+                if (mov.tipo === "entrada") {
+                    entradas += Number(mov.quantidade);
+                } else {
+                    saidas += Number(mov.quantidade);
+                }
+
+            }
+
+        });
+
+        document.getElementById("totalEntradas").innerText = entradas;
+        document.getElementById("totalSaidas").innerText = saidas;
+        document.getElementById("saldoHoje").innerText = entradas - saidas;
+
+    } catch (error) {
+        console.error("Erro dashboard:", error);
+    }
+}
+
+carregarDashboard();
+carregarHistorico();
+
+// movimentacoes do dia
+async function carregarGrafico() {
+
+    try {
+
+        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const dados = await response.json();
+
+        let mapa = {};
+
+        dados.forEach(mov => {
+
+            const data = new Date(mov.data).toLocaleDateString();
+
+            if (!mapa[data]) {
+                mapa[data] = { entrada: 0, saida: 0 };
+            }
+
+            if (mov.tipo === "entrada") {
+                mapa[data].entrada += Number(mov.quantidade);
+            } else {
+                mapa[data].saida += Number(mov.quantidade);
+            }
+
+        });
+
+        const labels = Object.keys(mapa);
+        const entradas = labels.map(d => mapa[d].entrada);
+        const saidas = labels.map(d => mapa[d].saida);
+
+       const ctx = document.getElementById("graficoMov");
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Entradas',
+                data: entradas,
+                backgroundColor: 'rgba(22, 163, 74, 0.7)', // verde
+                borderRadius: 6,
+                barPercentage: 0.5,
+                categoryPercentage: 0.5
+            },
+            {
+                label: 'Saídas',
+                data: saidas,
+                backgroundColor: 'rgba(220, 38, 38, 0.7)', // vermelho
+                borderRadius: 6,
+                barPercentage: 0.5,
+                categoryPercentage: 0.5
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+    } catch (error) {
+        console.error("Erro gráfico:", error);
+    }
+}
+
+carregarDashboard();
+carregarGrafico();
+
