@@ -494,6 +494,7 @@ if (document.getElementById("listaAlertas")) {
 fetchProdutos().then(data => {
 
 const container = document.getElementById("listaAlertas");
+const titulo = document.getElementById("tituloAlerta");
 
 container.innerHTML = "";
 
@@ -501,32 +502,172 @@ const produtosBaixo = data.filter(p =>
     Number(p.quantidade) <= Number(p.quantidade_minima)
 );
 
-if (produtosBaixo.length === 0) {
-
-container.innerHTML = "<p>Nenhum alerta no momento</p>";
-return;
-
+// 🔢 ATUALIZA TÍTULO
+if (titulo) {
+    if (produtosBaixo.length > 0) {
+        titulo.innerText = `⚠️ ${produtosBaixo.length} alertas encontrados`;
+    } else {
+        titulo.innerText = `✅ Nenhum alerta`;
+    }
 }
 
-produtosBaixo.forEach(p => {
+if (produtosBaixo.length === 0) {
+    container.innerHTML = "<p>Nenhum alerta no momento</p>";
+    return;
+}
+
+// 🔥 MOSTRA APENAS 1
+const primeiro = produtosBaixo[0];
 
 const alerta = document.createElement("div");
 
 alerta.style.padding = "8px";
 alerta.style.marginBottom = "6px";
-alerta.style.background = "#fee2e2";
+alerta.style.background = "#f1f5f9";
 alerta.style.borderRadius = "6px";
-alerta.style.color = "#991b1b";
+alerta.style.color = "#334155";
 
-alerta.innerText = `⚠ ${p.descricao} com estoque baixo (${p.quantidade})`;
+alerta.innerText = `⚠ ${primeiro.descricao} com estoque baixo (${primeiro.quantidade})`;
 
 container.appendChild(alerta);
 
-});
+// 🔥 MOSTRA QUANTOS FALTAM
+if (produtosBaixo.length > 1) {
+
+    const extra = document.createElement("p");
+
+    extra.style.marginTop = "5px";
+    extra.style.fontSize = "13px";
+    extra.style.color = "#64748b";
+
+    extra.innerText = `+ ${produtosBaixo.length - 1} outros alertas...`;
+
+    container.appendChild(extra);
+}
 
 });
 
 }
+
+let alertasExpandidos = false;
+let cacheAlertas = [];
+
+function verTodosAlertas() {
+
+    const container = document.getElementById("listaAlertas");
+    const botao = document.querySelector(".btn-ver");
+
+    // 🔄 SE JÁ ESTÁ ABERTO → FECHA
+    if (alertasExpandidos) {
+
+        container.innerHTML = "";
+
+        const primeiro = cacheAlertas[0];
+
+        if (primeiro) {
+            const alerta = document.createElement("div");
+
+            alerta.style.padding = "8px";
+            alerta.style.marginBottom = "6px";
+            alerta.style.background = "#f1f5f9";
+            alerta.style.borderRadius = "6px";
+            alerta.style.color = "#334155";
+
+            alerta.innerText = `⚠ ${primeiro.descricao} com estoque baixo (${primeiro.quantidade})`;
+
+            container.appendChild(alerta);
+        }
+
+        // mostra "+ X outros"
+        if (cacheAlertas.length > 1) {
+            const extra = document.createElement("p");
+            extra.style.marginTop = "5px";
+            extra.style.fontSize = "13px";
+            extra.style.color = "#64748b";
+            extra.innerText = `+ ${cacheAlertas.length - 1} outros alertas...`;
+            container.appendChild(extra);
+        }
+
+        botao.innerText = "Ver detalhes";
+        alertasExpandidos = false;
+
+        return;
+    }
+
+    // 🔥 SE ESTÁ FECHADO → ABRE
+    fetchProdutos().then(data => {
+
+        cacheAlertas = data.filter(p =>
+    Number(p.quantidade) <= Number(p.quantidade_minima)
+);
+
+// 🔥 ORDENA (ZERO PRIMEIRO)
+cacheAlertas.sort((a, b) => Number(a.quantidade) - Number(b.quantidade));
+
+        container.innerHTML = "";
+
+        cacheAlertas.forEach(p => {
+
+         const alerta = document.createElement("div");
+
+// 🔥 BASE (SEMPRE APLICAR)
+alerta.style.padding = "10px";
+alerta.style.marginBottom = "8px";
+alerta.style.borderRadius = "6px";
+alerta.style.fontSize = "14px";
+
+// 🔴 CRÍTICO (ESTOQUE 0)
+if (Number(p.quantidade) === 0) {
+
+    alerta.style.background = "#fff1f2";
+    alerta.style.color = "#991b1b";
+    alerta.style.borderLeft = "4px solid #dc2626";
+
+    alerta.innerText = `${p.descricao} SEM ESTOQUE`;
+
+} else {
+
+    alerta.style.background = "#f8fafc";
+    alerta.style.color = "#334155";
+    alerta.style.borderLeft = "4px solid #f59e0b";
+
+    alerta.innerText = `${p.descricao} com estoque baixo (${p.quantidade})`;
+
+}
+
+container.appendChild(alerta);
+
+            
+            
+  if (Number(p.quantidade) === 0) {
+
+    alerta.style.background = "#fff1f2"; // vermelho bem leve
+    alerta.style.color = "#991b1b";
+    alerta.style.borderLeft = "4px solid #dc2626";
+
+    alerta.innerText = `${p.descricao} SEM ESTOQUE`;
+
+} else {
+
+    alerta.style.background = "#f8fafc";
+    alerta.style.color = "#334155";
+    alerta.style.borderLeft = "4px solid #f59e0b";
+
+    alerta.innerText = `${p.descricao} com estoque baixo (${p.quantidade})`;
+
+}
+
+            container.appendChild(alerta);
+        });
+
+        botao.innerText = "Ver menos";
+        alertasExpandidos = true;
+
+    });
+
+}
+
+
 
 /* ========================================
    GRAFICO ESTOQUE BAIXO
@@ -724,3 +865,4 @@ function buscarNoMapa(){
     }
 
 }
+

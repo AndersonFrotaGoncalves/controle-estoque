@@ -90,7 +90,25 @@ Sair
 <h1>Dashboard</h1>
 
 </div>
+<!-- ALERTA RESUMO TOPO -->
 
+<div class="alertas-container resumo-alerta">
+
+<div class="alertas-header">
+
+<h3 id="tituloAlerta">Alertas</h3>
+
+<button onclick="verTodosAlertas()" class="btn-ver">
+Ver detalhes
+</button>
+
+</div>
+
+<div id="listaAlertas">
+<p class="sem-alerta">Nenhum alerta no momento</p>
+</div>
+
+</div>
 
 <!-- CARDS -->
 
@@ -161,32 +179,7 @@ Sair
 </div>
 
 
-<!-- ALERTAS -->
 
-<div class="alertas-container">
-
-<div class="alertas-header">
-
-<h3>Alertas</h3>
-
-<span class="dots">•••</span>
-
-</div>
-
-<div id="listaAlertas">
-
-<p class="sem-alerta">
-
-Nenhum alerta no momento
-
-</p>
-
-</div>
-
-</div>
-
-
-</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -196,6 +189,19 @@ Nenhum alerta no momento
 <script src="js/app.js"></script>
 
 
+<div id="modalAlertas" class="modal-alertas">
+  <div class="modal-conteudo">
+    
+    <h3>Detalhes dos Alertas</h3>
 
+    <div id="conteudoModalAlertas"></div>
+
+    <button onclick="fecharModalAlertas()">Fechar</button>
+  </div>
+</div>
+
+<div class="footer">
+  Delta Estoque v1.0 • © 2026 • Desenvolvido por Anderson Gonçalves
+</div>
 </body>
 </html>

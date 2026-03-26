@@ -972,3 +972,12 @@ background:#ccffcc;
 .submenu {
     display: none;
 }
+
+.footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 13px;
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 40px;
+}

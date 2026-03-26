@@ -29,12 +29,12 @@ try {
 const elementoUsuario = document.getElementById("usuarioLogado");
 
 if (elementoUsuario) {
-    elementoUsuario.innerText = nomeUsuario;
-}
 
-function fecharSubmenu() {
-    const submenu = document.getElementById("submenuMov");
-    if (submenu) {
-        submenu.style.display = "none";
-    }
+    const nomeFormatado = nomeUsuario
+        .toLowerCase()
+        .split(" ")
+        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+        .join(" ");
+
+    elementoUsuario.innerText = nomeFormatado;
 }
