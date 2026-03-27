@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de APs</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/aps.css">
+</head>
+
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <div class="logo-sidebar">
+        <img src="img/logo.png" alt="Logo Delta Estoque">
+        <h2>Delta<br>Estoque</h2>
+      </div>
+
+      <nav class="menu">
+        <a href="dashboard.html">📊 Dashboard</a>
+        <a href="aps.html">📡 Controle APs</a>
+        <a href="index.html">📦 Produtos</a>
+        <a href="cadastro.html">➕ Cadastrar Produto</a>
+        <a href="movimentacao.html">🔄 Movimentação</a>
+        <a href="mapa.html">🗺️ Mapa</a>
+        <a href="importar.html">📥 Importar</a>
+        <a href="sap.html">📊 Inventário SAP</a>
+        <a href="usuarios.html">👤 Usuários</a>
+      </nav>
+
+      <div class="user-box">
+        <div class="usuario">
+          👤 <span id="usuarioLogado"></span>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">
+          Sair
+        </button>
+      </div>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <h1>Controle de APs</h1>
+      <div class="tabela-container">
+   <button onclick="adicionarLinha()">➕ Nova Linha</button>
+<table class="tabela-produtos" id="tabelaAPs">
+  <thead>
+    <tr>
+      <th>Situação</th>
+      <th>Nº OT</th>
+      <th>Data</th>
+      <th>Responsável</th>
+      <th>Cód. Local</th>
+      <th>Localização</th>
+      <th>Descrição</th>
+      <th>Data Manual</th>
+      <th>Disponibilidade</th>
+      <th>Dias em Espera</th>
+      <th>Documento Compras</th>
+      <th>Pedido Tecnidelta</th>
+      <th>Armazém MRPT</th>
+      <th>Observações</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <!-- ✅ AGORA ESTÁ NO LUGAR CERTO -->
+  <tbody id="bodyAPs">
+    <!-- linhas aqui -->
+  </tbody>
+
+</table>
+
+</div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        Delta Estoque v1.0 • © 2026 • Desenvolvido por Anderson Gonçalves
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="js/proteger.js"></script>
+  <script src="aps.js"></script>
+
+</body>
+
+</html>

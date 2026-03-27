@@ -13,6 +13,7 @@ const importarRoutes = require("./routes/importar");
 const movimentacoes = require("./routes/movimentacoes");
 const produtos = require("./routes/produtos");
 const sapRoutes = require("./routes/sap");
+const apsRoutes = require("./routes/aps");
 
 // middlewares
 app.use(cors());
@@ -28,6 +29,7 @@ app.use("/api", sapRoutes);
 app.use("/auth", authRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
+app.use("/api", apsRoutes);
 
 // frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
@@ -167,3 +169,5 @@ function toggleSubmenu() {
         menu.style.display = "block";
     }
 }
+
+

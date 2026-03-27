@@ -1,0 +1,121 @@
+/* ========================================
+   TABELA APS
+======================================== */
+
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    scrollbar-width: thin;
+}
+
+/* scroll bonito */
+.tabela-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tabela-container::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 10px;
+}
+
+/* tabela */
+.tabela-produtos {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* cabeçalho */
+.tabela-produtos th {
+    background: #1e293b;
+    color: #ffffff;
+    padding: 10px;
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* linhas */
+.tabela-produtos td {
+    padding: 6px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 12px;
+    line-height: 1.2;
+    max-height: 40px;
+    overflow: hidden;
+}
+
+/* hover */
+.tabela-produtos tr:hover {
+    background: #f8fafc;
+}
+
+/* células editáveis */
+td[contenteditable="true"] {
+    background: #f9fafb;
+    cursor: text;
+}
+
+/* TEXTO INTELIGENTE */
+.tabela-produtos th,
+.tabela-produtos td {
+    white-space: normal;
+    word-break: keep-all;
+}
+
+/* dias em espera */
+.dias-espera {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* =========================
+   QUADRADOS (CHECK)
+========================= */
+
+.check-tec,
+.check-arm {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #cbd5f5;
+    border-radius: 3px;
+    margin: auto;
+    cursor: pointer;
+}
+
+/* vermelho */
+.check-tec.ativo {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+/* verde */
+.check-arm.ativo {
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+/* centralizar colunas */
+.tabela-produtos td:nth-child(12),
+.tabela-produtos td:nth-child(13) {
+    text-align: center;
+}
+
+/* botão */
+button {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2563eb;
+}
