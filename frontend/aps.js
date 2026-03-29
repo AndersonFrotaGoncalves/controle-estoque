@@ -1,23 +1,24 @@
 // ===============================
-// CONVERTER DATA (PT-BR)
+// VAR GLOBAL
 // ===============================
+let filtroAtual = "GERAL";
+let timeoutSalvar;
 
+
+// ===============================
+// CONVERTER DATA (PT)
+// ===============================
 function converterData(data) {
 
   if (!data) return null;
 
-  // remove hora (se tiver)
-  const limpa = data.split(" ")[0];
-
-  const partes = limpa.split("/");
+  const partes = data.split(" ")[0].split("/");
 
   if (partes.length !== 3) return null;
 
-  let dia = partes[0];
-  let mes = partes[1];
-  let ano = partes[2];
+  let [dia, mes, ano] = partes;
 
-  // 🔥 corrige ano curto (26 → 2026)
+  // 🔥 corrige ano tipo 26 → 2026
   if (ano.length === 2) {
     ano = "20" + ano;
   }
@@ -28,7 +29,6 @@ function converterData(data) {
 // ===============================
 // ADICIONAR LINHA
 // ===============================
-
 window.adicionarLinha = function () {
 
   const tbody = document.getElementById("bodyAPs");
@@ -36,33 +36,38 @@ window.adicionarLinha = function () {
   const tr = document.createElement("tr");
 
   tr.innerHTML = `
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
-    <td contenteditable="true"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
+    <td contenteditable="false"></td>
 
-    <td contenteditable="true" class="data-manual"></td>
-    <td contenteditable="true" class="data-disponivel"></td>
+    <td contenteditable="false" class="data-manual"></td>
+    <td contenteditable="false" class="data-disponivel"></td>
     <td class="dias-espera">0</td>
 
-    <td contenteditable="true"></td>
+    <td contenteditable="false"></td>
 
     <td class="check-tec"></td>
     <td class="check-arm"></td>
 
-    <td contenteditable="true"></td>
+    <td contenteditable="false"></td>
 
     <td>
-        <select>
-            <option>Por Tratar</option>
-            <option>Em Andamento</option>
-            <option>Disponível</option>
-            <option>OT Programada</option>
-            <option>Concluído</option>
-        </select>
+      <select>
+       <option></option>
+        <option>Disponível</option>
+        <option>Em Espera - Pedido efetuado</option>
+        <option>OT Programada</option>
+        <option>Por Tratar</option>
+      </select>
+    </td>
+
+    <td class="acoes">
+      <button class="btn-editar">✏️</button>
+      <button class="btn-excluir">🗑</button>
     </td>
   `;
 
@@ -70,18 +75,93 @@ window.adicionarLinha = function () {
 
   configurarCalculo(tr);
   configurarChecks(tr);
-  configurarEnter(tr);
-  configurarAutoSave(tr); // ✅ AGORA NO LUGAR CERTO
+  configurarEnter(tr); 
+  configurarEditar(tr, true); // 🔥 já começa editando
+  configurarDelete(tr);
+
+  atualizarContadores();
 };
 
 
 // ===============================
-// ENTER NÃO QUEBRA LINHA
-// ===============================
+// EDITAR
+// ===============================F
+function configurarEditar(tr, iniciarEditando = false) {
 
+  const btn = tr.querySelector(".btn-editar");
+  const celulas = tr.querySelectorAll("td[contenteditable]");
+
+  let editando = iniciarEditando;
+
+  // 🔥 aplica estado inicial
+  celulas.forEach((td, i) => {
+    td.contentEditable = editando;
+    td.style.background = editando ? "#fff7ed" : "#f9fafb";
+  });
+
+  if (editando) {
+    btn.classList.add("ativo");
+  }
+
+  btn.addEventListener("click", () => {
+
+    editando = !editando;
+
+    celulas.forEach((td, i) => {
+      td.contentEditable = editando;
+      td.style.background = editando ? "#fff7ed" : "#f9fafb";
+    });
+
+    btn.classList.toggle("ativo");
+
+    // 🔥 quando sair da edição → salva
+    if (!editando) {
+      salvarLinha(tr);
+    }
+
+  });
+
+}
+
+// ===============================
+// DELETE
+function configurarDelete(tr) {
+
+  const btn = tr.querySelector(".btn-excluir");
+
+  btn.addEventListener("click", () => {
+
+    const numeroOT = tr.children[1].innerText;
+    
+     // 🔥 SE NÃO TEM OT → só remove da tela
+    if (!numeroOT) {
+      tr.remove();
+      return;
+    }
+
+    if (!confirm(`Excluir OT ${numeroOT}?`)) return;
+
+    fetch(`/api/aps/${numeroOT}`, {
+      method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(res => {
+      console.log("DELETE OK", res);
+      tr.remove();
+    })
+    .catch(err => console.error("ERRO DELETE:", err));
+
+  });
+
+}
+
+
+// ===============================
+// ENTER (NÃO QUEBRA LINHA)
+// ===============================
 function configurarEnter(tr) {
 
-  const celulas = tr.querySelectorAll("td[contenteditable='true']");
+  const celulas = tr.querySelectorAll("td[contenteditable]");
 
   celulas.forEach((celula, index) => {
 
@@ -101,92 +181,89 @@ function configurarEnter(tr) {
 }
 
 
+// CALCULO DIAS (CORRIGIDO)
 // ===============================
-// CALCULAR DIAS
-// ===============================
-
 function configurarCalculo(tr) {
 
-  tr.addEventListener("input", () => {
+  const data1 = tr.children[7];
+  const data2 = tr.children[8];
+  const campo = tr.children[9];
 
-    const dataManual = tr.children[7].innerText.trim();
-    const disponibilidade = tr.children[8].innerText.trim();
-    const campoDias = tr.children[9];
+  function calcular() {
 
-    // 🔥 só calcula se ambas existirem
-    if (!dataManual || !disponibilidade) {
-      campoDias.innerText = "0";
-      return;
-    }
+    const d1 = converterData(data1.innerText.trim());
+    const d2 = converterData(data2.innerText.trim());
 
-    const d1 = converterData(dataManual);
-    const d2 = converterData(disponibilidade);
+    if (d1 && d2) {
 
-    if (!d1 || !d2 || isNaN(d1) || isNaN(d2)) {
-      campoDias.innerText = "0";
-      return;
-    }
+      const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+      const dias = diff >= 0 ? diff : 0;
 
-    const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+      campo.innerText = dias;
 
-    campoDias.innerText = diff >= 0 ? diff : 0;
+      // 🔥 ALERTAS VISUAIS
+      if (dias >= 30) {
+        campo.style.background = "#fee2e2"; // vermelho claro
+        campo.style.color = "#b91c1c";
+        campo.style.fontWeight = "bold";
+      } 
+      else if (dias > 5) {
+        campo.style.color = "red";
+        campo.style.background = "";
+      } 
+      else {
+        campo.style.color = "green";
+        campo.style.background = "";
+      }
 
-    // 🎯 cor automática
-    if (diff > 5) {
-      campoDias.style.color = "red";
     } else {
-      campoDias.style.color = "green";
+      campo.innerText = 0;
+      campo.style = "";
     }
 
-  });
+  }
+
+  data1.addEventListener("keyup", calcular);
+  data2.addEventListener("keyup", calcular);
+
+  data1.addEventListener("blur", calcular);
+  data2.addEventListener("blur", calcular);
 
 }
 
-
 // ===============================
-// CHECKS (TEC / ARMAZÉM)
+// CHECKS
 // ===============================
+function configurarChecks(tr) {
 
-function configurarChecks(linha) {
-
-  const tec = linha.querySelector(".check-tec");
-  const arm = linha.querySelector(".check-arm");
+  const tec = tr.querySelector(".check-tec");
+  const arm = tr.querySelector(".check-arm");
 
   tec.addEventListener("click", () => {
 
-    tec.classList.toggle("ativo");
-    arm.classList.remove("ativo");
+    const ativo = tec.classList.toggle("ativo");
 
-    tec.innerText = tec.classList.contains("ativo") ? "X" : "";
-    arm.innerText = "";
+    if (ativo) {
+      arm.classList.remove("ativo");
+    }
 
-    tec.style.background = tec.classList.contains("ativo") ? "#cf0707" : "";
-    tec.style.color = "#fff";
-
-    arm.style.background = "";
   });
 
   arm.addEventListener("click", () => {
 
-    arm.classList.toggle("ativo");
-    tec.classList.remove("ativo");
+    const ativo = arm.classList.toggle("ativo");
 
-    arm.innerText = arm.classList.contains("ativo") ? "X" : "";
-    tec.innerText = "";
+    if (ativo) {
+      tec.classList.remove("ativo");
+    }
 
-    arm.style.background = arm.classList.contains("ativo") ? "#03751c" : "";
-    arm.style.color = "#fff";
-
-    tec.style.background = "";
   });
 
 }
 
-
 // ===============================
 // PEGAR DADOS
 // ===============================
-
 function obterDadosLinha(tr) {
 
   return {
@@ -211,38 +288,19 @@ function obterDadosLinha(tr) {
 
 
 // ===============================
-// AUTO SAVE
-// ===============================
-
-let timeoutSalvar;
-
-function configurarAutoSave(tr) {
-
-  tr.addEventListener("input", () => {
-
-    clearTimeout(timeoutSalvar);
-
-    timeoutSalvar = setTimeout(() => {
-      salvarLinha(tr);
-    }, 800);
-
-  });
-
-}
-
-
-// ===============================
 // SALVAR
 // ===============================
-
 function salvarLinha(tr) {
 
   const dados = obterDadosLinha(tr);
 
-  if (!dados.numero_ot) return;
+  if (!dados.numero_ot || dados.numero_ot.trim() === "") {
+    console.warn("⚠️ Linha sem Nº OT não será salva");
+    return;
+  }
 
-  fetch("/api/aps", {
-    method: "POST",
+  fetch(`/api/aps/${dados.numero_ot}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json"
     },
@@ -251,21 +309,100 @@ function salvarLinha(tr) {
 
 }
 
+
+// ===============================
+// FILTRO + BOTÃO ATIVO
+// ===============================
+function filtrarStatus(status) {
+
+  filtroAtual = status;
+  localStorage.setItem("filtroAPS", status);
+
+  const linhas = document.querySelectorAll("#bodyAPs tr");
+  const btnNovaLinha = document.getElementById("btnNovaLinha");
+
+  linhas.forEach(tr => {
+
+    const valor = tr.children[14].querySelector("select").value;
+
+    tr.style.display = (status === "GERAL" || valor === status) ? "" : "none";
+
+  });
+
+  // botão nova linha
+  btnNovaLinha.disabled = status !== "GERAL";
+  btnNovaLinha.style.opacity = status === "GERAL" ? "1" : "0.5";
+
+  // 🔥 botão ativo
+  document.querySelectorAll(".btn-filtro").forEach(btn => {
+    btn.classList.remove("ativo");
+    if (btn.dataset.status === status) {
+      btn.classList.add("ativo");
+    }
+  });
+
+}
+
+
+// ===============================
+// CONTADORES
+// ===============================
+function atualizarContadores() {
+
+  const linhas = document.querySelectorAll("#bodyAPs tr");
+
+  const contagem = {
+    "GERAL": 0,
+    "Disponível": 0,
+    "Em Espera - Pedido efetuado": 0,
+    "OT Programada": 0,
+    "Por Tratar": 0
+  };
+
+  linhas.forEach(tr => {
+
+    const status = tr.children[14].querySelector("select").value;
+
+    contagem["GERAL"]++;
+    if (contagem[status] !== undefined) contagem[status]++;
+
+  });
+
+  document.querySelectorAll(".btn-filtro").forEach(btn => {
+
+    const status = btn.dataset.status;
+
+    if (contagem[status] !== undefined) {
+      btn.innerText = `${status} (${contagem[status]})`;
+    }
+
+  });
+
+}
+
+
+// ===============================
+// INICIAR
+// ===============================
+window.onload = () => {
+
+  carregarAPs(); // 🔥 ESSENCIAL
+
+  const filtroSalvo = localStorage.getItem("filtroAPS") || "GERAL";
+
+  setTimeout(() => {
+    filtrarStatus(filtroSalvo);
+  }, 500);
+
+};
+
 function carregarAPs() {
 
   fetch("/api/aps")
     .then(res => res.json())
     .then(data => {
 
-      console.log("DADOS DO BANCO:", data); // 👈 debug
-
       const tbody = document.getElementById("bodyAPs");
-
-      if (!tbody) {
-        console.error("bodyAPs NÃO encontrado ❌");
-        return;
-      }
-
       tbody.innerHTML = "";
 
       data.forEach(ap => {
@@ -273,38 +410,37 @@ function carregarAPs() {
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-          <td>${ap.situacao || ""}</td>
-          <td>${ap.numero_ot || ""}</td>
-          <td>${ap.data || ""}</td>
-          <td>${ap.responsavel || ""}</td>
-          <td>${ap.cod_local || ""}</td>
-          <td>${ap.localizacao || ""}</td>
-          <td>${ap.descricao || ""}</td>
+          <td contenteditable="false">${ap.situacao || ""}</td>
+          <td contenteditable="false">${ap.numero_ot || ""}</td>
+          <td contenteditable="false">${ap.data || ""}</td>
+          <td contenteditable="false">${ap.responsavel || ""}</td>
+          <td contenteditable="false">${ap.cod_local || ""}</td>
+          <td contenteditable="false">${ap.localizacao || ""}</td>
+          <td contenteditable="false">${ap.descricao || ""}</td>
 
-          <td contenteditable="true">${ap.data_manual || ""}</td>
-          <td contenteditable="true">${ap.disponibilidade || ""}</td>
+          <td contenteditable="false">${ap.data_manual || ""}</td>
+          <td contenteditable="false">${ap.disponibilidade || ""}</td>
           <td class="dias-espera">${ap.dias_espera || 0}</td>
 
-          <td>${ap.documento_compras || ""}</td>
+          <td contenteditable="false">${ap.documento_compras || ""}</td>
 
-          <td class="check-tec ${ap.pedido_tec ? "ativo" : ""}">
-            ${ap.pedido_tec ? "X" : ""}
-          </td>
+          <td class="check-tec ${ap.pedido_tec ? "ativo" : ""}"></td>
+          <td class="check-arm ${ap.armazem_mrpt ? "ativo" : ""}"></td>
 
-          <td class="check-arm ${ap.armazem_mrpt ? "ativo" : ""}">
-            ${ap.armazem_mrpt ? "X" : ""}
-          </td>
-
-          <td>${ap.observacoes || ""}</td>
+          <td contenteditable="false">${ap.observacoes || ""}</td>
 
           <td>
             <select>
-              <option ${ap.status === "Por Tratar" ? "selected" : ""}>Por Tratar</option>
-              <option ${ap.status === "Em Andamento" ? "selected" : ""}>Em Andamento</option>
               <option ${ap.status === "Disponível" ? "selected" : ""}>Disponível</option>
+              <option ${ap.status === "Em Espera - Pedido efetuado" ? "selected" : ""}>Em Espera - Pedido efetuado</option>
               <option ${ap.status === "OT Programada" ? "selected" : ""}>OT Programada</option>
-              <option ${ap.status === "Concluído" ? "selected" : ""}>Concluído</option>
+              <option ${ap.status === "Por Tratar" ? "selected" : ""}>Por Tratar</option>
             </select>
+          </td>
+
+          <td class="acoes">
+            <button class="btn-editar">✏️</button>
+            <button class="btn-excluir">🗑</button>
           </td>
         `;
 
@@ -314,16 +450,52 @@ function carregarAPs() {
         configurarCalculo(tr);
         configurarChecks(tr);
         configurarEnter(tr);
-        configurarAutoSave(tr);
+        configurarEditar(tr);
+        configurarDelete(tr);
 
       });
 
-    })
-    .catch(err => {
-      console.error("Erro ao carregar:", err);
+      atualizarContadores();
+
     });
 
 }
 
+document.getElementById("btnSalvarTudo").addEventListener("click", () => {
 
-window.onload = carregarAPs;
+  const linhas = document.querySelectorAll("#bodyAPs tr");
+
+  const dados = [];
+
+  linhas.forEach(tr => {
+
+    const numeroOT = tr.children[1].innerText;
+
+    if (!numeroOT || numeroOT.trim() === "") return;
+
+    dados.push(obterDadosLinha(tr));
+
+  });
+
+  console.log("ENVIANDO:", dados);
+
+  fetch("/api/aps/lote", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dados)
+  })
+  .then(res => res.json())
+  .then(res => {
+    console.log("RESPOSTA:", res);
+    alert("✔ Salvo com sucesso!");
+  })
+  .catch(err => {
+    console.error("ERRO:", err);
+    alert("Erro ao salvar!");
+  });
+
+});
+
+

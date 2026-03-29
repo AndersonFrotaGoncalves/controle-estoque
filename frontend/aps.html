@@ -51,37 +51,62 @@
     <div class="main">
 
       <h1>Controle de APs</h1>
+
       <div class="tabela-container">
-   <button onclick="adicionarLinha()">➕ Nova Linha</button>
-<table class="tabela-produtos" id="tabelaAPs">
-  <thead>
-    <tr>
-      <th>Situação</th>
-      <th>Nº OT</th>
-      <th>Data</th>
-      <th>Responsável</th>
-      <th>Cód. Local</th>
-      <th>Localização</th>
-      <th>Descrição</th>
-      <th>Data Manual</th>
-      <th>Disponibilidade</th>
-      <th>Dias em Espera</th>
-      <th>Documento Compras</th>
-      <th>Pedido Tecnidelta</th>
-      <th>Armazém MRPT</th>
-      <th>Observações</th>
-      <th>Status</th>
-    </tr>
-  </thead>
 
-  <!-- ✅ AGORA ESTÁ NO LUGAR CERTO -->
-  <tbody id="bodyAPs">
-    <!-- linhas aqui -->
-  </tbody>
+        <button id="btnNovaLinha" onclick="adicionarLinha()">➕ Nova Linha</button>
 
-</table>
+        <button class="btn-filtro" data-status="GERAL" onclick="filtrarStatus('GERAL')">Geral</button>
 
-</div>
+        <button class="btn-filtro" data-status="Disponível" onclick="filtrarStatus('Disponível')">Disponível</button>
+
+        <button class="btn-filtro" data-status="Em Espera - Pedido efetuado" onclick="filtrarStatus('Em Espera - Pedido efetuado')">Em Espera - Pedido Efetuado</button>
+
+        <button class="btn-filtro" data-status="OT Programada" onclick="filtrarStatus('OT Programada')">OT Programada</button>
+
+        <button class="btn-filtro" data-status="Por Tratar" onclick="filtrarStatus('Por Tratar')">Por Tratar</button>
+<button id="btnSalvarTudo" class="btn-salvar-topo">
+  💾 Salvar Alterações
+</button>
+      </div>
+
+      <!-- 🔥 container correto da tabela -->
+      <div class="tabela-container">
+        <table class="tabela-produtos" id="tabelaAPs">
+          <thead>
+            <tr>
+              <th title="Situação">Situação</th>
+              <th title="Número da Ordem de Trabalho">Nº OT</th>
+              <th title="Data">Data</th>
+              <th title="Responsável">Responsável</th>
+              <th title="Código do Local">Cód. Local</th>
+              <th title="Localização">Localização</th>
+              <th title="Descrição completa">Descrição</th>
+              <th title="Data Manual">Data Manual</th>
+              <th title="Disponibilidade">Disponibilidade</th>
+              <th title="Dias em Espera">Dias em Espera</th>
+              <th title="Documento Compras">Documento Compras</th>
+              <th title="Pedido Tecnidelta">Pedido Tecnidelta</th>
+              <th title="Armazém MRPT">Armazém MRPT</th>
+              <th title="Observações">Observações</th>
+              <th title="Status">Status</th>
+              <th title="Ações">Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="bodyAPs">
+            <!-- ⚠️ IMPORTANTE:
+                 Quando criar linhas via JS,
+                 adiciona title assim:
+
+                 <td title="Texto completo">Texto</td>
+
+                 👉 isso resolve o hover automático
+            -->
+          </tbody>
+
+        </table>
+      </div>
 
       <!-- FOOTER -->
       <div class="footer">
