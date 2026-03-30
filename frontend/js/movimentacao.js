@@ -435,123 +435,183 @@ async function salvarMovimentacaoLote() {
     }
 }
 
-// graficos movimentacoes 
 
-async function carregarDashboard() {
 
-    try {
 
-        const response = await fetch("http://localhost:3000/api/movimentacoes");
-        const dados = await response.json();
+let charts = {}; // 🔥 controla gráficos
 
-        let entradas = 0;
-        let saidas = 0;
+function carregarDashboardMov(lista) {
 
-        const hoje = new Date().toDateString();
+    const hoje = new Date().toLocaleDateString("pt-PT");
 
-        dados.forEach(mov => {
+    let entradas = 0;
+    let saidas = 0;
+    const produtosHoje = new Set();
 
-            const dataMov = new Date(mov.data).toDateString();
+    const mapaEntradas = {};
+    const mapaSaidas = {};
+    const ranking = {};
 
-            if (dataMov === hoje) {
+    lista.forEach(mov => {
 
-                if (mov.tipo === "entrada") {
-                    entradas += Number(mov.quantidade);
-                } else {
-                    saidas += Number(mov.quantidade);
-                }
+        const qtd = Number(mov.quantidade); // ✅ CORRIGIDO
+        const tipo = mov.tipo?.toLowerCase();
 
-            }
+        const dataFormatada = new Date(mov.data).toLocaleDateString("pt-PT");
 
-        });
+        // ===============================
+        // HOJE
+        // ===============================
+        if (dataFormatada === hoje) {
 
-        document.getElementById("totalEntradas").innerText = entradas;
-        document.getElementById("totalSaidas").innerText = saidas;
-        document.getElementById("saldoHoje").innerText = entradas - saidas;
+            if (tipo === "entrada") entradas += qtd;
+            if (tipo === "saida") saidas += qtd;
 
-    } catch (error) {
-        console.error("Erro dashboard:", error);
-    }
-}
-
-carregarDashboard();
-carregarHistorico();
-
-// movimentacoes do dia
-async function carregarGrafico() {
-
-    try {
-
-        const response = await fetch("http://localhost:3000/api/movimentacoes");
-        const dados = await response.json();
-
-        let mapa = {};
-
-        dados.forEach(mov => {
-
-            const data = new Date(mov.data).toLocaleDateString();
-
-            if (!mapa[data]) {
-                mapa[data] = { entrada: 0, saida: 0 };
-            }
-
-            if (mov.tipo === "entrada") {
-                mapa[data].entrada += Number(mov.quantidade);
-            } else {
-                mapa[data].saida += Number(mov.quantidade);
-            }
-
-        });
-
-        const labels = Object.keys(mapa);
-        const entradas = labels.map(d => mapa[d].entrada);
-        const saidas = labels.map(d => mapa[d].saida);
-
-       const ctx = document.getElementById("graficoMov");
-
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Entradas',
-                data: entradas,
-                backgroundColor: 'rgba(22, 163, 74, 0.7)', // verde
-                borderRadius: 6,
-                barPercentage: 0.5,
-                categoryPercentage: 0.5
-            },
-            {
-                label: 'Saídas',
-                data: saidas,
-                backgroundColor: 'rgba(220, 38, 38, 0.7)', // vermelho
-                borderRadius: 6,
-                barPercentage: 0.5,
-                categoryPercentage: 0.5
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top'
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+            produtosHoje.add(mov.descricao); // ✅ CORRIGIDO
         }
-    }
-});
 
-    } catch (error) {
-        console.error("Erro gráfico:", error);
+        // ===============================
+        // GRÁFICOS
+        // ===============================
+        if (tipo === "entrada") {
+            mapaEntradas[dataFormatada] = (mapaEntradas[dataFormatada] || 0) + qtd;
+        }
+
+        if (tipo === "saida") {
+            mapaSaidas[dataFormatada] = (mapaSaidas[dataFormatada] || 0) + qtd;
+        }
+
+        // ===============================
+        // RANKING
+        // ===============================
+        const nome = mov.descricao || "Sem nome";
+
+        ranking[nome] = (ranking[nome] || 0) + qtd;
+
+    });
+
+    // ===============================
+    // KPI
+    // ===============================
+    setSafe("entradasHoje", entradas);
+    setSafe("saidasHoje", saidas);
+    setSafe("produtosHoje", produtosHoje.size);
+
+    // ===============================
+    // TOP PRODUTO
+    // ===============================
+    let top = "-";
+    let max = 0;
+
+    Object.entries(ranking).forEach(([produto, valor]) => {
+        if (valor > max) {
+            max = valor;
+            top = produto;
+        }
+    });
+
+    setSafe("topSaida", top);
+
+    // ===============================
+    // GRÁFICOS
+    // ===============================
+    criarGrafico("graficoEntradas", mapaEntradas, "Entradas");
+    criarGrafico("graficoSaidas", mapaSaidas, "Saídas");
+
+    // ===============================
+    // RANKING
+    // ===============================
+    const ul = document.getElementById("rankingProdutos");
+
+    if (ul) {
+        ul.innerHTML = "";
+
+        Object.entries(ranking)
+            .sort((a,b) => b[1] - a[1])
+            .slice(0,5)
+            .forEach(([produto, valor]) => {
+
+                const li = document.createElement("li");
+                li.innerText = `${produto} — ${valor}`;
+                ul.appendChild(li);
+            });
+    }
+
+    // ===============================
+    // HISTÓRICO
+    // ===============================
+    const tbody = document.getElementById("historicoMov");
+
+    if (tbody) {
+
+        tbody.innerHTML = "";
+
+        lista.slice(-5).reverse().forEach(mov => {
+
+            const tr = document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>${mov.descricao}</td>
+                <td>${mov.tipo}</td>
+                <td>${mov.quantidade}</td>
+                <td>${new Date(mov.data).toLocaleDateString("pt-PT")}</td>
+            `;
+
+            tbody.appendChild(tr);
+        });
     }
 }
 
-carregarDashboard();
-carregarGrafico();
+function setSafe(id, valor) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = valor;
+}
 
+function criarGrafico(id, dados, label) {
+
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+
+    // 🔥 destruir gráfico antigo
+    if (charts[id]) {
+        charts[id].destroy();
+    }
+
+    // 🔥 ordenar datas
+    const labels = Object.keys(dados).sort((a,b) => {
+        return new Date(a.split('/').reverse().join('-')) -
+               new Date(b.split('/').reverse().join('-'));
+    });
+
+    const valores = labels.map(l => dados[l]);
+
+    charts[id] = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: valores
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    try {
+
+        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const lista = await response.json();
+
+        carregarDashboardMov(lista);
+
+    } catch (error) {
+        console.error("Erro ao carregar dashboard:", error);
+    }
+
+});

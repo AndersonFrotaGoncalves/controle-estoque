@@ -62,34 +62,73 @@ Sair
 
 <div class="main">
 
-<div class="mov-container">
-  
-
 <h1>Movimentação de Estoque</h1>
 
-<div class="dashboard-mov">
+<!-- 🔥 RESUMO INTELIGENTE -->
+<div class="resumo-grid">
 
-    <div class="card">
-        <h3>📥 Entradas Hoje</h3>
-        <p id="totalEntradas">0</p>
+    <div class="card resumo entrada">
+        <h4>Entradas Hoje</h4>
+        <p id="entradasHoje">0</p>
     </div>
 
-    <div class="card">
-        <h3>📤 Saídas Hoje</h3>
-        <p id="totalSaidas">0</p>
+    <div class="card resumo saida">
+        <h4>Saídas Hoje</h4>
+        <p id="saidasHoje">0</p>
     </div>
 
-    <div class="card">
-        <h3>📊 Saldo</h3>
-        <p id="saldoHoje">0</p>
+    <div class="card resumo produtos">
+        <h4>Produtos Movimentados</h4>
+        <p id="produtosHoje">0</p>
+    </div>
+
+    <div class="card resumo alerta">
+        <h4>⚠ Mais Saídas</h4>
+        <p id="topSaida">-</p>
     </div>
 
 </div>
 
-<div style="background:#fff; padding:20px; border-radius:10px;">
-    <h3>📊 Movimentações por Dia</h3>
-    <canvas id="graficoMov"></canvas>
+<!-- 🔥 GRAFICOS LADO A LADO -->
+<div class="graficos-flex">
+
+    <div class="grafico-box">
+        <h3>Entradas (últimos dias)</h3>
+        <canvas id="graficoEntradas"></canvas>
+    </div>
+
+    <div class="grafico-box">
+        <h3>Saídas (últimos dias)</h3>
+        <canvas id="graficoSaidas"></canvas>
+    </div>
+
 </div>
+
+<!-- 🔥 RANKING -->
+<div class="ranking-box">
+    <h3>🔥 Produtos Mais Movimentados</h3>
+    <ul id="rankingProdutos"></ul>
+</div>
+
+<!-- 🔥 HISTÓRICO -->
+<div class="tabela-box">
+    <h3>Últimas Movimentações</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Tipo</th>
+                <th>Qtd</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody id="historicoMov"></tbody>
+    </table>
+</div>
+
+</div>
+
 
 
 <script src="js/movimentacao.js"></script>

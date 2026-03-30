@@ -3,7 +3,7 @@ DASHBOARD LAYOUT
 ========================= */
 
 .main{
-padding:30px;
+padding:20px;
 background: linear-gradient(180deg,#f1f5f9 0%,#e2e8f0 100%);
 min-height:100vh;
 }

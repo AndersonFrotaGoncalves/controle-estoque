@@ -274,3 +274,73 @@ font-weight:bold;
   border-top: 1px solid #e2e8f0;
   margin-top: 40px;
 }
+
+/* GRID RESUMO */
+.resumo-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.card.resumo {
+    padding:20px;
+    border-radius:12px;
+    color:white;
+}
+
+.entrada { background:#16a34a; }
+.saida { background:#dc2626; }
+.produtos { background:#2563eb; }
+.alerta { background:#f59e0b; }
+
+/* GRAFICOS */
+.graficos-flex {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.grafico-box {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+.grafico-box canvas {
+    max-height:250px;
+}
+
+/* RANKING */
+.ranking-box {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:25px;
+}
+
+.ranking-box ul {
+    list-style:none;
+}
+
+.ranking-box li {
+    padding:10px;
+    border-bottom:1px solid #eee;
+}
+
+/* TABELA */
+.tabela-box {
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+.tabela-box table {
+    width:100%;
+}
+
+.tabela-box th {
+    background:#1e293b;
+    color:white;
+}
