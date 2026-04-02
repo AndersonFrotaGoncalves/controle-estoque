@@ -144,7 +144,7 @@ async function carregarHistorico(){
 
     try{
 
-        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const response = await fetch("/api/movimentacoes");
         const dados = await response.json();
 
         const tbody = document.querySelector("#tabelaMovimentacoes tbody");
@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
 
-        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const response = await fetch("/api/movimentacoes");
         const lista = await response.json();
 
         carregarDashboardMov(lista);
