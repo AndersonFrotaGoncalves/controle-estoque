@@ -438,36 +438,38 @@ async function salvarMovimentacaoLote() {
 
 
 
-let charts = {}; // 🔥 controla gráficos
+let charts = {}; // controla gráficos
 
 function carregarDashboardMov(lista) {
 
-    const hoje = new Date().toLocaleDateString("pt-PT");
-
-    let entradas = 0;
-    let saidas = 0;
-    const produtosHoje = new Set();
+    const entradasSet = new Set();
+    const saidasSet = new Set();
+    const produtosMovimentados = new Set();
 
     const mapaEntradas = {};
     const mapaSaidas = {};
     const ranking = {};
+    const rankingSaida = {};
 
     lista.forEach(mov => {
 
-        const qtd = Number(mov.quantidade); // ✅ CORRIGIDO
+        const qtd = Number(mov.quantidade || mov.qtd || 0);
         const tipo = mov.tipo?.toLowerCase();
 
+        const nome = mov.descricao || mov.produto || "Sem nome";
         const dataFormatada = new Date(mov.data).toLocaleDateString("pt-PT");
 
         // ===============================
-        // HOJE
+        // KPI (PRODUTOS)
         // ===============================
-        if (dataFormatada === hoje) {
+        produtosMovimentados.add(nome);
 
-            if (tipo === "entrada") entradas += qtd;
-            if (tipo === "saida") saidas += qtd;
+        if (tipo === "entrada") {
+            entradasSet.add(nome);
+        }
 
-            produtosHoje.add(mov.descricao); // ✅ CORRIGIDO
+        if (tipo === "saida") {
+            saidasSet.add(nome);
         }
 
         // ===============================
@@ -482,28 +484,33 @@ function carregarDashboardMov(lista) {
         }
 
         // ===============================
-        // RANKING
+        // RANKING GERAL
         // ===============================
-        const nome = mov.descricao || "Sem nome";
-
         ranking[nome] = (ranking[nome] || 0) + qtd;
+
+        // ===============================
+        // RANKING SAÍDA (TOP)
+        // ===============================
+        if (tipo === "saida") {
+            rankingSaida[nome] = (rankingSaida[nome] || 0) + qtd;
+        }
 
     });
 
     // ===============================
     // KPI
     // ===============================
-    setSafe("entradasHoje", entradas);
-    setSafe("saidasHoje", saidas);
-    setSafe("produtosHoje", produtosHoje.size);
+    setSafe("entradasHoje", entradasSet.size);
+    setSafe("saidasHoje", saidasSet.size);
+    setSafe("produtosHoje", produtosMovimentados.size);
 
     // ===============================
-    // TOP PRODUTO
+    // TOP PRODUTO (MAIS SAÍDA)
     // ===============================
     let top = "-";
     let max = 0;
 
-    Object.entries(ranking).forEach(([produto, valor]) => {
+    Object.entries(rankingSaida).forEach(([produto, valor]) => {
         if (valor > max) {
             max = valor;
             top = produto;
@@ -540,26 +547,33 @@ function carregarDashboardMov(lista) {
     // ===============================
     // HISTÓRICO
     // ===============================
-    const tbody = document.getElementById("historicoMov");
+   const tbody = document.getElementById("historicoMov");
+if(!tbody) return;
 
-    if (tbody) {
+tbody.innerHTML = "";
 
-        tbody.innerHTML = "";
+lista
+.sort((a,b) => new Date(b.data) - new Date(a.data))
+.slice(0,5)
+.forEach(mov=>{
 
-        lista.slice(-5).reverse().forEach(mov => {
+    const tr = document.createElement("tr");
 
-            const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${mov.descricao || mov.produto}</td>
+        <td>${mov.tipo}</td>
+        <td>${mov.quantidade || mov.qtd}</td>
+        <td>${new Date(mov.data).toLocaleDateString("pt-PT")}</td>
+    `;
 
-            tr.innerHTML = `
-                <td>${mov.descricao}</td>
-                <td>${mov.tipo}</td>
-                <td>${mov.quantidade}</td>
-                <td>${new Date(mov.data).toLocaleDateString("pt-PT")}</td>
-            `;
-
-            tbody.appendChild(tr);
-        });
+    tbody.appendChild(tr);
+});
     }
+
+
+function setSafe(id, valor) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = valor;
 }
 
 function setSafe(id, valor) {
@@ -572,12 +586,10 @@ function criarGrafico(id, dados, label) {
     const canvas = document.getElementById(id);
     if (!canvas) return;
 
-    // 🔥 destruir gráfico antigo
     if (charts[id]) {
         charts[id].destroy();
     }
 
-    // 🔥 ordenar datas
     const labels = Object.keys(dados).sort((a,b) => {
         return new Date(a.split('/').reverse().join('-')) -
                new Date(b.split('/').reverse().join('-'));
@@ -615,3 +627,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
+
