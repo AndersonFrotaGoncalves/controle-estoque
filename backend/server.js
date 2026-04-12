@@ -19,15 +19,14 @@ const apsRoutes = require("./routes/aps");
 app.use(cors());
 app.use(express.json());
 
-//rotas API
 app.use("/api", movimentacoes);
 app.use("/api", produtos);
 app.use("/api", sapRoutes);
 
 
 // outras rotas
-app.use("/auth", authRoutes);
-app.use("/usuarios", usuariosRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/usuarios", usuariosRoutes);
 app.use("/importar", importarRoutes);
 app.use("/api", apsRoutes);
 

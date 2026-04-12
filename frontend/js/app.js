@@ -1,3 +1,4 @@
+
 const apiUrl = "/api/produtos";
 
 const usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -867,38 +868,41 @@ function buscarNoMapa(){
 }
 
 // botao salvar tudo
-document.getElementById("btnSalvarTudo").addEventListener("click", () => {
+const btnSalvarTudo = document.getElementById("btnSalvarTudo");
 
-  const linhas = document.querySelectorAll("#bodyAPs tr");
+if (btnSalvarTudo) {
+  btnSalvarTudo.addEventListener("click", () => {
 
-  const dados = [];
+    const linhas = document.querySelectorAll("#bodyAPs tr");
 
-  linhas.forEach(tr => {
+    const dados = [];
 
-    const numeroOT = tr.children[1].innerText;
+    linhas.forEach(tr => {
 
-    if (!numeroOT || numeroOT.trim() === "") return;
+      const numeroOT = tr.children[1].innerText;
 
-    dados.push(obterDadosLinha(tr));
+      if (!numeroOT || numeroOT.trim() === "") return;
+
+      dados.push(obterDadosLinha(tr));
+
+    });
+
+    fetch("/api/aps/lote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dados)
+    })
+    .then(res => res.json())
+    .then(res => {
+      alert("✔ Dados salvos com sucesso!");
+      console.log(res);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Erro ao salvar!");
+    });
 
   });
-
-  fetch("/api/aps/lote", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(dados)
-  })
-  .then(res => res.json())
-  .then(res => {
-    alert("✔ Dados salvos com sucesso!");
-    console.log(res);
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Erro ao salvar!");
-  });
-
-});
-
+}

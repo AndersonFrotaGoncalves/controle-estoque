@@ -6,18 +6,20 @@ const db = require("../db");
 // ===============================
 // LISTAR
 // ===============================
-router.get("/aps", (req, res) => {
-    db.query("SELECT * FROM aps", (err, result) => {
-        if (err) return res.status(500).json(err);
-        res.json(result);
-    });
+router.get("/aps", async (req, res) => {
+    try {
+        const result = await db.query("SELECT * FROM aps");
+        res.json(result.rows); // 🔥 CORREÇÃO
+    } catch (err) {
+        return res.status(500).json(err);
+    }
 });
 
 
 // ===============================
 // CRIAR / UPDATE (INDIVIDUAL)
 // ===============================
-router.post("/aps", (req, res) => {
+router.post("/aps", async (req, res) => {
 
     const d = req.body;
 
@@ -28,47 +30,49 @@ router.post("/aps", (req, res) => {
             data_manual, disponibilidade, dias_espera,
             documento_compras, pedido_tec, armazem_mrpt,
             observacoes, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
 
-        ON DUPLICATE KEY UPDATE
-            situacao=VALUES(situacao),
-            data=VALUES(data),
-            responsavel=VALUES(responsavel),
-            cod_local=VALUES(cod_local),
-            localizacao=VALUES(localizacao),
-            descricao=VALUES(descricao),
-            data_manual=VALUES(data_manual),
-            disponibilidade=VALUES(disponibilidade),
-            dias_espera=VALUES(dias_espera),
-            documento_compras=VALUES(documento_compras),
-            pedido_tec=VALUES(pedido_tec),
-            armazem_mrpt=VALUES(armazem_mrpt),
-            observacoes=VALUES(observacoes),
-            status=VALUES(status)
+        ON CONFLICT (numero_ot) DO UPDATE SET
+            situacao=EXCLUDED.situacao,
+            data=EXCLUDED.data,
+            responsavel=EXCLUDED.responsavel,
+            cod_local=EXCLUDED.cod_local,
+            localizacao=EXCLUDED.localizacao,
+            descricao=EXCLUDED.descricao,
+            data_manual=EXCLUDED.data_manual,
+            disponibilidade=EXCLUDED.disponibilidade,
+            dias_espera=EXCLUDED.dias_espera,
+            documento_compras=EXCLUDED.documento_compras,
+            pedido_tec=EXCLUDED.pedido_tec,
+            armazem_mrpt=EXCLUDED.armazem_mrpt,
+            observacoes=EXCLUDED.observacoes,
+            status=EXCLUDED.status
     `;
 
-    db.query(sql, [
-        d.situacao,
-        d.numero_ot,
-        d.data,
-        d.responsavel,
-        d.cod_local,
-        d.localizacao,
-        d.descricao,
-        d.data_manual,
-        d.disponibilidade,
-        d.dias_espera,
-        d.documento_compras,
-        d.pedido_tec,
-        d.armazem_mrpt,
-        d.observacoes,
-        d.status
-    ], (err) => {
+    try {
+        await db.query(sql, [
+            d.situacao,
+            d.numero_ot,
+            d.data,
+            d.responsavel,
+            d.cod_local,
+            d.localizacao,
+            d.descricao,
+            d.data_manual,
+            d.disponibilidade,
+            d.dias_espera,
+            d.documento_compras,
+            d.pedido_tec,
+            d.armazem_mrpt,
+            d.observacoes,
+            d.status
+        ]);
 
-        if (err) return res.status(500).json(err);
         res.json({ ok: true });
 
-    });
+    } catch (err) {
+        return res.status(500).json(err);
+    }
 
 });
 
@@ -76,14 +80,19 @@ router.post("/aps", (req, res) => {
 // ===============================
 // DELETE
 // ===============================
-router.delete("/aps/:numero_ot", (req, res) => {
+router.delete("/aps/:numero_ot", async (req, res) => {
 
     const numero_ot = req.params.numero_ot;
 
-    db.query("DELETE FROM aps WHERE numero_ot = ?", [numero_ot], (err) => {
-        if (err) return res.status(500).json(err);
+    try {
+        await db.query(
+            "DELETE FROM aps WHERE numero_ot = $1",
+            [numero_ot]
+        );
         res.json({ ok: true });
-    });
+    } catch (err) {
+        return res.status(500).json(err);
+    }
 
 });
 
@@ -91,127 +100,124 @@ router.delete("/aps/:numero_ot", (req, res) => {
 // ===============================
 // UPDATE
 // ===============================
-router.put("/aps/:numero_ot", (req, res) => {
+router.put("/aps/:numero_ot", async (req, res) => {
 
     const numero_ot = req.params.numero_ot;
     const d = req.body;
 
     const sql = `
         UPDATE aps SET
-        situacao=?, data=?, responsavel=?, cod_local=?, localizacao=?,
-        descricao=?, data_manual=?, disponibilidade=?, dias_espera=?,
-        documento_compras=?, pedido_tec=?, armazem_mrpt=?,
-        observacoes=?, status=?
-        WHERE numero_ot=?
+        situacao=$1, data=$2, responsavel=$3, cod_local=$4, localizacao=$5,
+        descricao=$6, data_manual=$7, disponibilidade=$8, dias_espera=$9,
+        documento_compras=$10, pedido_tec=$11, armazem_mrpt=$12,
+        observacoes=$13, status=$14
+        WHERE numero_ot=$15
     `;
 
-    db.query(sql, [
-        d.situacao,
-        d.data,
-        d.responsavel,
-        d.cod_local,
-        d.localizacao,
-        d.descricao,
-        d.data_manual,
-        d.disponibilidade,
-        d.dias_espera,
-        d.documento_compras,
-        d.pedido_tec,
-        d.armazem_mrpt,
-        d.observacoes,
-        d.status,
-        numero_ot
-    ], (err) => {
+    try {
+        await db.query(sql, [
+            d.situacao,
+            d.data,
+            d.responsavel,
+            d.cod_local,
+            d.localizacao,
+            d.descricao,
+            d.data_manual,
+            d.disponibilidade,
+            d.dias_espera,
+            d.documento_compras,
+            d.pedido_tec,
+            d.armazem_mrpt,
+            d.observacoes,
+            d.status,
+            numero_ot
+        ]);
 
-        if (err) return res.status(500).json(err);
         res.json({ ok: true });
 
-    });
+    } catch (err) {
+        return res.status(500).json(err);
+    }
 
 });
 
 
 // ===============================
-// 🔥 SALVAR EM LOTE (O MAIS IMPORTANTE)
+// 🔥 SALVAR EM LOTE
 // ===============================
-router.post("/aps/lote", (req, res) => {
+router.post("/aps/lote", async (req, res) => {
 
   const dados = req.body;
 
-  let total = dados.length;
-  let concluido = 0;
+  const sql = `
+    INSERT INTO aps (
+      numero_ot,
+      situacao,
+      data,
+      responsavel,
+      cod_local,
+      localizacao,
+      descricao,
+      data_manual,
+      disponibilidade,
+      dias_espera,
+      documento_compras,
+      pedido_tec,
+      armazem_mrpt,
+      observacoes,
+      status
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+    ON CONFLICT (numero_ot) DO UPDATE SET
+      situacao = EXCLUDED.situacao,
+      data = EXCLUDED.data,
+      responsavel = EXCLUDED.responsavel,
+      cod_local = EXCLUDED.cod_local,
+      localizacao = EXCLUDED.localizacao,
+      descricao = EXCLUDED.descricao,
+      data_manual = EXCLUDED.data_manual,
+      disponibilidade = EXCLUDED.disponibilidade,
+      dias_espera = EXCLUDED.dias_espera,
+      documento_compras = EXCLUDED.documento_compras,
+      pedido_tec = EXCLUDED.pedido_tec,
+      armazem_mrpt = EXCLUDED.armazem_mrpt,
+      observacoes = EXCLUDED.observacoes,
+      status = EXCLUDED.status
+  `;
 
-  dados.forEach(ap => {
+  try {
 
-    db.query(`
-      INSERT INTO aps (
-        numero_ot,
-        situacao,
-        data,
-        responsavel,
-        cod_local,
-        localizacao,
-        descricao,
-        data_manual,
-        disponibilidade,
-        dias_espera,
-        documento_compras,
-        pedido_tec,
-        armazem_mrpt,
-        observacoes,
-        status
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE
-        situacao = VALUES(situacao),
-        data = VALUES(data),
-        responsavel = VALUES(responsavel),
-        cod_local = VALUES(cod_local),
-        localizacao = VALUES(localizacao),
-        descricao = VALUES(descricao),
-        data_manual = VALUES(data_manual),
-        disponibilidade = VALUES(disponibilidade),
-        dias_espera = VALUES(dias_espera),
-        documento_compras = VALUES(documento_compras),
-        pedido_tec = VALUES(pedido_tec),
-        armazem_mrpt = VALUES(armazem_mrpt),
-        observacoes = VALUES(observacoes),
-        status = VALUES(status)
-    `, [
-      ap.numero_ot,
-      ap.situacao,
-      ap.data,
-      ap.responsavel,
-      ap.cod_local,
-      ap.localizacao,
-      ap.descricao,
-      ap.data_manual,
-      ap.disponibilidade,
-      ap.dias_espera,
-      ap.documento_compras,
-      ap.pedido_tec,
-      ap.armazem_mrpt,
-      ap.observacoes,
-      ap.status
-    ], (err) => {
+    for (const ap of dados) {
 
-      if (err) {
-        console.error("ERRO SQL:", err);
-        return res.status(500).json({ erro: "Erro ao salvar" });
-      }
+      await db.query(sql, [
+        ap.numero_ot,
+        ap.situacao,
+        ap.data,
+        ap.responsavel,
+        ap.cod_local,
+        ap.localizacao,
+        ap.descricao,
+        ap.data_manual,
+        ap.disponibilidade,
+        ap.dias_espera,
+        ap.documento_compras,
+        ap.pedido_tec,
+        ap.armazem_mrpt,
+        ap.observacoes,
+        ap.status
+      ]);
 
-      concluido++;
+    }
 
-      if (concluido === total) {
-        res.json({ sucesso: true });
-      }
+    res.json({ sucesso: true });
 
-    });
-
-  });
+  } catch (err) {
+    console.error("ERRO SQL:", err);
+    res.status(500).json({ erro: "Erro ao salvar" });
+  }
 
 });
 
 
-// ✅ EXPORTA NO FINAL
+// ===============================
 module.exports = router;

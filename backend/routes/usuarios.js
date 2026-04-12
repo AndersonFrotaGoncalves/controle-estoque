@@ -6,25 +6,25 @@ const bcrypt = require("bcryptjs");
 /* ===============================
    LISTAR USUÁRIOS
 ================================ */
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
 
-    db.query("SELECT id, nome, email, role FROM usuarios", (err, result) => {
+    try {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao buscar usuários" });
-        }
+        const result = await db.query("SELECT id, nome, email, role FROM usuarios");
 
-        res.json(result);
+        res.json(result.rows); // 🔥 CORRETO
 
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao buscar usuários" });
+    }
 
 });
 
 /* ===============================
    CRIAR USUÁRIO
 ================================ */
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
 
     const { nome, email, senha, role } = req.body;
 
@@ -32,49 +32,41 @@ router.post("/", (req, res) => {
         return res.status(400).json({ error: "Preencha todos os campos" });
     }
 
-    bcrypt.hash(senha, 10, (err, hash) => {
+    try {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao criptografar senha" });
-        }
+        const hash = await bcrypt.hash(senha, 10);
 
-        db.query(
-            "INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)",
-            [nome, email, hash, role],
-            (err) => {
-
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: "Erro ao criar usuário" });
-                }
-
-                res.json({ sucesso: true });
-
-            }
+        await db.query(
+            "INSERT INTO usuarios (nome, email, senha, role) VALUES ($1, $2, $3, $4)",
+            [nome, email, hash, role]
         );
 
-    });
+        res.json({ sucesso: true });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao criar usuário" });
+    }
 
 });
 
 /* ===============================
    EXCLUIR USUÁRIO
 ================================ */
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
 
     const { id } = req.params;
 
-    db.query("DELETE FROM usuarios WHERE id = ?", [id], (err) => {
+    try {
 
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao excluir usuário" });
-        }
+        await db.query("DELETE FROM usuarios WHERE id = $1", [id]);
 
         res.json({ sucesso: true });
 
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao excluir usuário" });
+    }
 
 });
 

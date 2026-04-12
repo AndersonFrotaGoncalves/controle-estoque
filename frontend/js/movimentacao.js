@@ -547,34 +547,33 @@ function carregarDashboardMov(lista) {
     // ===============================
     // HISTÓRICO
     // ===============================
-   const tbody = document.getElementById("historicoMov");
-if(!tbody) return;
+ const tbody = document.getElementById("historicoMov");
 
-tbody.innerHTML = "";
+    if (tbody) {
 
-lista
-.sort((a,b) => new Date(b.data) - new Date(a.data))
-.slice(0,5)
-.forEach(mov=>{
+        tbody.innerHTML = "";
 
-    const tr = document.createElement("tr");
+        lista
+        .sort((a,b) => new Date(b.data) - new Date(a.data))
+        .slice(0,5)
+        .forEach(mov=>{
 
-    tr.innerHTML = `
-        <td>${mov.descricao || mov.produto}</td>
-        <td>${mov.tipo}</td>
-        <td>${mov.quantidade || mov.qtd}</td>
-        <td>${new Date(mov.data).toLocaleDateString("pt-PT")}</td>
-    `;
+            const tr = document.createElement("tr");
 
-    tbody.appendChild(tr);
-});
+            tr.innerHTML = `
+                <td>${mov.descricao || mov.produto}</td>
+                <td>${mov.tipo}</td>
+                <td>${mov.quantidade || mov.qtd}</td>
+                <td>${new Date(mov.data).toLocaleDateString("pt-PT")}</td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+
     }
 
-
-function setSafe(id, valor) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = valor;
 }
+
 
 function setSafe(id, valor) {
     const el = document.getElementById(id);

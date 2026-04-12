@@ -5,15 +5,17 @@ if (!usuario || usuario.role !== "admin") {
     window.location.href = "dashboard.html";
 }
 
-const api = "/api/usuarios"; // 🔥 CORRETO
+const api = "/api/usuarios";
 
 /* ====================
 CARREGAR
 ==================== */
 async function carregarUsuarios(){
 
-    const res = await fetch("/usuarios");
+    const res = await fetch(api);
     const usuarios = await res.json();
+
+    console.log("USUARIOS:", usuarios); // 🔥 debug
 
     const tabela = document.querySelector("#tabelaUsuarios tbody");
 
@@ -24,7 +26,7 @@ async function carregarUsuarios(){
         tabela.innerHTML += `
         <tr>
             <td>${u.id}</td>
-            <td>${u.nome}</td>
+            <td>${u.nome || "-"}</td>
             <td>${u.email}</td>
             <td>${u.role}</td>
             <td>
@@ -51,7 +53,7 @@ function novoUsuario(){
     const senha = prompt("Senha:");
     const role = prompt("Permissão (admin/user):");
 
-    fetch("/usuarios", {
+    fetch(api, {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ nome, email, senha, role })
@@ -71,7 +73,7 @@ function editarUsuario(id){
     const role = prompt("Permissão (admin/user):");
     const senha = prompt("Nova senha (deixe vazio para não alterar):");
 
-    fetch(`/usuarios/${id}`, {
+    fetch(`${api}/${id}`, {
         method:"PUT",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ nome, email, role, senha })
@@ -88,7 +90,7 @@ function excluirUsuario(id){
 
     if(!confirm("Excluir usuário?")) return;
 
-   fetch(`/usuarios/${id}`,{
+    fetch(`${api}/${id}`,{
         method:"DELETE"
     })
     .then(() => carregarUsuarios());
