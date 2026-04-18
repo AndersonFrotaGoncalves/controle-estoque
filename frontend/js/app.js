@@ -3,6 +3,7 @@ const apiUrl = "/api/produtos";
 
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 
+
 /* ========================================
    UTIL
 ======================================== */
