@@ -1,0 +1,19 @@
+# Configuração de deploy no Render (https://render.com) — plano gratuito.
+# No Render: New → Blueprint → escolher este repositório → Apply.
+#
+# A base SQLite fica no disco temporário do serviço: é recriada com os dados
+# de demonstração em cada deploy ou reinício, o que mantém a demo sempre limpa.
+services:
+  - type: web
+    name: stockcontrol
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=optional
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: JWT_SECRET
+        generateValue: true

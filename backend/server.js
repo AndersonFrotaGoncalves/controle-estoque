@@ -9,6 +9,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// estado do serviço (usado pelo Render para saber se o servidor está de pé)
+app.get("/health", (req, res) => res.json({ ok: true }));
+
 // ---------- API ----------
 // Login é a única rota pública; tudo o resto exige um token válido.
 app.use("/auth", require("./routes/auth"));

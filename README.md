@@ -26,6 +26,10 @@ Abra **http://localhost:3000** e entre com uma das contas de demonstração (tam
 
 No primeiro arranque é criada uma base SQLite com 77 produtos e 2 meses de movimentações. Para começar do zero: `npm run reset-db`.
 
+## Publicar online (Render, grátis)
+
+O repositório inclui um [`render.yaml`](render.yaml). No [Render](https://render.com): **New → Blueprint**, escolha este repositório e clique em **Apply**. O Render instala, gera o `JWT_SECRET` e publica a cada push. No plano gratuito, a base de demonstração é recriada em cada deploy ou reinício.
+
 ## Funcionalidades
 
 - **Dashboard:** total de produtos, ocupação das posições, produtos por rack, stock normal vs. baixo e produtos mais movimentados
