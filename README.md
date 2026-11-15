@@ -2,6 +2,8 @@
 
 Sistema web para gerir o stock de um armazém de peças: **mapa de racks e níveis, entradas e saídas, importação de Excel e conferência com o relatório do SAP**. Back-end próprio em Node.js com API REST, autenticação JWT e base de dados SQL.
 
+🔗 **Demo online:** [controle-estoque-6d0g.onrender.com](https://controle-estoque-6d0g.onrender.com) · entre com o botão *Administrador* ou *Operador*. No plano gratuito, a primeira visita pode demorar cerca de 50 segundos enquanto o servidor acorda.
+
 > Empresa e dados fictícios, criados para demonstração. O projeto nasceu da minha experiência real no controlo de stock de um armazém.
 
 ![Dashboard](docs/dashboard.png)
