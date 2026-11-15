@@ -1,81 +1,70 @@
+// Gestão de utilizadores (apenas administradores).
 const express = require("express");
-const router = express.Router();
-const db = require("../db");
 const bcrypt = require("bcryptjs");
+const db = require("../db");
 
-/* ===============================
-   LISTAR USUÁRIOS
-================================ */
-router.get("/", (req, res) => {
+const router = express.Router();
+const falha = (res, status, msg) => res.status(status).json({ error: msg });
+const ROLES = ["admin", "user"];
 
-    db.query("SELECT id, nome, email, role FROM usuarios", (err, result) => {
-
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao buscar usuários" });
-        }
-
-        res.json(result);
-
-    });
-
+router.get("/", async (req, res) => {
+  try {
+    res.json(await db.run("SELECT id, nome, email, role FROM usuarios ORDER BY nome"));
+  } catch (err) {
+    console.error(err);
+    falha(res, 500, "Erro ao buscar usuários.");
+  }
 });
 
-/* ===============================
-   CRIAR USUÁRIO
-================================ */
-router.post("/", (req, res) => {
-
-    const { nome, email, senha, role } = req.body;
-
-    if (!nome || !email || !senha || !role) {
-        return res.status(400).json({ error: "Preencha todos os campos" });
-    }
-
-    bcrypt.hash(senha, 10, (err, hash) => {
-
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao criptografar senha" });
-        }
-
-        db.query(
-            "INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)",
-            [nome, email, hash, role],
-            (err) => {
-
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json({ error: "Erro ao criar usuário" });
-                }
-
-                res.json({ sucesso: true });
-
-            }
-        );
-
-    });
-
+router.post("/", async (req, res) => {
+  const nome = String(req.body.nome || "").trim();
+  const email = String(req.body.email || "").trim().toLowerCase();
+  const senha = String(req.body.senha || "");
+  const role = req.body.role;
+  if (!nome || !email || !senha || !role) return falha(res, 400, "Preencha todos os campos.");
+  if (!ROLES.includes(role)) return falha(res, 400, "Permissão inválida (use admin ou user).");
+  if (senha.length < 6) return falha(res, 400, "A senha tem de ter pelo menos 6 caracteres.");
+  try {
+    const hash = await bcrypt.hash(senha, 10);
+    const r = await db.run("INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)", [nome, email, hash, role]);
+    res.status(201).json({ sucesso: true, id: r.insertId });
+  } catch (err) {
+    if (/UNIQUE|ER_DUP_ENTRY/i.test(String(err.code) + err.message)) return falha(res, 409, "Já existe um usuário com esse e-mail.");
+    console.error(err);
+    falha(res, 500, "Erro ao criar usuário.");
+  }
 });
 
-/* ===============================
-   EXCLUIR USUÁRIO
-================================ */
-router.delete("/:id", (req, res) => {
+// Editar: campos vazios mantêm o valor atual; a senha só muda se for enviada.
+router.put("/:id", async (req, res) => {
+  try {
+    const [atual] = await db.run("SELECT * FROM usuarios WHERE id = ?", [req.params.id]);
+    if (!atual) return falha(res, 404, "Usuário não encontrado.");
+    const nome = String(req.body.nome || "").trim() || atual.nome;
+    const email = String(req.body.email || "").trim().toLowerCase() || atual.email;
+    const role = req.body.role || atual.role;
+    if (!ROLES.includes(role)) return falha(res, 400, "Permissão inválida (use admin ou user).");
+    if (atual.id === req.usuario.id && role !== "admin") return falha(res, 400, "Não pode retirar a sua própria permissão de administrador.");
+    const senha = req.body.senha ? await bcrypt.hash(String(req.body.senha), 10) : atual.senha;
+    await db.run("UPDATE usuarios SET nome = ?, email = ?, role = ?, senha = ? WHERE id = ?", [nome, email, role, senha, atual.id]);
+    res.json({ sucesso: true });
+  } catch (err) {
+    if (/UNIQUE|ER_DUP_ENTRY/i.test(String(err.code) + err.message)) return falha(res, 409, "Já existe um usuário com esse e-mail.");
+    console.error(err);
+    falha(res, 500, "Erro ao atualizar usuário.");
+  }
+});
 
-    const { id } = req.params;
-
-    db.query("DELETE FROM usuarios WHERE id = ?", [id], (err) => {
-
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Erro ao excluir usuário" });
-        }
-
-        res.json({ sucesso: true });
-
-    });
-
+router.delete("/:id", async (req, res) => {
+  if (Number(req.params.id) === req.usuario.id) return falha(res, 400, "Não pode excluir o seu próprio usuário.");
+  try {
+    const r = await db.run("DELETE FROM usuarios WHERE id = ?", [req.params.id]);
+    if (!r.affectedRows) return falha(res, 404, "Usuário não encontrado.");
+    res.json({ sucesso: true });
+  } catch (err) {
+    console.error(err);
+    falha(res, 500, "Erro ao excluir usuário.");
+  }
 });
 
 module.exports = router;

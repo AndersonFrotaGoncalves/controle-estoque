@@ -1,5 +1,28 @@
 {
+  "name": "controle-estoque",
+  "version": "2.0.0",
+  "description": "Controlo de stock de armazém com mapa de racks, movimentações e conferência com o SAP (Node.js + Express + SQLite/MySQL)",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning backend/server.js",
+    "dev": "node --watch --disable-warning=ExperimentalWarning backend/server.js",
+    "reset-db": "node -e \"require('fs').rmSync('backend/data',{recursive:true,force:true});console.log('Base de dados apagada. Será recriada no próximo npm start.')\""
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "author": "Anderson Frota",
+  "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "xlsx": "^0.18.5"
+  },
+  "optionalDependencies": {
+    "dotenv": "^16.4.5",
     "mysql2": "^3.19.0"
   }
 }

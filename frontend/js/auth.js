@@ -1,68 +1,48 @@
-document.addEventListener("DOMContentLoaded", function () {
+// Login: envia e-mail e senha, guarda o token JWT e abre o dashboard.
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("token")) {
+    window.location.replace("dashboard.html");
+    return;
+  }
 
-    // 👉 MUDA AQUI conforme ambiente
-    const API_URL = "http://localhost:3000"; 
-    // se estiver online:
-    // const API_URL = "https://SEU-BACKEND-REAL.up.railway.app";
+  const form = document.getElementById("loginForm");
+  const erro = document.getElementById("erroLogin");
 
-    const form = document.getElementById("loginForm");
+  // botões de acesso rápido às contas de demonstração
+  document.querySelectorAll("[data-demo]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const [email, senha] = b.dataset.demo.split("|");
+      document.getElementById("email").value = email;
+      document.getElementById("senha").value = senha;
+    }));
 
-    if (!form) {
-        console.error("Formulário não encontrado");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    erro.innerText = "";
+    const botao = form.querySelector("button[type=submit]");
+    botao.disabled = true;
+
+    try {
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: document.getElementById("email").value.trim(),
+          senha: document.getElementById("senha").value,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        erro.innerText = data.error || "Não foi possível entrar.";
         return;
+      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("usuario", JSON.stringify(data.usuario));
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      erro.innerText = "Servidor indisponível. Confirme que o backend está a correr (npm start).";
+    } finally {
+      botao.disabled = false;
     }
-
-    form.addEventListener("submit", async function (e) {
-
-        e.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const senha = document.getElementById("senha").value.trim();
-        const erro = document.getElementById("erroLogin");
-
-        if (erro) erro.innerText = "";
-
-        try {
-
-            console.log("LOGIN DISPARADO");
-
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, senha })
-            });
-
-            console.log("STATUS:", res.status);
-
-            // 👉 tratamento seguro
-            let data;
-            try {
-                data = await res.json();
-            } catch {
-                throw new Error("Resposta inválida do servidor");
-            }
-
-            console.log("RESPOSTA:", data);
-
-            if (!res.ok) {
-                if (erro) erro.innerText = data.error || "Erro no login";
-                return;
-            }
-
-            // 👉 salva usuário
-            localStorage.setItem("usuario", JSON.stringify(data.usuario));
-
-            console.log("LOGIN OK - REDIRECIONANDO");
-
-            window.location.href = "dashboard.html";
-
-        } catch (err) {
-            console.error("ERRO LOGIN:", err);
-            if (erro) erro.innerText = "Servidor não disponível";
-        }
-
-    });
-
+  });
 });

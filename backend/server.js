@@ -1,174 +1,33 @@
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
+require("./db"); // liga à base de dados (e cria os dados de demonstração na 1.ª vez)
+const { verificarToken, apenasAdmin } = require("./middleware/authMiddleware");
+
 const app = express();
-
-const authRoutes = require("./routes/auth");
-const usuariosRoutes = require("./routes/usuarios");
-const importarRoutes = require("./routes/importar");
-const movimentacoes = require("./routes/movimentacoes");
-const produtos = require("./routes/produtos");
-const sapRoutes = require("./routes/sap");
-
-
-/* ===============================
-   MIDDLEWARE
-================================ */
 app.use(cors());
 app.use(express.json());
 
+// ---------- API ----------
+// Login é a única rota pública; tudo o resto exige um token válido.
+app.use("/auth", require("./routes/auth"));
+app.use("/api", verificarToken, require("./routes/produtos"));
+app.use("/api", verificarToken, require("./routes/movimentacoes"));
+app.use("/api", verificarToken, require("./routes/sap"));
+app.use("/importar", verificarToken, apenasAdmin, require("./routes/importar"));
+app.use("/usuarios", verificarToken, apenasAdmin, require("./routes/usuarios"));
 
+// ---------- frontend ----------
+const FRONTEND = path.join(__dirname, "../frontend");
+app.get("/", (req, res) => res.sendFile(path.join(FRONTEND, "login.html")));
+app.use(express.static(FRONTEND));
 
-/* ===============================
-   ROTAS API
-================================ */
-
-app.use("/api", movimentacoes);
-app.use("/api", produtos);
-
-/* ===============================
-   OUTRAS ROTAS
-================================ */
-
-app.use("/auth", authRoutes);
-app.use("/usuarios", usuariosRoutes);
-app.use("/importar", importarRoutes);
-app.use("/api", sapRoutes);
-
-/* ===============================
-   FRONTEND
-================================ */
-
-app.use(express.static(path.join(__dirname, "../frontend")));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/login.html"));
+// erros não tratados (ex.: ficheiro demasiado grande no upload)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message || "Erro no servidor.", message: err.message });
 });
-
-/* ===============================
-   PORTA
-================================ */
 
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta", PORT);
-});
-
-/* PÁGINA INICIAL */
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/login.html"));
-});
-
-/* ===============================
-   LISTAR PRODUTOS
-================================ */
-
-app.get("/produtos", (req, res) => {
-
-  db.query("SELECT * FROM produtos", (err, result) => {
-
-    if (err) {
-      console.log("ERRO MYSQL:", err);
-      return res.status(500).json(err);
-    }
-
-    res.json(result);
-
-  });
-
-});
-
-/* ===============================
-   CADASTRAR PRODUTO
-================================ */
-
-app.post("/produtos", (req, res) => {
-
-  const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
-
-  const sql = `
-    INSERT INTO produtos
-    (codigo, descricao, rack, nivel, quantidade, quantidade_minima)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    sql,
-    [codigo, descricao, rack, nivel, quantidade, quantidade_minima || 2],
-    (err) => {
-
-      if (err) {
-        return res.status(500).json({ error: "Erro ao cadastrar produto" });
-      }
-
-      res.json({ sucesso: true });
-
-    }
-  );
-
-});
-
-/* ===============================
-   EDITAR PRODUTO
-================================ */
-
-app.put("/produtos/:id", (req, res) => {
-
-  const { id } = req.params;
-
-  const { codigo, descricao, rack, nivel, quantidade, quantidade_minima } = req.body;
-
-  const sql = `
-    UPDATE produtos
-    SET codigo=?, descricao=?, rack=?, nivel=?, quantidade=?, quantidade_minima=?
-    WHERE id=?
-  `;
-
-  db.query(
-    sql,
-    [codigo, descricao, rack, nivel, quantidade, quantidade_minima, id],
-    (err) => {
-
-      if (err) {
-        return res.status(500).json({ error: "Erro ao atualizar produto" });
-      }
-
-      res.json({ sucesso: true });
-
-    }
-  );
-
-});
-
-/* ===============================
-   EXCLUIR PRODUTO
-================================ */
-
-app.delete("/produtos/:id", (req, res) => {
-
-  const { id } = req.params;
-
-  db.query(
-  "DELETE FROM produtos WHERE id = ?",
-  [id],
-    (err) => {
-
-      if (err) {
-        return res.status(500).json({ error: "Erro ao excluir produto" });
-      }
-
-      res.json({ sucesso: true });
-
-    }
-  );
-
-});
-
-/* ===============================
-   PORTA
-================================ */
-
+app.listen(PORT, () => console.log(`Servidor em http://localhost:${PORT}`));

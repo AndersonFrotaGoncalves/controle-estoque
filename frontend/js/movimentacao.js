@@ -5,7 +5,7 @@ async function carregarProdutos(){
 
     try{
 
-        const response = await fetch("http://localhost:3000/api/produtos");
+        const response = await fetch("/api/produtos");
         const produtos = await response.json();
 
         const select = document.getElementById("produto");
@@ -51,7 +51,7 @@ async function buscarProduto(){
 
     try{
 
-        const response = await fetch(`http://localhost:3000/api/produtos/codigo/${codigo}`);
+        const response = await fetch(`/api/produtos/codigo/${codigo}`);
         const produto = await response.json();
 
         if(produto){
@@ -91,7 +91,7 @@ async function salvarMovimentacao(){
 
     try{
 
-        const response = await fetch("http://localhost:3000/api/movimentacoes", {
+        const response = await fetch("/api/movimentacoes", {
 
             method: "POST",
 
@@ -104,8 +104,7 @@ async function salvarMovimentacao(){
                 produto_id: produto,
                 tipo: tipo,
                 quantidade: quantidade,
-                observacao: obs,
-                usuario: JSON.parse(localStorage.getItem("usuario")).email
+                observacao: obs
 
             })
 
@@ -124,7 +123,7 @@ async function salvarMovimentacao(){
 
         }else{
 
-            alert("Erro ao registrar movimentação");
+            alert(data.erro || "Erro ao registrar movimentação");
 
         }
 
@@ -144,7 +143,7 @@ async function carregarHistorico(){
 
     try{
 
-        const response = await fetch("http://localhost:3000/api/movimentacoes");
+        const response = await fetch("/api/movimentacoes");
 
         const dados = await response.json();
 
@@ -164,7 +163,7 @@ dados.forEach(mov => {
         <td class="${tipoClass}">${mov.tipo}</td>
         <td>${mov.quantidade}</td>
         <td>${formatarUsuario(mov.usuario)}</td>
-        <td>${new Date(mov.data).toLocaleString()}</td>
+        <td>${new Date(String(mov.data).replace(" ", "T")).toLocaleString("pt-PT")}</td>
     `;
 
     tbody.appendChild(tr);

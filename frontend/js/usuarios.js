@@ -1,19 +1,21 @@
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-if (!usuario || usuario.role !== "admin") {
+const ehAdmin = usuario && usuario.role === "admin";
+if (!ehAdmin) {
     alert("Apenas administrador pode acessar");
-    window.location.href = "dashboard.html";
+    window.location.replace("dashboard.html");
 }
 
-const api = "/api/usuarios"; // 🔥 CORRETO
 
 /* ====================
 CARREGAR
 ==================== */
 async function carregarUsuarios(){
 
+    if (!ehAdmin) return;
     const res = await fetch("/usuarios");
     const usuarios = await res.json();
+    if (!res.ok) { alert(usuarios.error || "Erro ao carregar usuários"); return; }
 
     const tabela = document.querySelector("#tabelaUsuarios tbody");
 
@@ -42,55 +44,53 @@ carregarUsuarios();
 
 
 /* ====================
+PEDIDO À API (mostra o erro do servidor, se houver)
+==================== */
+async function enviar(url, metodo, corpo){
+    const res = await fetch(url, {
+        method: metodo,
+        headers: { "Content-Type": "application/json" },
+        body: corpo ? JSON.stringify(corpo) : undefined
+    });
+    const dados = await res.json().catch(() => ({}));
+    if (!res.ok) alert(dados.error || "Não foi possível concluir a operação.");
+    carregarUsuarios();
+}
+
+/* ====================
 NOVO USUÁRIO
 ==================== */
 function novoUsuario(){
-
     const nome = prompt("Nome:");
+    if (nome === null) return;          // cancelado
     const email = prompt("Email:");
-    const senha = prompt("Senha:");
-    const role = prompt("Permissão (admin/user):");
-
-    fetch("/usuarios", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ nome, email, senha, role })
-    })
-    .then(() => carregarUsuarios());
-
+    if (email === null) return;
+    const senha = prompt("Senha (mínimo 6 caracteres):");
+    if (senha === null) return;
+    const role = prompt("Permissão (admin/user):", "user");
+    if (role === null) return;
+    enviar("/usuarios", "POST", { nome, email, senha, role: role.trim().toLowerCase() });
 }
-
 
 /* ====================
-EDITAR
+EDITAR (campos vazios mantêm o valor atual)
 ==================== */
 function editarUsuario(id){
-
-    const nome = prompt("Novo nome:");
-    const email = prompt("Novo email:");
-    const role = prompt("Permissão (admin/user):");
-    const senha = prompt("Nova senha (deixe vazio para não alterar):");
-
-    fetch(`/usuarios/${id}`, {
-        method:"PUT",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ nome, email, role, senha })
-    })
-    .then(() => carregarUsuarios());
-
+    const nome = prompt("Novo nome (vazio = manter):");
+    if (nome === null) return;
+    const email = prompt("Novo email (vazio = manter):");
+    if (email === null) return;
+    const role = prompt("Permissão admin/user (vazio = manter):");
+    if (role === null) return;
+    const senha = prompt("Nova senha (vazio = manter):");
+    if (senha === null) return;
+    enviar(`/usuarios/${id}`, "PUT", { nome, email, role: role.trim().toLowerCase() || undefined, senha });
 }
-
 
 /* ====================
 EXCLUIR
 ==================== */
 function excluirUsuario(id){
-
-    if(!confirm("Excluir usuário?")) return;
-
-   fetch(`/usuarios/${id}`,{
-        method:"DELETE"
-    })
-    .then(() => carregarUsuarios());
-
+    if (!confirm("Excluir usuário?")) return;
+    enviar(`/usuarios/${id}`, "DELETE");
 }

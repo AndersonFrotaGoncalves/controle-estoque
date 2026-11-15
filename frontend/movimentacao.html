@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/movimentacao.css">
 
+<script src="js/proteger.js"></script>
 </head>
 
 <body>
@@ -17,8 +18,8 @@
 <div class="sidebar">
 
 <div class="logo-sidebar">
-<img src="img/logo.png">
-<h2>Delta<br>Estoque</h2>
+<img src="img/logo.svg" alt="StockControl">
+<h2>Stock<br>Control</h2>
 </div>
 
 <div class="menu">
@@ -101,29 +102,7 @@ Salvar
 
 </div>
 
-</table>
-
 <script src="js/movimentacao.js"></script>
-<script src="js/proteger.js"></script>
-
-<script>
-
-let usuario = localStorage.getItem("usuario");
-
-if(usuario){
-
-    try {
-        const obj = JSON.parse(usuario);
-        document.getElementById("usuarioLogado").innerText = obj.email;
-    } catch {
-        document.getElementById("usuarioLogado").innerText = usuario;
-    }
-
-}else{
-    window.location.href="login.html";
-}
-
-</script>
 
 </body>
 </html>

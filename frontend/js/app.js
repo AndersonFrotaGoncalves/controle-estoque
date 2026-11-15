@@ -311,7 +311,8 @@ if (formProduto) {
             });
 
             if (!response.ok) {
-                alert("Erro ao salvar");
+                const erro = await response.json().catch(() => ({}));
+                alert(erro.error || "Erro ao salvar");
                 return;
             }
 

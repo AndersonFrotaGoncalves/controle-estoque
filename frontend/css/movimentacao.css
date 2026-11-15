@@ -32,7 +32,7 @@ padding:30px;
 
 .form-mov{
 display:grid;
-grid-template-columns: 2fr 1fr 2fr 1fr 1fr 2fr 1fr;
+grid-template-columns: minmax(0,2fr) auto minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,2fr) auto;
 gap:10px;
 margin-bottom:20px;
 }
@@ -100,3 +100,4 @@ font-weight:bold;
 color:#dc2626;
 font-weight:bold;
 }
+@media (max-width:1100px){ .form-mov{ grid-template-columns: minmax(0,1fr) auto; } }

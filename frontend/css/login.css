@@ -90,3 +90,7 @@ transition:0.2s;
 .btn-login:hover{
 background:#1d4ed8;
 }
+.demo-contas{margin-top:18px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;font-size:13px;color:#64748b}
+.demo-contas p{margin-bottom:8px}
+.demo-contas button{margin:0 4px;padding:6px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;color:#1e293b;cursor:pointer;font-size:13px}
+.demo-contas button:hover{border-color:#2563eb;color:#2563eb}
