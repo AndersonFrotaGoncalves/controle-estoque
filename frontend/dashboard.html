@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - Controle de Estoque</title>
+<title>Dashboard · StockControl</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -27,19 +27,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 
@@ -50,7 +50,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -68,7 +68,7 @@ Sair
 
 <div class="search-box">
 
-<input type="text" placeholder="Buscar produto...">
+<input type="text" placeholder="Search product...">
 
 </div>
 
@@ -100,7 +100,7 @@ Sair
 <div class="card">
 <div class="card-icon icon-produtos">📦</div>
 <div>
-<h3>Total de Produtos</h3>
+<h3>Total Products</h3>
 <p id="totalProdutos">0</p>
 </div>
 </div>
@@ -108,7 +108,7 @@ Sair
 <div class="card">
 <div class="card-icon icon-pecas">🏢</div>
 <div>
-<h3>Total de Racks</h3>
+<h3>Total Racks</h3>
 <p id="totalPecas">0</p>
 </div>
 </div>
@@ -116,7 +116,7 @@ Sair
 <div class="card">
 <div class="card-icon icon-posicoes">📍</div>
 <div>
-<h3>Posições Ocupadas</h3>
+<h3>Occupied Positions</h3>
 <p id="ocupadas">0</p>
 </div>
 </div>
@@ -124,51 +124,51 @@ Sair
 <div class="card">
 <div class="card-icon icon-alerta">📂</div>
 <div>
-<h3>Posições Livres</h3>
+<h3>Free Positions</h3>
 <p id="estoqueBaixo">0</p>
 </div>
 </div>
 </div>
 
 
-<!-- GRÁFICOS -->
+<!-- CHARTS -->
 
 <div class="graficos-grid">
 
 <!-- 1 -->
 <div class="grafico-container">
-<h3>Posições do Armazém</h3>
+<h3>Warehouse Positions</h3>
 <canvas id="graficoPosicoes"></canvas>
 </div>
 
 <!-- 2 -->
 <div class="grafico-container">
-<h3>Produtos por Rack</h3>
+<h3>Products per Rack</h3>
 <canvas id="graficoRacks"></canvas>
 </div>
 
 <!-- 3 -->
 <div class="grafico-container">
-<h3>Estoque (Normal vs Baixo)</h3>
+<h3>Stock (Normal vs Low)</h3>
 <canvas id="graficoEstoque"></canvas>
 </div>
 
 <!-- 4 -->
 <div class="grafico-container">
-<h3>Top Produtos Movimentados</h3>
+<h3>Most Moved Products</h3>
 <canvas id="graficoTopProdutos"></canvas>
 </div>
 
 </div>
 
 
-<!-- ALERTAS -->
+<!-- ALERTS -->
 
 <div class="alertas-container">
 
 <div class="alertas-header">
 
-<h3>Alertas</h3>
+<h3>Alerts</h3>
 
 <span class="dots">•••</span>
 
@@ -178,7 +178,7 @@ Sair
 
 <p class="sem-alerta">
 
-Nenhum alerta no momento
+No alerts right now
 
 </p>
 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Produtos - Controle de Estoque</title>
+<title>Products · StockControl</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -24,19 +24,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 
@@ -47,7 +47,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -57,20 +57,20 @@ Sair
 
 <div class="main">
 
-<h1>Lista de Produtos</h1>
+<h1>Product List</h1>
 
 <table id="tabelaProdutos" class="tabela-produtos">
 <thead>
 <tr>
 <th>
-<th>Código</th>
-<th>Descrição</th>
+<th>Code</th>
+<th>Description</th>
 <th>Rack</th>
-<th>Nível</th>
-<th>Qtd</th>
-<th>Ações</th>
+<th>Level</th>
+<th>Qty</th>
+<th>Actions</th>
 <button id="btnExcluirSelecionados" onclick="excluirSelecionados()">
-🗑 Excluir Selecionados
+🗑 Delete Selected
 </button>
 </tr>
 </thead>
@@ -83,12 +83,12 @@ Sair
 <!-- MODAL -->
 <div class="modal-overlay" id="modalExcluir">
 <div class="modal">
-<h3>Excluir Produto?</h3>
-<p>Esta ação não pode ser desfeita.</p>
+<h3>Delete product?</h3>
+<p>This can't be undone.</p>
 
 <div class="modal-buttons">
-<button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-<button class="btn-confirmar" onclick="confirmarExclusao()">Excluir</button>
+<button class="btn-cancelar" onclick="fecharModal()">Cancel</button>
+<button class="btn-confirmar" onclick="confirmarExclusao()">Delete</button>
 </div>
 </div>
 </div>

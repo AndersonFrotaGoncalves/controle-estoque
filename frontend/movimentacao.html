@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Movimentação de Estoque</title>
+<title>Stock Movements · StockControl</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/movimentacao.css">
@@ -26,19 +26,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 
@@ -49,7 +49,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -60,41 +60,41 @@ Sair
 
 <div class="mov-container">
 
-<h1>Movimentação de Estoque</h1>
+<h1>Stock Movements</h1>
 
 <div class="form-mov">
 
-<input id="codigo" placeholder="Digite ou escaneie o código">
-<button onclick="buscarProduto()">Buscar</button>
+<input id="codigo" placeholder="Type or scan the code">
+<button onclick="buscarProduto()">Search</button>
 
-<input id="descricao" placeholder="Produto" readonly>
+<input id="descricao" placeholder="Product" readonly>
 <input type="hidden" id="produto">
 
 <select id="tipo">
-<option value="entrada">Entrada</option>
-<option value="saida">Saída</option>
+<option value="entrada">Stock in</option>
+<option value="saida">Stock out</option>
 </select>
 
-<input id="quantidade" type="number" placeholder="Quantidade">
+<input id="quantidade" type="number" placeholder="Quantity">
 
-<input id="obs" placeholder="Observação">
+<input id="obs" placeholder="Note">
 
 <button onclick="salvarMovimentacao()" class="btn-salvar">
-Salvar
+Save
 </button>
 
 </div>
 
-<h2>Histórico de Movimentações</h2>
+<h2>Movement History</h2>
 
 <table id="tabelaMovimentacoes">
 <thead>
 <tr>
-<th>Produto</th>
-<th>Tipo</th>
-<th>Quantidade</th>
-<th>Usuário</th>
-<th>Data</th>
+<th>Product</th>
+<th>Type</th>
+<th>Quantity</th>
+<th>User</th>
+<th>Date</th>
 </tr>
 </thead>
 <tbody></tbody>

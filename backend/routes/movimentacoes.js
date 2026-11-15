@@ -13,7 +13,7 @@ router.get("/movimentacoes", async (req, res) => {
       ORDER BY m.data DESC, m.id DESC`));
   } catch (err) {
     console.error(err);
-    falha(res, 500, "Erro ao buscar movimentações.");
+    falha(res, 500, "Error loading movements.");
   }
 });
 
@@ -23,8 +23,8 @@ router.post("/movimentacoes", async (req, res) => {
   const quantidade = Number(req.body.quantidade);
   const observacao = String(req.body.observacao || "").trim() || null;
 
-  if (!produtoId || !["entrada", "saida"].includes(tipo)) return falha(res, 400, "Dados inválidos.");
-  if (!Number.isInteger(quantidade) || quantidade <= 0) return falha(res, 400, "A quantidade tem de ser um número inteiro maior que zero.");
+  if (!produtoId || !["entrada", "saida"].includes(tipo)) return falha(res, 400, "Invalid data.");
+  if (!Number.isInteger(quantidade) || quantidade <= 0) return falha(res, 400, "Quantity must be a whole number greater than zero.");
 
   try {
     // A atualização só acontece se houver stock suficiente: a condição está
@@ -35,8 +35,8 @@ router.post("/movimentacoes", async (req, res) => {
 
     if (!r.affectedRows) {
       const [p] = await db.run("SELECT quantidade FROM produtos WHERE id = ?", [produtoId]);
-      if (!p) return falha(res, 404, "Produto não encontrado.");
-      return falha(res, 400, `Estoque insuficiente: há ${p.quantidade} unidade(s).`);
+      if (!p) return falha(res, 404, "Product not found.");
+      return falha(res, 400, `Not enough stock: there are ${p.quantidade} unit(s).`);
     }
 
     // o utilizador vem do token, não do corpo do pedido
@@ -48,7 +48,7 @@ router.post("/movimentacoes", async (req, res) => {
     res.status(201).json({ sucesso: true, quantidade: atual.quantidade });
   } catch (err) {
     console.error(err);
-    falha(res, 500, "Erro ao salvar movimentação.");
+    falha(res, 500, "Error saving the movement.");
   }
 });
 

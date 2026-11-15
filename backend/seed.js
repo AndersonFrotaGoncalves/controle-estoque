@@ -1,35 +1,35 @@
-// Dados de demonstração (fictícios), criados só quando a base SQLite é nova.
+// Demo data (fictional), created only when the SQLite database is new.
 const bcrypt = require("bcryptjs");
 
 module.exports = function seed(executar) {
-  // gerador com semente fixa: os dados são sempre os mesmos
+  // fixed-seed generator: the data is always the same
   let s = 42;
   const r = () => ((s = (s * 1103515245 + 12345) % 2147483648) / 2147483648);
   const escolher = (lista) => lista[Math.floor(r() * lista.length)];
 
   executar("INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)",
-    ["Administrador", "admin@estoque.demo", bcrypt.hashSync("admin123", 10), "admin"]);
+    ["Administrator", "admin@estoque.demo", bcrypt.hashSync("admin123", 10), "admin"]);
   executar("INSERT INTO usuarios (nome, email, senha, role) VALUES (?, ?, ?, ?)",
-    ["Operador", "operador@estoque.demo", bcrypt.hashSync("operador123", 10), "user"]);
+    ["Operator", "operador@estoque.demo", bcrypt.hashSync("operador123", 10), "user"]);
 
   const pecas = [
-    "VEDANTE O-RING 12MM", "VEDANTE O-RING 20MM", "ANILHA SILICONE 30X42", "ANILHA COBRE 3/8",
-    "RESISTÊNCIA 1200W", "RESISTÊNCIA 2000W", "TERMÓSTATO 120ºC", "SONDA TEMPERATURA NTC",
-    "ELETROVÁLVULA 2 VIAS", "ELETROVÁLVULA 3 VIAS", "BOMBA VIBRATÓRIA 48W", "BOMBA ROTATIVA 150L",
-    "PRESSOSTATO 1,2 BAR", "MANÓMETRO 0-16 BAR", "FILTRO DE ÁGUA 10\"", "CARTUCHO ANTICALCÁRIO",
-    "MANGUEIRA PTFE 1M", "TUBO COBRE 1/4", "TUBO COBRE 3/8", "LIGAÇÃO RÁPIDA 1/4",
-    "MOTOR MOINHO 230V", "MÓS MOINHO 64MM", "PORTA-FILTRO DUPLO", "CESTO FILTRO 14G",
-    "CHUVEIRO GRUPO 57MM", "JUNTA GRUPO 8,5MM", "PLACA ELETRÓNICA CPU", "TECLADO MEMBRANA 6T",
-    "INTERRUPTOR ON/OFF", "RELÉ 12V", "CONDENSADOR 4µF", "FUSÍVEL 10A",
-    "VENTILADOR 120MM", "SENSOR DE NÍVEL", "TORNEIRA VAPOR", "LANÇA VAPOR INOX",
-    "PARAFUSO M4X10 INOX", "PORCA M6 INOX", "ABRAÇADEIRA 12-22", "SUPORTE PAREDE 450MM",
+    "O-RING SEAL 12MM", "O-RING SEAL 20MM", "SILICONE WASHER 30X42", "COPPER WASHER 3/8",
+    "HEATING ELEMENT 1200W", "HEATING ELEMENT 2000W", "THERMOSTAT 120ºC", "NTC TEMPERATURE PROBE",
+    "2-WAY SOLENOID VALVE", "3-WAY SOLENOID VALVE", "VIBRATION PUMP 48W", "ROTARY PUMP 150L",
+    "PRESSURE SWITCH 1.2 BAR", "PRESSURE GAUGE 0-16 BAR", "WATER FILTER 10\"", "ANTI-SCALE CARTRIDGE",
+    "PTFE HOSE 1M", "COPPER PIPE 1/4", "COPPER PIPE 3/8", "QUICK CONNECTOR 1/4",
+    "GRINDER MOTOR 230V", "GRINDER BURRS 64MM", "DOUBLE PORTAFILTER", "FILTER BASKET 14G",
+    "GROUP SHOWER SCREEN 57MM", "GROUP GASKET 8.5MM", "CPU CIRCUIT BOARD", "MEMBRANE KEYPAD 6 KEYS",
+    "ON/OFF SWITCH", "RELAY 12V", "CAPACITOR 4µF", "FUSE 10A",
+    "FAN 120MM", "LEVEL SENSOR", "STEAM VALVE", "STAINLESS STEAM WAND",
+    "SCREW M4X10 STAINLESS", "NUT M6 STAINLESS", "HOSE CLAMP 12-22", "WALL BRACKET 450MM",
   ];
   const racks = ["A", "B", "C", "D", "E", "F", "G", "H", "E-ARM4", "E-ARM5"];
   const usadas = new Set();
   const ids = [];
 
   pecas.forEach((desc, i) => {
-    // até 3 tamanhos/variantes por peça, para encher o mapa
+    // up to 3 sizes/variants per part, to fill the map
     const variantes = 1 + Math.floor(r() * 3);
     for (let v = 0; v < variantes; v++) {
       let rack, nivel;
@@ -47,9 +47,9 @@ module.exports = function seed(executar) {
     }
   });
 
-  // histórico de movimentações dos últimos 60 dias
+  // movement history for the last 60 days
   const quem = ["admin@estoque.demo", "operador@estoque.demo"];
-  const obs = { entrada: ["Receção de encomenda", "Devolução de técnico", "Acerto de inventário"], saida: ["Abastecimento técnico", "Reparação em oficina", "Venda balcão"] };
+  const obs = { entrada: ["Order received", "Returned by technician", "Stock count adjustment"], saida: ["Technician restock", "Workshop repair", "Counter sale"] };
   for (let d = 60; d >= 0; d--) {
     const n = Math.floor(r() * 5);
     for (let k = 0; k < n; k++) {
@@ -60,5 +60,5 @@ module.exports = function seed(executar) {
         [escolher(ids), tipo, 1 + Math.floor(r() * 6), escolher(obs[tipo]), escolher(quem), iso]);
     }
   }
-  console.log(`Dados de demonstração criados: ${ids.length} produtos.`);
+  console.log(`Demo data created: ${ids.length} products.`);
 };

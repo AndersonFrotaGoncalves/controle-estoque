@@ -44,8 +44,8 @@ async function carregarProdutos() {
     <td>${produto.quantidade ?? 0}</td>
     <td>
     ${usuario?.role === "admin" ? `
-        <button onclick="editarProduto(${produto.id})">Editar</button>
-    ` : `<span style="color:#888;">Somente leitura</span>`}
+        <button onclick="editarProduto(${produto.id})">Edit</button>
+    ` : `<span style="color:#888;">Read only</span>`}
     </td>
 `;
 
@@ -130,8 +130,8 @@ function renderizarMapa(data) {
         contador.classList.add("rack-count");
 
         contador.innerHTML = `
-        ${percentual}% ocupado<br>
-        ${ocupadas} de ${totalPosicoes} posições
+        ${percentual}% occupied<br>
+        ${ocupadas} of ${totalPosicoes} positions
         `;
 
         header.appendChild(titulo);
@@ -223,7 +223,7 @@ new Chart(ctxPosicoes, {
 type: "doughnut",
 
 data: {
-labels: ["Ocupadas", "Livres"],
+labels: ["Occupied", "Free"],
 datasets: [{
 data: [ocupadas, livres],
 backgroundColor: ["#16a34a","#1e3a8a"]
@@ -312,17 +312,17 @@ if (formProduto) {
 
             if (!response.ok) {
                 const erro = await response.json().catch(() => ({}));
-                alert(erro.error || "Erro ao salvar");
+                alert(erro.error || "Error saving");
                 return;
             }
 
-            alert(produtoId ? "Produto atualizado!" : "Produto criado!");
+            alert(produtoId ? "Product updated!" : "Product created!");
 
             window.location.href = "index.html";
 
         } catch (error) {
             console.error(error);
-            alert("Erro no servidor");
+            alert("Server error");
         }
 
     });
@@ -333,11 +333,11 @@ function excluirSelecionados(){
     const selecionados = document.querySelectorAll(".selecionarProduto:checked");
 
     if(selecionados.length === 0){
-        alert("Selecione pelo menos um produto");
+        alert("Select at least one product");
         return;
     }
 
-    if(!confirm("Deseja excluir os produtos selecionados?")) return;
+    if(!confirm("Delete the selected products?")) return;
 
     const ids = Array.from(selecionados).map(cb => cb.value);
 
@@ -349,12 +349,12 @@ function excluirSelecionados(){
         )
     )
     .then(() => {
-        alert("Produtos excluídos com sucesso!");
+        alert("Products deleted.");
         carregarProdutos();
     })
     .catch(err => {
         console.error(err);
-        alert("Erro ao excluir");
+        alert("Error deleting");
     });
 
 }
@@ -446,7 +446,7 @@ labels: labels,
 
 datasets: [{
 
-label: "Produtos por Rack",
+label: "Products per Rack",
 
 data: valores,
 
@@ -504,7 +504,7 @@ const produtosBaixo = data.filter(p =>
 
 if (produtosBaixo.length === 0) {
 
-container.innerHTML = "<p>Nenhum alerta no momento</p>";
+container.innerHTML = "<p>No alerts right now</p>";
 return;
 
 }
@@ -519,7 +519,7 @@ alerta.style.background = "#fee2e2";
 alerta.style.borderRadius = "6px";
 alerta.style.color = "#991b1b";
 
-alerta.innerText = `⚠ ${p.descricao} com estoque baixo (${p.quantidade})`;
+alerta.innerText = `⚠ ${p.descricao}: low stock (${p.quantidade})`;
 
 container.appendChild(alerta);
 
@@ -552,7 +552,7 @@ new Chart(ctx, {
 type: "pie",
 
 data: {
-labels: ["Estoque Normal", "Estoque Baixo"],
+labels: ["Normal stock", "Low stock"],
 datasets: [{
 data: [estoqueNormal, estoqueBaixo],
 backgroundColor: [
@@ -689,7 +689,7 @@ function buscarNoMapa(){
     const codigo = document.getElementById("buscarMapa").value.toLowerCase();
 
     if(!codigo){
-        alert("Digite um código");
+        alert("Enter a code");
         return;
     }
 
@@ -721,7 +721,7 @@ function buscarNoMapa(){
     });
 
     if(!encontrou){
-        alert("Produto não encontrado no mapa");
+        alert("Product not found on the map");
     }
 
 }

@@ -1,4 +1,4 @@
-// Login: envia e-mail e senha, guarda o token JWT e abre o dashboard.
+// Login: sends email and password, stores the JWT token and opens the dashboard.
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("token")) {
     window.location.replace("dashboard.html");
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const erro = document.getElementById("erroLogin");
 
-  // botões de acesso rápido às contas de demonstração
+  // quick access buttons for the demo accounts
   document.querySelectorAll("[data-demo]").forEach((b) =>
     b.addEventListener("click", () => {
       const [email, senha] = b.dataset.demo.split("|");
@@ -33,14 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        erro.innerText = data.error || "Não foi possível entrar.";
+        erro.innerText = data.error || "Could not sign in.";
         return;
       }
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
       window.location.href = "dashboard.html";
     } catch (err) {
-      erro.innerText = "Servidor indisponível. Confirme que o backend está a correr (npm start).";
+      erro.innerText = "Server unavailable. Make sure the backend is running (npm start).";
     } finally {
       botao.disabled = false;
     }

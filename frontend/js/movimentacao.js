@@ -11,11 +11,11 @@ async function carregarProdutos(){
         const select = document.getElementById("produto");
 
         if(!select){
-            console.error("Elemento #produto não existe");
+            console.error("Element #produto not found");
             return;
         }
 
-        select.innerHTML = '<option value="">Selecione um produto</option>';
+        select.innerHTML = '<option value="">Select a product</option>';
 
         produtos.forEach(produto => {
 
@@ -45,7 +45,7 @@ async function buscarProduto(){
     const codigo = document.getElementById("codigo")?.value;
 
     if(!codigo){
-        alert("Digite o código");
+        alert("Enter the code");
         return;
     }
 
@@ -63,7 +63,7 @@ async function buscarProduto(){
             if(prod) prod.value = produto.id; // 🔥 ESSENCIAL
 
         }else{
-            alert("Produto não encontrado");
+            alert("Product not found");
         }
 
     }catch(error){
@@ -84,7 +84,7 @@ async function salvarMovimentacao(){
 
     if(!produto || !quantidade){
 
-        alert("Preencha todos os campos");
+        alert("Fill in all fields");
         return;
 
     }
@@ -114,7 +114,7 @@ async function salvarMovimentacao(){
 
         if(data.sucesso){
 
-            alert("Movimentação registrada com sucesso!");
+            alert("Movement recorded.");
 
             document.getElementById("quantidade").value = "";
             document.getElementById("obs").value = "";
@@ -123,7 +123,7 @@ async function salvarMovimentacao(){
 
         }else{
 
-            alert(data.erro || "Erro ao registrar movimentação");
+            alert(data.erro || "Error recording the movement");
 
         }
 
@@ -160,10 +160,10 @@ dados.forEach(mov => {
 
     tr.innerHTML = `
         <td><strong>${mov.codigo}</strong> - ${mov.descricao}</td>
-        <td class="${tipoClass}">${mov.tipo}</td>
+        <td class="${tipoClass}">${mov.tipo === "entrada" ? "In" : "Out"}</td>
         <td>${mov.quantidade}</td>
         <td>${formatarUsuario(mov.usuario)}</td>
-        <td>${new Date(String(mov.data).replace(" ", "T")).toLocaleString("pt-PT")}</td>
+        <td>${new Date(String(mov.data).replace(" ", "T")).toLocaleString("en-GB")}</td>
     `;
 
     tbody.appendChild(tr);

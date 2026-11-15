@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Produto - Controle de Estoque</title>
+    <title>Add Product · StockControl</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -24,19 +24,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 
@@ -47,7 +47,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -56,7 +56,7 @@ Sair
 
 <div class="main">
 
-    <h1 id="tituloFormulario">Cadastrar Produto</h1>
+    <h1 id="tituloFormulario">Add Product</h1>
 
     <div class="form-container">
 
@@ -65,40 +65,40 @@ Sair
             <div class="form-grid">
 
                 <div class="form-group">
-                    <label for="codigo">Código</label>
-                    <input type="text" id="codigo" placeholder="Digite o código do produto" required>
+                    <label for="codigo">Code</label>
+                    <input type="text" id="codigo" placeholder="Enter the product code" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="descricao">Descrição</label>
-                    <input type="text" id="descricao" placeholder="Descrição do produto" required>
+                    <label for="descricao">Description</label>
+                    <input type="text" id="descricao" placeholder="Product description" required>
                 </div>
 
                 <div class="form-group">
                     <label for="rack">Rack</label>
-                    <input type="text" id="rack" placeholder="Ex: A01" required>
+                    <input type="text" id="rack" placeholder="e.g. A01" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="nivel">Nível</label>
-                    <input type="number" id="nivel" placeholder="Ex: 1" required>
+                    <label for="nivel">Level</label>
+                    <input type="number" id="nivel" placeholder="e.g. 1" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="quantidade">Quantidade</label>
-                    <input type="number" id="quantidade" placeholder="Quantidade em estoque" required>
+                    <label for="quantidade">Quantity</label>
+                    <input type="number" id="quantidade" placeholder="Quantity in stock" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="quantidade_minima">Quantidade Mínima</label>
-                    <input type="number" id="quantidade_minima" placeholder="Estoque mínimo">
+                    <label for="quantidade_minima">Minimum Quantity</label>
+                    <input type="number" id="quantidade_minima" placeholder="Minimum stock">
                 </div>
 
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Salvar Produto</button>
-                <a href="index.html" class="btn-secundario">Cancelar</a>
+                <button type="submit" class="btn-primary">Save Product</button>
+                <a href="index.html" class="btn-secundario">Cancel</a>
             </div>
 
         </form>
@@ -109,9 +109,9 @@ Sair
 
 <div id="toast" class="toast"></div>
 
-<!-- proteção de login -->
+<!-- login protection -->
 
-<!-- funções do sistema -->
+<!-- app functions -->
 <script src="js/app.js"></script>
 
 </body>

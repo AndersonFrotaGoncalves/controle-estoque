@@ -3,7 +3,7 @@ async function importarExcel(){
     const input = document.getElementById("excelFile");
 
     if(!input.files.length){
-        alert("Selecione um arquivo");
+        alert("Choose a file");
         return;
     }
 
@@ -12,7 +12,7 @@ async function importarExcel(){
 
     try{
 
-        // 🔥 envia Excel (não salva, só lê)
+        // sends the Excel file (read only, nothing is saved)
         const resExcel = await fetch("/api/sap", {
             method: "POST",
             body: formData
@@ -20,7 +20,7 @@ async function importarExcel(){
 
         const dadosExcel = await resExcel.json();
 
-        // 🔥 pega produtos do sistema
+        // gets the system products
         const resProdutos = await fetch("/api/produtos");
         const produtos = await resProdutos.json();
 
@@ -28,7 +28,7 @@ async function importarExcel(){
 
     }catch(error){
         console.error(error);
-        alert("Erro ao importar Excel");
+        alert("Error importing the Excel file");
     }
 
 }
@@ -44,6 +44,8 @@ function montarTabela(excel, produtos){
 
 const qtdSAP = Number(
     item["Estoque SAP"] ||
+    item["SAP Stock"] ||
+    item.Quantity ||
     item.quantidade ||
     item.Qtd ||
     0
@@ -62,7 +64,7 @@ const qtdSAP = Number(
 
         tr.innerHTML = `
             <td>${codigo}</td>
-            <td>${produto?.descricao || "Não encontrado"}</td>
+            <td>${produto?.descricao || "Not found"}</td>
             <td>${qtdSistema}</td>
             <td>${qtdSAP}</td>
             <td style="color:${cor}; font-weight:bold;">
@@ -77,7 +79,7 @@ const qtdSAP = Number(
 }
 
 document.getElementById("excelFile").addEventListener("change", function(){
-    const nome = this.files[0]?.name || "Nenhum arquivo selecionado";
+    const nome = this.files[0]?.name || "No file selected";
     document.getElementById("nomeArquivo").innerText = nome;
 });
 
@@ -102,13 +104,13 @@ function exportarExcel(){
 
     });
 
-    // 🔥 cria planilha
+    // builds the spreadsheet
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(dados);
 
-    XLSX.utils.book_append_sheet(wb, ws, "Inventario SAP");
+    XLSX.utils.book_append_sheet(wb, ws, "SAP Stock Check");
 
-    XLSX.writeFile(wb, "relatorio_inventario_sap.xlsx");
+    XLSX.writeFile(wb, "sap_stock_check.xlsx");
 }
 
 function imprimirRelatorio(){
@@ -120,7 +122,7 @@ function imprimirRelatorio(){
     janela.document.write(`
         <html>
         <head>
-            <title>Relatório Inventário SAP</title>
+            <title>SAP Stock Check Report</title>
             <style>
                 body{ font-family: Arial; padding:20px; }
                 h1{ text-align:center; }
@@ -144,7 +146,7 @@ function imprimirRelatorio(){
         </head>
         <body>
 
-        <h1>Relatório de Inventário SAP</h1>
+        <h1>SAP Stock Check Report</h1>
 
         ${conteudo}
 

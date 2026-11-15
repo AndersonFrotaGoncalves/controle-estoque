@@ -1,16 +1,16 @@
-# StockControl · Controle de Estoque
+# StockControl · Inventory Management
 
-Sistema web para gerir o stock de um armazém de peças: **mapa de racks e níveis, entradas e saídas, importação de Excel e conferência com o relatório do SAP**. Back-end próprio em Node.js com API REST, autenticação JWT e base de dados SQL.
+Web system to manage stock in a parts warehouse: **rack and level map, stock in/out movements, Excel import and stock check against the SAP report**. Custom Node.js back end with a REST API, JWT authentication and a SQL database.
 
-🔗 **Demo online:** [controle-estoque-6d0g.onrender.com](https://controle-estoque-6d0g.onrender.com) · entre com o botão *Administrador* ou *Operador*. No plano gratuito, a primeira visita pode demorar cerca de 50 segundos enquanto o servidor acorda.
+🔗 **Live demo:** [controle-estoque-6d0g.onrender.com](https://controle-estoque-6d0g.onrender.com) · sign in with the *Administrator* or *Operator* button. On the free plan, the first visit can take about 50 seconds while the server wakes up.
 
-> Empresa e dados fictícios, criados para demonstração. O projeto nasceu da minha experiência real no controlo de stock de um armazém.
+> The company and data are fictional, created for this demo. The project comes from my real experience managing stock in a warehouse.
 
 ![Dashboard](docs/dashboard.png)
 
-## Experimentar em 1 minuto
+## Try it in 1 minute
 
-Precisa do **Node.js 22.13 ou mais recente**.
+You need **Node.js 22.13 or newer**.
 
 ```bash
 git clone https://github.com/AndersonFrotaGoncalves/controle-estoque.git
@@ -19,85 +19,86 @@ npm install
 npm start
 ```
 
-Abra **http://localhost:3000** e entre com uma das contas de demonstração (também há botões no ecrã de login):
+Open **http://localhost:3000** and sign in with one of the demo accounts (there are also buttons on the login screen):
 
-| Conta | E-mail | Senha | Pode |
+| Account | Email | Password | Can |
 |---|---|---|---|
-| Administrador | `admin@estoque.demo` | `admin123` | tudo |
-| Operador | `operador@estoque.demo` | `operador123` | consultar e registar movimentações |
+| Administrator | `admin@estoque.demo` | `admin123` | everything |
+| Operator | `operador@estoque.demo` | `operador123` | view and record movements |
 
-No primeiro arranque é criada uma base SQLite com 77 produtos e 2 meses de movimentações. Para começar do zero: `npm run reset-db`.
+On first start, a SQLite database is created with 77 products and 2 months of movements. To start from scratch: `npm run reset-db`.
 
-## Publicar online (Render, grátis)
+## Deploy online (Render, free)
 
-O repositório inclui um [`render.yaml`](render.yaml). No [Render](https://render.com): **New → Blueprint**, escolha este repositório e clique em **Apply**. O Render instala, gera o `JWT_SECRET` e publica a cada push. No plano gratuito, a base de demonstração é recriada em cada deploy ou reinício.
+The repository includes a [`render.yaml`](render.yaml). On [Render](https://render.com): **New → Blueprint**, choose this repository and click **Apply**. Render installs it, generates the `JWT_SECRET` and deploys on every push. On the free plan, the demo database is recreated on every deploy or restart.
 
-## Funcionalidades
+## Features
 
-- **Dashboard:** total de produtos, ocupação das posições, produtos por rack, stock normal vs. baixo e produtos mais movimentados
-- **Mapa do armazém:** cada rack com os seus níveis, as posições ocupadas e pesquisa por código
-- **Produtos:** listagem, criação, edição e exclusão (só administradores), com código único validado no servidor
-- **Movimentações:** procurar a peça pelo código (ou leitor de código de barras + Enter) e registar entradas e saídas. **Não é possível deixar o stock negativo**
-- **Importar Excel:** cria os códigos novos e atualiza os que já existem, com relatório de linhas com erro
-- **Inventário SAP:** carrega o relatório do SAP e mostra, para cada material, a diferença entre o stock do sistema e o do SAP
-- **Utilizadores:** gestão de contas e permissões (admin ou operador)
+- **Dashboard:** total products, position occupancy, products per rack, normal vs. low stock and most moved products
+- **Warehouse map:** each rack with its levels, occupied positions and search by code
+- **Products:** list, create, edit and delete (administrators only), with a unique code checked on the server
+- **Movements:** find the part by code (or with a barcode scanner + Enter) and record stock in and stock out. **Stock can never go below zero**
+- **Excel import:** creates new codes and updates existing ones, with a report of rows that have errors
+- **SAP stock check:** loads the SAP report and shows, for each material, the difference between the system stock and the SAP stock
+- **Users:** manage accounts and roles (admin or operator)
 
-Na pasta [`exemplos/`](exemplos) há duas folhas de Excel para testar a importação e a conferência com o SAP.
+The [`examples/`](examples) folder has two Excel files to test the import and the SAP stock check.
 
-| Movimentações | Conferência com o SAP |
+| Movements | SAP stock check |
 |---|---|
-| ![Movimentações](docs/movimentacao.png) | ![SAP](docs/sap.png) |
+| ![Movements](docs/movimentacao.png) | ![SAP](docs/sap.png) |
 
-![Mapa do armazém](docs/mapa.png)
+![Warehouse map](docs/mapa.png)
 
-## Arquitetura
+## Architecture
 
 ```
 backend/
-  server.js              # Express: API + ficheiros do frontend
-  db.js                  # SQLite (por omissão) ou MySQL, com a mesma interface
-  schema.sql             # tabelas: usuarios, produtos, movimentacoes
-  schema.mysql.sql       # equivalente para MySQL
-  seed.js                # dados de demonstração (fictícios)
+  server.js              # Express: API + front-end files
+  db.js                  # SQLite (default) or MySQL, with the same interface
+  schema.sql             # tables: usuarios (users), produtos (products), movimentacoes (movements)
+  schema.mysql.sql       # MySQL equivalent
+  seed.js                # demo data (fictional)
   middleware/
-    authMiddleware.js    # verificação do JWT e permissão de administrador
+    authMiddleware.js    # JWT check and admin permission
   routes/
     auth.js              # POST /auth/login
     produtos.js          # CRUD /api/produtos
     movimentacoes.js     # /api/movimentacoes
-    importar.js          # POST /importar (Excel → produtos)
-    sap.js               # POST /api/sap (lê o relatório do SAP)
+    importar.js          # POST /importar (Excel → products)
+    sap.js               # POST /api/sap (reads the SAP report)
     usuarios.js          # CRUD /usuarios
 frontend/
-  *.html, css/, js/      # páginas em HTML, CSS e JavaScript sem framework
-  js/proteger.js         # guarda de sessão: envia o token e trata a expiração
+  *.html, css/, js/      # pages in HTML, CSS and plain JavaScript
+  js/proteger.js         # session guard: sends the token and handles expiry
 ```
 
 ### API
 
-| Método | Rota | Acesso | Descrição |
+| Method | Route | Access | Description |
 |---|---|---|---|
-| POST | `/auth/login` | público | devolve o token JWT (8 h) |
-| GET | `/api/produtos` | autenticado | lista de produtos |
-| GET | `/api/produtos/codigo/:codigo` | autenticado | procura por código |
-| POST · PUT · DELETE | `/api/produtos[/:id]` | admin | criar, editar, excluir |
-| GET · POST | `/api/movimentacoes` | autenticado | histórico e nova entrada/saída |
-| POST | `/api/sap` | autenticado | lê o Excel do SAP |
-| POST | `/importar` | admin | importa produtos de Excel/CSV |
-| GET · POST · PUT · DELETE | `/usuarios[/:id]` | admin | gestão de utilizadores |
+| POST | `/auth/login` | public | returns the JWT token (8 h) |
+| GET | `/api/produtos` | signed in | product list |
+| GET | `/api/produtos/codigo/:codigo` | signed in | find by code |
+| POST · PUT · DELETE | `/api/produtos[/:id]` | admin | create, edit, delete |
+| GET · POST | `/api/movimentacoes` | signed in | history and new stock in/out |
+| POST | `/api/sap` | signed in | reads the SAP Excel file |
+| POST | `/importar` | admin | imports products from Excel/CSV |
+| GET · POST · PUT · DELETE | `/usuarios[/:id]` | admin | user management |
 
-### Decisões técnicas
+### Technical decisions
 
-- **Stock nunca negativo, mesmo com pedidos em simultâneo.** A saída é um único `UPDATE … WHERE quantidade >= ?`, por isso duas saídas ao mesmo tempo não passam do stock disponível. A base de dados tem também um `CHECK (quantidade >= 0)`.
-- **Autenticação JWT em todas as rotas** exceto o login. O utilizador de cada movimentação vem do token, não do formulário, para não poder ser falsificado.
-- **Senhas com bcrypt.** O login dá a mesma mensagem para e-mail inexistente e senha errada, para não revelar que contas existem.
-- **Sem configuração para experimentar:** usa o SQLite incluído no Node. Em produção, basta definir as variáveis `MYSQL*` para usar MySQL (ver [`.env.example`](.env.example)).
-- **Uploads em memória:** os ficheiros Excel não ficam guardados no servidor.
+- **Stock never below zero, even with simultaneous requests.** Stock out is a single `UPDATE … WHERE quantidade >= ?`, so two requests at the same time can't take more than the available stock. The database also has a `CHECK (quantidade >= 0)`.
+- **JWT authentication on every route** except login. The user of each movement comes from the token, not from the form, so it can't be faked.
+- **Passwords hashed with bcrypt.** Login gives the same message for an unknown email and a wrong password, so it doesn't reveal which accounts exist.
+- **No setup to try it:** it uses the SQLite built into Node. In production, set the `MYSQL*` variables to use MySQL (see [`.env.example`](.env.example)).
+- **Uploads in memory:** Excel files are never stored on the server.
+- **The importers accept English and Portuguese column names** (the original SAP exports are in Portuguese).
 
-## Tecnologias
+## Tech stack
 
 Node.js · Express · SQLite / MySQL · JWT · bcrypt · Multer · SheetJS · HTML · CSS · JavaScript · Chart.js
 
-## Autor
+## Author
 
 **Anderson Frota** · [andersonfrota.netlify.app](https://andersonfrota.netlify.app) · [LinkedIn](https://www.linkedin.com/in/andersongfrota) · [GitHub](https://github.com/AndersonFrotaGoncalves)

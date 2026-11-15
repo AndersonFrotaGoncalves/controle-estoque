@@ -19,11 +19,11 @@ if (form) {
 
             const resultado = await resposta.json();
 
-            alert(resultado.message || "Importação concluída!");
+            alert(resultado.message || "Import finished!");
 
         } catch (erro) {
             console.error(erro);
-            alert("Erro ao importar arquivo");
+            alert("Error importing the file");
         }
 
     });

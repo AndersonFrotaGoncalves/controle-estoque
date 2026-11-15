@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning backend/server.js",
     "dev": "node --watch --disable-warning=ExperimentalWarning backend/server.js",
-    "reset-db": "node -e \"require('fs').rmSync('backend/data',{recursive:true,force:true});console.log('Base de dados apagada. Será recriada no próximo npm start.')\""
+    "reset-db": "node -e \"require('fs').rmSync('backend/data',{recursive:true,force:true});console.log('Database deleted. It will be recreated on the next npm start.')\""
   },
   "engines": {
     "node": ">=22.13"

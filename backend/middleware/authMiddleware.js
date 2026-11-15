@@ -8,7 +8,7 @@ if (!SECRET) {
   // Sem JWT_SECRET definido, gera um segredo aleatório a cada arranque
   // (as sessões terminam quando o servidor reinicia). Em produção, defina-o.
   SECRET = crypto.randomBytes(32).toString("hex");
-  console.warn("Aviso: JWT_SECRET não definido; a usar um segredo temporário.");
+  console.warn("Warning: JWT_SECRET is not set; using a temporary secret.");
 }
 
 const gerarToken = (usuario) =>
@@ -17,10 +17,10 @@ const gerarToken = (usuario) =>
 function verificarToken(req, res, next) {
   const [tipo, token] = (req.headers.authorization || "").split(" ");
   if (tipo !== "Bearer" || !token) {
-    return res.status(401).json({ error: "Sessão em falta. Faça login." });
+    return res.status(401).json({ error: "Missing session. Please sign in." });
   }
   jwt.verify(token, SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ error: "Sessão expirada. Faça login novamente." });
+    if (err) return res.status(401).json({ error: "Session expired. Please sign in again." });
     req.usuario = decoded; // { id, email, nome, role }
     next();
   });
@@ -28,7 +28,7 @@ function verificarToken(req, res, next) {
 
 function apenasAdmin(req, res, next) {
   if (req.usuario?.role !== "admin") {
-    return res.status(403).json({ error: "Apenas administradores podem fazer esta ação." });
+    return res.status(403).json({ error: "Only administrators can do this." });
   }
   next();
 }

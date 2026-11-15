@@ -29,8 +29,8 @@ app.use(express.static(FRONTEND));
 // erros não tratados (ex.: ficheiro demasiado grande no upload)
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(err.status || 500).json({ error: err.message || "Erro no servidor.", message: err.message });
+  res.status(err.status || 500).json({ error: err.message || "Server error.", message: err.message });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor em http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

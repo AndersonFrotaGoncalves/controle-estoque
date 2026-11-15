@@ -17,10 +17,10 @@ function lerProduto(body) {
     quantidade: Number(body.quantidade ?? 0),
     quantidade_minima: body.quantidade_minima === "" || body.quantidade_minima == null ? 2 : Number(body.quantidade_minima),
   };
-  if (!p.codigo) return { erro: "Indique o código do produto." };
-  if (!p.descricao) return { erro: "Indique a descrição do produto." };
-  if (!Number.isInteger(p.quantidade) || p.quantidade < 0) return { erro: "A quantidade tem de ser um número inteiro, 0 ou mais." };
-  if (!Number.isInteger(p.quantidade_minima) || p.quantidade_minima < 0) return { erro: "A quantidade mínima tem de ser um número inteiro, 0 ou mais." };
+  if (!p.codigo) return { erro: "Enter the product code." };
+  if (!p.descricao) return { erro: "Enter the product description." };
+  if (!Number.isInteger(p.quantidade) || p.quantidade < 0) return { erro: "Quantity must be a whole number, 0 or more." };
+  if (!Number.isInteger(p.quantidade_minima) || p.quantidade_minima < 0) return { erro: "Minimum quantity must be a whole number, 0 or more." };
   return { p };
 }
 
@@ -29,7 +29,7 @@ router.get("/produtos", async (req, res) => {
     res.json(await db.run("SELECT * FROM produtos ORDER BY codigo"));
   } catch (err) {
     console.error(err);
-    falha(res, 500, "Erro ao buscar produtos.");
+    falha(res, 500, "Error loading products.");
   }
 });
 
@@ -38,13 +38,13 @@ router.get("/produtos/codigo/:codigo", async (req, res) => {
     const [p] = await db.run("SELECT * FROM produtos WHERE codigo = ?", [req.params.codigo.trim().toUpperCase()]);
     res.json(p || null);
   } catch (err) {
-    falha(res, 500, "Erro ao buscar produto.");
+    falha(res, 500, "Error loading the product.");
   }
 });
 
 router.get("/produtos/:id", async (req, res) => {
   const [p] = await db.run("SELECT * FROM produtos WHERE id = ?", [req.params.id]);
-  if (!p) return falha(res, 404, "Produto não encontrado.");
+  if (!p) return falha(res, 404, "Product not found.");
   res.json(p);
 });
 
@@ -57,9 +57,9 @@ router.post("/produtos", apenasAdmin, async (req, res) => {
       [p.codigo, p.descricao, p.rack, p.nivel, p.quantidade, p.quantidade_minima]);
     res.status(201).json({ sucesso: true, id: r.insertId });
   } catch (err) {
-    if (duplicado(err)) return falha(res, 409, `Já existe um produto com o código ${p.codigo}.`);
+    if (duplicado(err)) return falha(res, 409, `A product with code ${p.codigo} already exists.`);
     console.error(err);
-    falha(res, 500, "Erro ao cadastrar produto.");
+    falha(res, 500, "Error creating the product.");
   }
 });
 
@@ -70,23 +70,23 @@ router.put("/produtos/:id", apenasAdmin, async (req, res) => {
     const r = await db.run(
       "UPDATE produtos SET codigo = ?, descricao = ?, rack = ?, nivel = ?, quantidade = ?, quantidade_minima = ? WHERE id = ?",
       [p.codigo, p.descricao, p.rack, p.nivel, p.quantidade, p.quantidade_minima, req.params.id]);
-    if (!r.affectedRows) return falha(res, 404, "Produto não encontrado.");
+    if (!r.affectedRows) return falha(res, 404, "Product not found.");
     res.json({ sucesso: true });
   } catch (err) {
-    if (duplicado(err)) return falha(res, 409, `Já existe outro produto com o código ${p.codigo}.`);
+    if (duplicado(err)) return falha(res, 409, `Another product with code ${p.codigo} already exists.`);
     console.error(err);
-    falha(res, 500, "Erro ao atualizar produto.");
+    falha(res, 500, "Error updating the product.");
   }
 });
 
 router.delete("/produtos/:id", apenasAdmin, async (req, res) => {
   try {
     const r = await db.run("DELETE FROM produtos WHERE id = ?", [req.params.id]);
-    if (!r.affectedRows) return falha(res, 404, "Produto não encontrado.");
+    if (!r.affectedRows) return falha(res, 404, "Product not found.");
     res.json({ sucesso: true });
   } catch (err) {
     console.error(err);
-    falha(res, 500, "Erro ao excluir produto.");
+    falha(res, 500, "Error deleting the product.");
   }
 });
 

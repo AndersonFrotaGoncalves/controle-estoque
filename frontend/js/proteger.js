@@ -1,9 +1,9 @@
 /* =====================================================
-   PROTEÇÃO DAS PÁGINAS
-   Carregado antes dos outros scripts em todas as páginas:
-   - sem sessão, volta ao login;
-   - junta o token JWT a todos os pedidos à API;
-   - se o servidor responder 401 (sessão expirada), volta ao login.
+   PAGE PROTECTION
+   Loaded before the other scripts on every page:
+   - no session: back to login;
+   - adds the JWT token to every API request;
+   - if the server answers 401 (expired session): back to login.
 ===================================================== */
 (function () {
   const token = localStorage.getItem("token");
@@ -23,7 +23,7 @@
       localStorage.removeItem("token");
       localStorage.removeItem("usuario");
       window.location.replace("login.html");
-      // a página vai mudar: não devolve nada, para os scripts não tentarem usar a resposta
+      // the page is changing: return nothing, so scripts don't try to use the response
       return new Promise(() => {});
     }
     return resposta;
@@ -35,13 +35,13 @@
     window.location.href = "login.html";
   };
 
-  // nome do utilizador no topo da página
+  // user name at the top of the page
   document.addEventListener("DOMContentLoaded", () => {
-    let nome = "Usuário";
+    let nome = "User";
     try {
       const u = JSON.parse(localStorage.getItem("usuario"));
       nome = u.nome || u.email || nome;
-    } catch (e) { /* sem dados */ }
+    } catch (e) { /* no data */ }
     const el = document.getElementById("usuarioLogado");
     if (el) el.innerText = nome;
   });

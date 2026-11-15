@@ -26,7 +26,7 @@ if (process.env.MYSQLHOST) {
   });
   db.motor = "mysql";
   db.run = (sql, params = []) => db.promise().query(sql, params).then(([r]) => r);
-  console.log("Base de dados: MySQL em", process.env.MYSQLHOST);
+  console.log("Database: MySQL at", process.env.MYSQLHOST);
 } else {
   const { DatabaseSync } = require("node:sqlite");
   const pasta = path.join(__dirname, "data");
@@ -62,7 +62,7 @@ if (process.env.MYSQLHOST) {
 
   sqlite.exec(fs.readFileSync(path.join(__dirname, "schema.sql"), "utf8"));
   if (novo) require("./seed")(executar);
-  console.log("Base de dados: SQLite em", path.relative(process.cwd(), ficheiro));
+  console.log("Database: SQLite at", path.relative(process.cwd(), ficheiro));
 }
 
 module.exports = db;

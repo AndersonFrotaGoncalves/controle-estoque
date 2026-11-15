@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Inventário SAP - Controle de Estoque</title>
+<title>SAP Stock Check · StockControl</title>
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -27,19 +27,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 
@@ -50,7 +50,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -61,24 +61,24 @@ Sair
 <!-- CONTEÚDO -->
 <div class="main">
 
-<h1>Inventário SAP</h1>
+<h1>SAP Stock Check</h1>
 
 <div class="upload-container">
 
-<h3>Importar Excel do SAP</h3>
+<h3>Import the SAP Excel report</h3>
 
 <div class="upload-box">
 
 <input type="file" id="excelFile" hidden>
 
 <button class="btn-escolher" onclick="document.getElementById('excelFile').click()">
-📂 Escolher Excel
+📂 Choose Excel file
 </button>
 
-<span id="nomeArquivo">Nenhum arquivo selecionado</span>
+<span id="nomeArquivo">No file selected</span>
 
 <button class="btn-importar" onclick="importarExcel()">
-📥 Importar
+📥 Import
 </button>
 
 </div>
@@ -88,11 +88,11 @@ Sair
 <div style="display:flex; gap:10px; margin:15px 0;">
 
 <button onclick="exportarExcel()" class="btn-importar">
-📊 Exportar Excel
+📊 Export Excel
 </button>
 
 <button onclick="imprimirRelatorio()" class="btn-escolher">
-🖨 Imprimir
+🖨 Print
 </button>
 
 </div>
@@ -102,10 +102,10 @@ Sair
 <thead>
 <tr>
 <th>Material</th>
-<th>Produto</th>
-<th>Estoque Sistema</th>
-<th>Estoque SAP</th>
-<th>Diferença</th>
+<th>Product</th>
+<th>System Stock</th>
+<th>SAP Stock</th>
+<th>Difference</th>
 </tr>
 </thead>
 

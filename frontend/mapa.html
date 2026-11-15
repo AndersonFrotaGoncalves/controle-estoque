@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa do Armazém - Controle de Estoque</title>
+    <title>Warehouse Map · StockControl</title>
 
    <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -24,19 +24,19 @@
 
 <a href="dashboard.html">📊 Dashboard</a>
 
-<a href="index.html">📦 Produtos</a>
+<a href="index.html">📦 Products</a>
 
-<a href="cadastro.html">➕ Cadastrar Produto</a>
+<a href="cadastro.html">➕ Add Product</a>
 
-<a href="movimentacao.html">🔄 Movimentação</a>
+<a href="movimentacao.html">🔄 Movements</a>
 
-<a href="mapa.html">🗺️ Mapa</a>
+<a href="mapa.html">🗺️ Map</a>
 
-<a href="importar.html">📥 Importar</a>
+<a href="importar.html">📥 Import</a>
 
-<a href="sap.html">📊 Inventário SAP</a>
+<a href="sap.html">📊 SAP Stock Check</a>
 
-<a href="usuarios.html">👤 Usuários</a>
+<a href="usuarios.html">👤 Users</a>
 
 </div>
 </div>
@@ -48,7 +48,7 @@
 </div>
 
 <button class="btn-logout" onclick="logout()">
-Sair
+Sign out
 </button>
 
 </div>
@@ -56,29 +56,29 @@ Sair
 </div>
 <div class="main">
 
-    <!-- TOPO -->
+    <!-- TOP -->
     <div class="mapa-topo">
 
         <div class="mapa-titulo">
-            <h1>Mapa do Armazém</h1>
-            <span>Visualização geral das posições de estoque</span>
+            <h1>Warehouse Map</h1>
+            <span>Overview of all stock positions</span>
         </div>
 
         <div class="mapa-busca-card">
-          <input id="buscarMapa" placeholder="Digite o código do produto...">
-<button onclick="buscarNoMapa()">🔍 Buscar</button>
+          <input id="buscarMapa" placeholder="Enter the product code...">
+<button onclick="buscarNoMapa()">🔍 Search</button>
         </div>
 
     </div>
 
-    <!-- MAPA -->
+    <!-- MAP -->
     <div id="mapa"></div>
 
 </div>
 
-<!-- proteção de login -->
+<!-- login protection -->
 
-<!-- funções do sistema -->
+<!-- app functions -->
 <script src="js/app.js"></script>
 
 </body>
